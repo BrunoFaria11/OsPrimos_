@@ -12098,11 +12098,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\bruno\\OneDrive\\Ambiente de Trabalho\\Ecommerce_Primos\\Ecommerce_MVC_Core\\Ecommerce_MVC_Core.csproj",
+      "projectUniqueName": "C:\\Users\\bruno\\OneDrive\\Ambiente de Trabalho\\OsPrimos_\\Ecommerce_Primos\\Ecommerce_MVC_Core\\Ecommerce_MVC_Core.csproj",
       "projectName": "Ecommerce_MVC_Core",
-      "projectPath": "C:\\Users\\bruno\\OneDrive\\Ambiente de Trabalho\\Ecommerce_Primos\\Ecommerce_MVC_Core\\Ecommerce_MVC_Core.csproj",
+      "projectPath": "C:\\Users\\bruno\\OneDrive\\Ambiente de Trabalho\\OsPrimos_\\Ecommerce_Primos\\Ecommerce_MVC_Core\\Ecommerce_MVC_Core.csproj",
       "packagesPath": "C:\\Users\\bruno\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\bruno\\OneDrive\\Ambiente de Trabalho\\Ecommerce_Primos\\Ecommerce_MVC_Core\\obj\\",
+      "outputPath": "C:\\Users\\bruno\\OneDrive\\Ambiente de Trabalho\\OsPrimos_\\Ecommerce_Primos\\Ecommerce_MVC_Core\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\bruno\\AppData\\Roaming\\NuGet\\NuGet.Config",

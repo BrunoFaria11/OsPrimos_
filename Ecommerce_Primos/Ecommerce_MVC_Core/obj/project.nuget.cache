@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "6HudHYaUrXHEjjovdcwLJu0nQFxVWGhBIa7X7/EfCPfftu+34k+RzWhX8EwqorY+B4UDkZm2vBWJPUCgkdi0nQ==",
+  "dgSpecHash": "/2KR7xhb3/QqidOKy6sr3oSJ2GqFd6e3KRUvTswetkCqP6AuLStNxlaAkSVHQGxilZbOAYfiuFckvTwTTWJHbQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\bruno\\OneDrive\\Ambiente de Trabalho\\Ecommerce_Primos\\Ecommerce_MVC_Core\\Ecommerce_MVC_Core.csproj",
+  "projectFilePath": "C:\\Users\\bruno\\OneDrive\\Ambiente de Trabalho\\OsPrimos_\\Ecommerce_Primos\\Ecommerce_MVC_Core\\Ecommerce_MVC_Core.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\bruno\\.nuget\\packages\\codingupastorm.vadersharp\\1.0.4\\codingupastorm.vadersharp.1.0.4.nupkg.sha512",
     "C:\\Users\\bruno\\.nuget\\packages\\fontawesome\\4.7.0\\fontawesome.4.7.0.nupkg.sha512",

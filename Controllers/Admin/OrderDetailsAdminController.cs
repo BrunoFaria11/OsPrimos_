@@ -50,7 +50,7 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
                     Id = o.Id,
                     ModifiedDate = o.ModifiedDate,
                     AddedDate = o.AddedDate,
-                    ProductId = o.ProductId,
+                    // ProductId = o.ProductId,
                     OrderId = o.OrderId,
                     Quantity = o.Quantity,
                     Rate = o.Rate,

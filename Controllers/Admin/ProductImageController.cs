@@ -50,18 +50,18 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
         public List<ProductImageListViewModel> GetAllProductImageList()
         {
             List<ProductImageListViewModel> productImageList = new List<ProductImageListViewModel>();
-            _unitOfWork.Repository<ProductImage>().GetAllInclude(p=>p.Product).OrderByDescending(x=>x.AddedDate).ToList().ForEach(p =>
-            {
-                ProductImageListViewModel productImage=new ProductImageListViewModel
-                {
-                    Id = p.Id,
-                    ProductId = p.Id,
-                    Title = p.Title,
-                    ImagePath = p.ImagePath,
-                    ProductName = p.Product.Name
-                };
-                productImageList.Add(productImage);
-            });
+            // _unitOfWork.Repository<ProductImage>().GetAllInclude(p=>p.Product).OrderByDescending(x=>x.AddedDate).ToList().ForEach(p =>
+            // {
+            //     ProductImageListViewModel productImage=new ProductImageListViewModel
+            //     {
+            //         Id = p.Id,
+            //         ProductId = p.Id,
+            //         Title = p.Title,
+            //         ImagePath = p.ImagePath,
+            //         ProductName = p.Product.Name
+            //     };
+            //     productImageList.Add(productImage);
+            // });
             return productImageList;
         }
 

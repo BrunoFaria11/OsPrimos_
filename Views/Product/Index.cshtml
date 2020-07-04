@@ -1,88 +1,42 @@
-﻿@model IEnumerable<Ecommerce_MVC_Core.ViewModel.ProductListViewModel>
-@{
-    ViewData["Title"] = "Index";
-}
+﻿@{ ViewData["Title"] = "Products"; }
 
-<div class="col-md-2">
-    <a id="createModel" data-toggle="modal" asp-controller="Product" asp-action="AddEditProduct" class="btn btn-info" data-target="#modal-popUP">
-        <i class="glyphicon glyphicon-plus"></i>Add
-    </a>
-</div>
-<div class="col-md-3">
-    <form method="post" asp-action="Index" class="form-inline">
-        <div class="form-horizontal">
-            <div class="form-group">
-                <input type="text" name="search" value="@Html.ViewBag.SearchString" class="form-control" />
-                <input type="submit" value="Search" class="btn btn-default pull-right" />
+<div class="card card-primary">
+    <div class="card-header">
+        <h3 class="card-title">Quick Example</h3>
+    </div>
+    <!-- /.card-header -->
+    
+              <form role="form">
+                <div class="card-body">
+                  <div class="form-group">
+                    <label for="exampleInputEmail1">Email address</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputPassword1">Password</label>
+                    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputFile">File input</label>
+                    <div class="input-group">
+                      <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="exampleInputFile">
+                        <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                      </div>
+                      <div class="input-group-append">
+                        <span class="input-group-text" id="">Upload</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                    <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                  </div>
+                </div>
+                <!-- /.card-body -->
 
+                <div class="card-footer">
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+              </form>
             </div>
-        </div>
-    </form>
-</div>
-<hr/>
-@{
-    if (Model.ToList().Count <= 0)
-    {
-        <h1>No Product Added Yet</h1>
-    }
-    else
-    {
-        <table class="table table-responsive table-hover">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Product</th>
-
-                    <th>Info</th>
-                    <th>Price</th>
-                    <th>Stocks</th>
-                    <th>Total Comments</th>
-                    <th>Total Images</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-
-            <tbody>
-            @{
-                int count = 1;
-                foreach (var item in Model)
-                {
-                <tr>
-                    <td>@count</td>
-                    <td>
-                        <b>Product:</b> @item.Name <br />
-                    <b> Code:</b> @item.Code <br />
-                        <b> Tag:</b> @item.Tag
-                    </td>
-                    <td>
-                      <b>Category</b>  @item.CategoryName <br />
-                        <b>Brand</b>  @item.BrandName 
-                    </td>
-                    <td>
-                        <b>Current Price</b> @(Convert.ToInt32(item.FinalPrice))<br />
-                        <b>Regular Price</b> @item.Price /@item.UnitName<br />
-                        <b>Discount</b> @item.Discount%
-                    </td>
-                    <td>@item.ProductStocks</td>
-                    <td>@item.ProductComments</td>
-                    <td>
-                        <a data-toggle="modal" asp-action="GetProdutcsImages" asp-route-id="@item.Id" data-target="#modal-popUP">@item.TotalImage</a>
-                    </td>
-                <td>
-                    <a id="editUserModal" data-toggle="modal" asp-action="AddEditProduct" asp-route-id="@item.Id" data-target="#modal-popUP"
-                       class="btn btn-info">
-                        <i class="glyphicon glyphicon-pencil"></i>  Edit
-                    </a>
-                    <a id="deleteUserModal" data-toggle="modal" asp-action="DeleteProduct" asp-route-id="@item.Id" data-target="#modal-popUP" class="btn btn-danger">
-                        <i class="glyphicon glyphicon-trash"></i>  Delete
-                    </a>
-                </td>
-                </tr>
-                    count++;
-                }
-            }
-            </tbody>
-        </table>
-    }
-}
-@Html.Partial("_Modal", new BootstrapModel { ID = "modal-popUP", AreaLabeledId = "modal-popUP-label", Size = ModalSize.Large })

@@ -27,51 +27,52 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IActionResult> Index(string search)
+        public IActionResult Index(string search)
         {
             List<ProductListViewModel> model = new List<ProductListViewModel>();
-            var dbData = await _unitOfWork.Repository<Product>().GetAllIncludeAsync(b => b.Brand, c => c.Category,
-                u => u.Unit, com => com.ProductCommentses, pi => pi.ProductImages, ps => ps.ProductStocks);
+            
+            
+            Product banner =  _unitOfWork.Repository<Product>().Find(x => x.Id == 1);
+            Console.Write(banner);
+            // if (!String.IsNullOrEmpty(search))
+            // {
+            //     dbData=dbData.Where(x =>
+            //         x.Name.ToLower().Contains(search.ToLower()) ||
+            //         x.Code.ToLower().Contains(search.ToLower()) ||
+            //         x.Tag.ToLower().Contains(search.ToLower())
 
-            if (!String.IsNullOrEmpty(search))
-            {
-                dbData=dbData.Where(x =>
-                    x.Name.ToLower().Contains(search.ToLower()) ||
-                    x.Code.ToLower().Contains(search.ToLower()) ||
-                    x.Tag.ToLower().Contains(search.ToLower())
+            //     ).ToList();
 
-                ).ToList();
+            // }
 
-            }
+            // foreach (var b in dbData)
+            // {
+            //     ProductListViewModel product = new ProductListViewModel
+            //     {
+            //         Id = b.Id,
+            //         Name = b.Name,
+            //         Code = b.Code,
+            //         Tag = b.Tag,
+            //         CategoryId = b.CategoryId,
+            //         BrandId = b.BrandId,
+            //         UnitId = b.UnitId,
+            //         Description = b.Description,
+            //         Price = b.Price,
+            //         BrandName = b.Brand.Name,
+            //         CategoryName = b.Category?.Name,
+            //         UnitName = b.Unit.Name,
+            //         Discount = b.Discount,
+            //         FinalPrice = (b.Price - ((b.Price * b.Discount) / 100)),
+            //         ProductComments = b.ProductCommentses.Count,
+            //         TotalImage = b.ProductImages.Count
+            //     };
+            //     var prdctStocks = b.ProductStocks.FirstOrDefault();
+            //     product.ProductStocks = prdctStocks != null ? product.ProductStocks = prdctStocks.InQuantity - prdctStocks.OutQuantity : product.ProductStocks = 0;
 
-            foreach (var b in dbData)
-            {
-                ProductListViewModel product = new ProductListViewModel
-                {
-                    Id = b.Id,
-                    Name = b.Name,
-                    Code = b.Code,
-                    Tag = b.Tag,
-                    CategoryId = b.CategoryId,
-                    BrandId = b.BrandId,
-                    UnitId = b.UnitId,
-                    Description = b.Description,
-                    Price = b.Price,
-                    BrandName = b.Brand.Name,
-                    CategoryName = b.Category?.Name,
-                    UnitName = b.Unit.Name,
-                    Discount = b.Discount,
-                    FinalPrice = (b.Price - ((b.Price * b.Discount) / 100)),
-                    ProductComments = b.ProductCommentses.Count,
-                    TotalImage = b.ProductImages.Count
-                };
-                var prdctStocks = b.ProductStocks.FirstOrDefault();
-                product.ProductStocks = prdctStocks != null ? product.ProductStocks = prdctStocks.InQuantity - prdctStocks.OutQuantity : product.ProductStocks = 0;
+            //     model.Add(product);
+            // }
 
-                model.Add(product);
-            }
-
-            return View(model);
+            return View();
         }
 
         [HttpGet]
@@ -100,14 +101,14 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
             {
                 Product product =await _unitOfWork.Repository<Product>().GetByIdAsync(id);
                 model.Name = product.Name;
-                model.Code = product.Code;
-                model.Tag = product.Tag;
-                model.CategoryId = product.CategoryId;
-                model.BrandId = product.BrandId;
-                model.UnitId = product.UnitId;
+                // model.Code = product.Code;
+                // model.Tag = product.Tag;
+                // model.CategoryId = product.CategoryId;
+                // model.BrandId = product.BrandId;
+                // model.UnitId = product.UnitId;
                 model.Description = product.Description;
                 model.Price = product.Price;
-                model.Discount = product.Discount;
+                // model.Discount = product.Discount;
             }
 
             return PartialView("_AddEditProduct", model);
@@ -127,14 +128,14 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
                 if (product!=null)
                 {
                     product.Name = model.Name;
-                    product.Code = model.Code;
-                    product.Tag = model.Tag;
-                    product.CategoryId = model.CategoryId;
-                    product.BrandId = model.BrandId;
-                    product.UnitId = model.UnitId;
+                    // product.Code = model.Code;
+                    // product.Tag = model.Tag;
+                    // product.CategoryId = model.CategoryId;
+                    // product.BrandId = model.BrandId;
+                    // product.UnitId = model.UnitId;
                     product.Description = model.Description;
                     product.Price = model.Price;
-                    product.Discount = model.Discount;
+                    // product.Discount = model.Discount;
 
                     product.ModifiedDate = DateTime.Now;
                     await _unitOfWork.Repository<Product>().UpdateAsync(product);
@@ -146,14 +147,14 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
                 Product product = new Product
                 {
                     Name = model.Name,
-                    Code = model.Code,
-                    Tag = model.Tag,
-                    CategoryId = model.CategoryId,
-                    BrandId = model.BrandId,
-                    UnitId = model.UnitId,
+                    // Code = model.Code,
+                    // Tag = model.Tag,
+                    // CategoryId = model.CategoryId,
+                    // BrandId = model.BrandId,
+                    // UnitId = model.UnitId,
                     Description = model.Description,
                     Price = model.Price,
-                    Discount = model.Discount,
+                    // Discount = model.Discount,
                     AddedDate = DateTime.Now,
                     ModifiedDate = DateTime.Now
                 };

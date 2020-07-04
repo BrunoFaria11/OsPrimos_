@@ -190,74 +190,54 @@ namespace Ecommerce_MVC_Core.Controllers
         public List<ProductListViewModel> GetAllProductList( int id=0,int take=1000,int ctgid=0)
         {
             List<ProductListViewModel> productList = new List<ProductListViewModel>();
-            IQueryable<Product> dbProducts = _unitOfWork.Repository<Product>().Query()
-                .Include(x => x.Brand)
-                .Include(c => c.Category)
-                .Include(u => u.Unit)
-                .Include(pc => pc.ProductCommentses)
-                .Include(pi => pi.ProductImages)
-                .Include(ps => ps.ProductStocks);
-
-            if (ctgid>0)
-            {
-                dbProducts = dbProducts.Where(x => x.CategoryId == ctgid ||x.Category.Id==ctgid);
-            }
-
-            dbProducts = dbProducts.OrderByDescending(x => x.AddedDate).Take(take);
-            foreach (var b in dbProducts)
-            {
-                ProductListViewModel product = new ProductListViewModel
-                {
-                    Id = b.Id,
-                    Name = b.Name,
-                    Code = b.Code,
-                    Tag = b.Tag,
-                    CategoryId = b.CategoryId,
-                    BrandId = b.BrandId,
-                    UnitId = b.UnitId,
-                    Description = b.Description,
-                    Price = b.Price,
-                    BrandName = b.Brand.Name,
-                    CategoryName = b.Category.Name,
-                    UnitName = b.Unit.Name,
-                    Discount = b.Discount,
-                    FinalPrice = (b.Price - ((b.Price * b.Discount) / 100)),
-                    ProductComments = b.ProductCommentses.Count,
-                    TotalImage = b.ProductImages.Count,
+            // IQueryable<Product> dbProducts = _unitOfWork.Repository<Product>().Query()
+            //     .Include(pc => pc.ProductCommentses)
+            //     .Include(pi => pi.ProductImages)
+            //     .Include(ps => ps.ProductStocks);
 
 
-                };
-                var prdctStocks = b.ProductStocks.FirstOrDefault(x => x.ProductId == b.Id);
-                product.ProductStocks = prdctStocks != null
-                    ? product.ProductStocks = prdctStocks.InQuantity - prdctStocks.OutQuantity
-                    : product.ProductStocks = 0;
+            // dbProducts = dbProducts.OrderByDescending(x => x.AddedDate).Take(take);
+            // foreach (var b in dbProducts)
+            // {
+            //     ProductListViewModel product = new ProductListViewModel
+            //     {
+            //         Id = b.Id,
+            //         Name = b.Name,
+            //         Description = b.Description,
+            //         Price = b.Price
+            //     };
 
-                var productImageList = b.ProductImages.Where(x => x.ProductId == b.Id).ToList();
+            //     // var prdctStocks = b.ProductStocks.FirstOrDefault(x => x.ProductId == b.Id);
+            //     // product.ProductStocks = prdctStocks != null
+            //     //     ? product.ProductStocks = prdctStocks.InQuantity - prdctStocks.OutQuantity
+            //     //     : product.ProductStocks = 0;
 
-                var productImage = productImageList.FirstOrDefault();
-                if (productImage != null)
-                {
-                    product.ImageTitle = productImage.Title;
-                    product.ImagePath = productImage.ImagePath;
-                    if (productImageList.Count > 1)
-                    {
-                        product.SecondImagePath = productImageList.Skip(1).FirstOrDefault()?.ImagePath;
-                    }
-                    else
-                    {
-                        product.SecondImagePath = product.ImagePath;
-                    }
-                }
-                else
-                {
-                    product.ImagePath = "noproductimage.png";
-                    product.SecondImagePath = "noproductimage.png";
-                }
+            //     // var productImageList = b.ProductImages.Where(x => x.ProductId == b.Id).ToList();
+
+            //     var productImage = productImageList.FirstOrDefault();
+            //     if (productImage != null)
+            //     {
+            //         product.ImageTitle = productImage.Title;
+            //         product.ImagePath = productImage.ImagePath;
+            //         // if (productImageList.Count > 1)
+            //         // {
+            //         //     product.SecondImagePath = productImageList.Skip(1).FirstOrDefault()?.ImagePath;
+            //         // }
+            //         // else
+            //         // {
+            //         //     product.SecondImagePath = product.ImagePath;
+            //         // }
+            //     }
+            //     else
+            //     {
+            //         product.ImagePath = "noproductimage.png";
+            //         product.SecondImagePath = "noproductimage.png";
+            //     }
 
 
 
-                productList.Add(product);
-            }
+            //     productList.Add(product);
+            // }
             
             
             return productList;
@@ -270,36 +250,36 @@ namespace Ecommerce_MVC_Core.Controllers
             List<ProductListViewModel> productsList = new List<ProductListViewModel>();
 
             
-                _unitOfWork.Repository<Product>().Query().Include(x => x.Brand)
-                    .Include(c => c.Category)
-                    .Include(u => u.Unit)
-                    .Include(pc => pc.ProductCommentses)
-                    .Include(pi => pi.ProductImages)
-                    .Include(ps => ps.ProductStocks).OrderByDescending(x=>x.AddedDate).Take(12).ToList().ForEach(b =>
-                {
-                    ProductListViewModel product = new ProductListViewModel
-                    {
-                        Id = b.Id,
-                        Name = b.Name,
-                        Code = b.Code,
-                        Tag = b.Tag,
-                        CategoryId = b.CategoryId,
-                        BrandId = b.BrandId,
-                        UnitId = b.UnitId,
-                        Description = b.Description,
-                        Price = b.Price,
-                        BrandName = b.Brand.Name,
-                        CategoryName = b.Category.Name,
-                        UnitName = b.Unit.Name,
-                        Discount = b.Discount,
-                        FinalPrice = (b.Price - ((b.Price * b.Discount) / 100)),
-                        ProductComments = b.ProductCommentses.Count(x => x.ProductId == b.Id),
-                        TotalImage = b.ProductImages.Count(x => x.ProductId == b.Id)
-                    };
-                    var prdctStocks = b.ProductStocks.FirstOrDefault(x => x.ProductId == b.Id);
-                    product.ProductStocks = prdctStocks != null ? product.ProductStocks = prdctStocks.InQuantity - prdctStocks.OutQuantity : product.ProductStocks = 0;
-                    productsList.Add(product);
-                });
+                // _unitOfWork.Repository<Product>().Query().Include(x => x.Brand)
+                //     .Include(c => c.Category)
+                //     .Include(u => u.Unit)
+                //     .Include(pc => pc.ProductCommentses)
+                //     .Include(pi => pi.ProductImages)
+                //     .Include(ps => ps.ProductStocks).OrderByDescending(x=>x.AddedDate).Take(12).ToList().ForEach(b =>
+                // {
+                //     ProductListViewModel product = new ProductListViewModel
+                //     {
+                //         Id = b.Id,
+                //         Name = b.Name,
+                //         Code = b.Code,
+                //         Tag = b.Tag,
+                //         CategoryId = b.CategoryId,
+                //         BrandId = b.BrandId,
+                //         UnitId = b.UnitId,
+                //         Description = b.Description,
+                //         Price = b.Price,
+                //         BrandName = b.Brand.Name,
+                //         CategoryName = b.Category.Name,
+                //         UnitName = b.Unit.Name,
+                //         Discount = b.Discount,
+                //         FinalPrice = (b.Price - ((b.Price * b.Discount) / 100)),
+                //         ProductComments = b.ProductCommentses.Count(x => x.ProductId == b.Id),
+                //         TotalImage = b.ProductImages.Count(x => x.ProductId == b.Id)
+                //     };
+                //     var prdctStocks = b.ProductStocks.FirstOrDefault(x => x.ProductId == b.Id);
+                //     product.ProductStocks = prdctStocks != null ? product.ProductStocks = prdctStocks.InQuantity - prdctStocks.OutQuantity : product.ProductStocks = 0;
+                //     productsList.Add(product);
+                // });
 
 
 
@@ -330,113 +310,113 @@ namespace Ecommerce_MVC_Core.Controllers
         public async Task<IActionResult> QuickViewProduct(int product)
         {
             ProductListViewModel pList = new ProductListViewModel();
-           Product pro= await _unitOfWork.Repository<Product>().GetSingleIncludeAsync(x=>x.Id== product,b=>b.Brand,c=>c.Category,u=>u.Unit,rc=>rc.ProductCommentses,pi=>pi.ProductImages);
-            if (pro!=null)
-            {
+           //Product pro= await _unitOfWork.Repository<Product>().GetSingleIncludeAsync(x=>x.Id== product,b=>b.Brand,c=>c.Category,u=>u.Unit,rc=>rc.ProductCommentses,pi=>pi.ProductImages);
+            // if (pro!=null)
+            // {
 
-                pList.Id = pro.Id;
-                pList.Name = pro.Name;
-                pList.Code = pro.Code;
-                pList.Tag = pro.Tag;
-                pList.CategoryId = pro.CategoryId;
-                pList.BrandId = pro.BrandId;
-                pList.UnitId = pro.UnitId;
-                pList.Description = pro.Description;
-                pList.Price = pro.Price;
-                pList.BrandName = pro.Brand.Name;
-                pList.CategoryName = pro.Category.Name;
-                pList.UnitName = pro.Unit.Name;
-                pList.Discount = pro.Discount;
-                pList.FinalPrice = (pro.Price - ((pro.Price * pro.Discount) / 100));
-                pList.ProductComments =pro.ProductCommentses.Count(x => x.ProductId == pro.Id);
-                pList.TotalImage = pro.ProductImages.Count(x => x.ProductId == pro.Id);
+            //     pList.Id = pro.Id;
+            //     pList.Name = pro.Name;
+            //     // pList.Code = pro.Code;
+            //     // pList.Tag = pro.Tag;
+            //     // pList.CategoryId = pro.CategoryId;
+            //     // pList.BrandId = pro.BrandId;
+            //     // pList.UnitId = pro.UnitId;
+            //     pList.Description = pro.Description;
+            //     pList.Price = pro.Price;
+            //     // pList.BrandName = pro.Brand.Name;
+            //     // pList.CategoryName = pro.Category.Name;
+            //     // pList.UnitName = pro.Unit.Name;
+            //     // pList.Discount = pro.Discount;
+            //     // pList.FinalPrice = (pro.Price - ((pro.Price * pro.Discount) / 100));
+            //     pList.ProductComments =pro.ProductCommentses.Count(x => x.ProductId == pro.Id);
+            //     pList.TotalImage = pro.ProductImages.Count(x => x.ProductId == pro.Id);
 
 
                 
 
-                var productImageList = pro.ProductImages.Where(x => x.ProductId == pro.Id).ToList();
+            //     var productImageList = pro.ProductImages.Where(x => x.ProductId == pro.Id).ToList();
 
-                var productImage = productImageList.FirstOrDefault();
-                if (productImage != null)
-                {
-                    pList.ImageTitle = productImage.Title;
-                    pList.ImagePath = productImage.ImagePath;
+            //     var productImage = productImageList.FirstOrDefault();
+            //     if (productImage != null)
+            //     {
+            //         pList.ImageTitle = productImage.Title;
+            //         pList.ImagePath = productImage.ImagePath;
 
-                }
+            //     }
                 
-            }
+            // }
             return PartialView("_QuickView", pList);
         }
 
         public async Task<IActionResult> ProductDetails(int product)
         {
             ProductListViewModel pList = new ProductListViewModel();
-            Product pro = await _unitOfWork.Repository<Product>().GetSingleIncludeAsync(x => x.Id == product, b => b.Brand, c => c.Category, u => u.Unit, rc => rc.ProductCommentses, pi => pi.ProductImages); ;
-            if (pro != null)
-            {
+            // Product pro = await _unitOfWork.Repository<Product>().GetSingleIncludeAsync(x => x.Id == product, b => b.Brand, c => c.Category, u => u.Unit, rc => rc.ProductCommentses, pi => pi.ProductImages); ;
+            // if (pro != null)
+            // {
 
-                pList.Id = pro.Id;
-                pList.Name = pro.Name;
-                pList.Code = pro.Code;
-                pList.Tag = pro.Tag;
-                pList.CategoryId = pro.CategoryId;
-                pList.BrandId = pro.BrandId;
-                pList.UnitId = pro.UnitId;
-                pList.Description = pro.Description;
-                pList.Price = pro.Price;
-                pList.BrandName = pro.Brand.Name;
-                pList.CategoryName = pro.Category.Name;
-                pList.UnitName = pro.Unit.Name;
-                pList.Discount = pro.Discount;
-                pList.FinalPrice = (pro.Price - ((pro.Price * pro.Discount) / 100));
-                pList.ProductComments = pro.ProductCommentses.Count(x => x.ProductId == pro.Id);
-                pList.TotalImage = pro.ProductImages.Count(x => x.ProductId == pro.Id);
-                pList.ProductCommentsList = GetAllCommentsByProduct(pro.Id);
+            //     pList.Id = pro.Id;
+            //     pList.Name = pro.Name;
+            //     pList.Code = pro.Code;
+            //     pList.Tag = pro.Tag;
+            //     pList.CategoryId = pro.CategoryId;
+            //     pList.BrandId = pro.BrandId;
+            //     pList.UnitId = pro.UnitId;
+            //     pList.Description = pro.Description;
+            //     pList.Price = pro.Price;
+            //     pList.BrandName = pro.Brand.Name;
+            //     pList.CategoryName = pro.Category.Name;
+            //     pList.UnitName = pro.Unit.Name;
+            //     pList.Discount = pro.Discount;
+            //     pList.FinalPrice = (pro.Price - ((pro.Price * pro.Discount) / 100));
+            //     pList.ProductComments = pro.ProductCommentses.Count(x => x.ProductId == pro.Id);
+            //     pList.TotalImage = pro.ProductImages.Count(x => x.ProductId == pro.Id);
+            //     pList.ProductCommentsList = GetAllCommentsByProduct(pro.Id);
 
-                pList.ImageList=new List<ProductImageListViewModel>();
+            //     pList.ImageList=new List<ProductImageListViewModel>();
 
-                var productImageList = pro.ProductImages.Where(x => x.ProductId == pro.Id).ToList();
+            //     var productImageList = pro.ProductImages.Where(x => x.ProductId == pro.Id).ToList();
 
-                var productImage = productImageList.FirstOrDefault();
-                if (productImage != null)
-                {
-                    pList.ImageTitle = productImage.Title;
-                    pList.ImagePath = productImage.ImagePath;
-                    productImageList.ForEach(x =>
-                    {
-                        ProductImageListViewModel image=new ProductImageListViewModel
-                        {
-                            Id = x.Id,
-                            ImagePath = x.ImagePath,
-                            Title = x.Title,
-                        };
-                        pList.ImageList.Add(image);
-                     });
-                }
+            //     var productImage = productImageList.FirstOrDefault();
+            //     if (productImage != null)
+            //     {
+            //         pList.ImageTitle = productImage.Title;
+            //         pList.ImagePath = productImage.ImagePath;
+            //         productImageList.ForEach(x =>
+            //         {
+            //             ProductImageListViewModel image=new ProductImageListViewModel
+            //             {
+            //                 Id = x.Id,
+            //                 ImagePath = x.ImagePath,
+            //                 Title = x.Title,
+            //             };
+            //             pList.ImageList.Add(image);
+            //          });
+            //     }
 
-            }
+            // }
             return View(pList);
         }
 
         public List<CommentsListViewModel> GetAllCommentsByProduct(int productId)
         {
             List<CommentsListViewModel> commentsList=new List<CommentsListViewModel>();
-            _unitOfWork.Repository<ProductComments>().GetIncludeList(x => x.ProductId == productId,p=>p.Product).OrderByDescending(x=>x.AddedDate).ToList().ForEach(x =>
-            {
-                CommentsListViewModel comments=new CommentsListViewModel
-                {
-                    ProductId = x.ProductId,
-                    Comment = x.Comment,
-                    ProductName = x.Product.Name,
-                    UserId = x.UserId
-                };
-                DateTime date = x.AddedDate;
-                comments.AddedDate = TimeAgoCustom.TimeAgo(date);
+            // _unitOfWork.Repository<ProductComments>().GetIncludeList(x => x.ProductId == productId,p=>p.Product).OrderByDescending(x=>x.AddedDate).ToList().ForEach(x =>
+            // {
+            //     CommentsListViewModel comments=new CommentsListViewModel
+            //     {
+            //         ProductId = x.ProductId,
+            //         Comment = x.Comment,
+            //         // ProductName = x.Product.Name,
+            //         UserId = x.UserId
+            //     };
+            //     DateTime date = x.AddedDate;
+            //     comments.AddedDate = TimeAgoCustom.TimeAgo(date);
 
-                ApplicationUsers user = _userManager.FindByIdAsync(x.UserId).Result;
-                comments.UserName = user.Name;
-                commentsList.Add(comments);
-            });
+            //     ApplicationUsers user = _userManager.FindByIdAsync(x.UserId).Result;
+            //     comments.UserName = user.Name;
+            //     commentsList.Add(comments);
+            // });
 
             return commentsList;
         }
@@ -476,7 +456,7 @@ namespace Ecommerce_MVC_Core.Controllers
                     {
                         ProductId = pro.Id,
                         ProductName = pro.Name,
-                        FinalPrice = (pro.Price - ((pro.Price * pro.Discount) / 100)),
+                        //FinalPrice = (pro.Price - ((pro.Price * pro.Discount) / 100)),
                         Quantity = 1
                     };
                     ViewBag.productId = product;

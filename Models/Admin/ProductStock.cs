@@ -9,12 +9,10 @@ namespace Ecommerce_MVC_Core.Models.Admin
 {
     public class ProductStock:BaseEntity
     {
-        public int ProductId { get; set; }
         public int InQuantity { get; set; }
         public int OutQuantity { get; set; }
         public string Remarks { get; set; }
         
-        public  Product Product { get; set; }
     }
 
     public class ProductStockMap
@@ -25,7 +23,6 @@ namespace Ecommerce_MVC_Core.Models.Admin
             entityTypeBuilder.Property(x => x.InQuantity);
             entityTypeBuilder.Property(x => x.OutQuantity);
             entityTypeBuilder.Property(x => x.Remarks).HasMaxLength(200);
-            entityTypeBuilder.HasOne(x => x.Product).WithMany(x => x.ProductStocks).HasForeignKey(x => x.ProductId);
             
         }
     }

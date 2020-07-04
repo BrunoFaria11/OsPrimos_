@@ -30,15 +30,15 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
             if (!String.IsNullOrEmpty(search))
             {
                 search=search.ToLower();
-                model = GetProductsStock().Where(x => x.ProductName.ToLower().Contains(search)).ToList();
+                //model = GetProductsStock().Where(x => x.ProductName.ToLower().Contains(search)).ToList();
                 ViewBag.SearchString = search;
             }
 
-            else
-            {
-                model=GetProductsStock();
-            }
-            return View(model);
+            // else
+            // {
+            //     model=GetProductsStock();
+            // }
+            return View();
         }
 
         [HttpGet]
@@ -47,13 +47,13 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
             ProductStockViewModel model=new ProductStockViewModel();
             if (id>0)
             {
-                ProductStock productStock = await _unitOfWork.Repository<ProductStock>().GetSingleIncludeAsync(x=>x.Id==id,p=>p.Product);
+                ProductStock productStock = await _unitOfWork.Repository<ProductStock>().GetSingleIncludeAsync(x=>x.Id==id);
                 model.Id = productStock.Id;
                 model.InQuantity = productStock.InQuantity;
                 model.OutQuantity = productStock.OutQuantity;
-                model.ProductId = productStock.ProductId;
+                // model.ProductId = productStock.ProductId;
                 model.Remarks = productStock.Remarks;
-                model.ProductName = productStock.Product.Name;
+                // model.ProductName = productStock.Product.Name;
             }
             return View(model);
         }
@@ -72,7 +72,7 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
                 productStock.InQuantity = model.InQuantity;
                 productStock.OutQuantity = model.OutQuantity;
                 productStock.ModifiedDate=DateTime.Now;
-                productStock.ProductId = model.ProductId;
+                // productStock.ProductId = model.ProductId;
                 productStock.Remarks = model.Remarks;
                 await _unitOfWork.Repository<ProductStock>().UpdateAsync(productStock);
             }
@@ -84,7 +84,7 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
                     OutQuantity = model.OutQuantity,
                     AddedDate = DateTime.Now,
                     ModifiedDate = DateTime.Now,
-                    ProductId = model.ProductId,
+                    // ProductId = model.ProductId,
                     Remarks = model.Remarks
                 };
                 await _unitOfWork.Repository<ProductStock>().InsertAsync(productStock);
@@ -92,37 +92,37 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
             return RedirectToAction(nameof(AddEditProductStock));
         }
 
-        public List<ProductStockListViewModel> GetProductsStock()
-        {
-            List<ProductStockListViewModel> productList=new List<ProductStockListViewModel>();
-             _unitOfWork.Repository<ProductStock>().GetAllInclude(x=>x.Product).ToList().ForEach(x =>
-            {
-                ProductStockListViewModel productStock = new ProductStockListViewModel
-                {
-                    Id = x.Id,
-                    ProductId = x.ProductId,
-                    ModifiedDate = x.ModifiedDate,
-                    AddedDate = x.AddedDate,
-                    InQuantity = x.InQuantity,
-                    ProductName = x.Product.Name,
-                    OutQuantity = x.OutQuantity,
-                    Remarks = x.Remarks,
-                    InStock = x.InQuantity - x.OutQuantity
-                };
-                productList.Add(productStock);
-            });
-            return productList;
-        }
+        // public List<ProductStockListViewModel> GetProductsStock()
+        // {
+        //     // List<ProductStockListViewModel> productList=new List<ProductStockListViewModel>();
+        //     //  _unitOfWork.Repository<ProductStock>().GetAllInclude(x=>x.Product).ToList().ForEach(x =>
+        //     // {
+        //     //     ProductStockListViewModel productStock = new ProductStockListViewModel
+        //     //     {
+        //     //         Id = x.Id,
+        //     //         ProductId = x.ProductId,
+        //     //         ModifiedDate = x.ModifiedDate,
+        //     //         AddedDate = x.AddedDate,
+        //     //         InQuantity = x.InQuantity,
+        //     //         ProductName = x.Product.Name,
+        //     //         OutQuantity = x.OutQuantity,
+        //     //         Remarks = x.Remarks,
+        //     //         InStock = x.InQuantity - x.OutQuantity
+        //     //     };
+        //     //     productList.Add(productStock);
+        //     // });
+        //     //return productList;
+        // }
 
 
         [HttpGet]
         public IActionResult Delete(int id)
         {
 
-            var productStock =  _unitOfWork.Repository<ProductStock>().GetSingleInclude(x=>x.Id==id,p=>p.Product);
-            string name = productStock.Product.Name;
+            var productStock =  _unitOfWork.Repository<ProductStock>().GetSingleInclude(x=>x.Id==id);
+            //string name = productStock.Product.Name;
 
-            return PartialView("_DeleteProductStock", name);
+            return PartialView("_DeleteProductStock");
         }
 
         [HttpPost]

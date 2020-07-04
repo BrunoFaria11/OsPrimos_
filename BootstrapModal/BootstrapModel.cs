@@ -10,6 +10,8 @@ namespace Ecommerce_MVC_Core.BootstrapModal
     {
         public string ID { get; set; }
         public string AreaLabeledId { get; set; }
+        public string urlPOST { get; set; }
+
         public ModalSize Size { get; set; }
         public string Message { get; set; }
         public string ModalSizeClass

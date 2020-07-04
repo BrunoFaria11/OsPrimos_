@@ -1,6 +1,10 @@
 ﻿
 @{ ViewData["Title"] = "Index"; }
-
+<style>
+    input[type="file"] {
+        display: none;
+    }
+</style>
 <section class="content">
     <div class="container-fluid">
         <div class="row">
@@ -18,26 +22,38 @@
                     <form role="form">
                         <div class="row">
                             <div class="col-sm-12">
-                                <div class="card-body text-center " style="height: 300px;background-color: rgba(95, 95, 95, 0.59);border-radius:8px">
-                                    <a class="btn btn-default  btn-lg" href="#" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
-                                        <i class="fas fa-pencil-alt">
-                                        </i>
-                                    </a>
+                                <div class="card-body text-center" id="Div_banner_1" style="padding: 0px;background-image:url(/css/Images/banner1.jpg) ;background-repeat: no-repeat; background-position-x: center; background-position-y: top;background-attachment: fixed;">
+                                    <div class="" style="height: 300px; border-radius: 8px;background-color: rgba(95, 95, 95, 0.59); padding-top:6%">
+                                        <lebel id="banner1Click" class="btn btn-default  btn-lg" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
+                                            <i class="fas fa-pencil-alt">
+                                            </i>
+                                        </lebel>
+                                        <input id="banner1" type="file" />
+                                        <a data-toggle="modal" asp-action="EditBanner" data-target="#modal-EditBanner" id="EditBannerbtn" class="btn btn-default  btn-lg" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
+                                            <i class="fas fa-quote-right">
+                                            </i>
+                                        </a>
+                                    </div>
                                 </div>
 
-
-                                <div class="card-body text-center" style="height: 300px;background-color: rgba(95, 95, 95, 0.59);border-radius:8px;margin-top:20px">
-                                    <a class="btn btn-default  btn-lg" href="#" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
-                                        <i class="fas fa-pencil-alt">
-                                        </i>
-                                    </a>
+                                <div class="card-body text-center" id="Div_banner_2" style="padding: 0px;margin-top: 20px;background-image:url(/css/Images/banner2.jpg);background-repeat: no-repeat;  background-position-x: center; background-position-y: top;background-attachment: fixed;">
+                                    <div class="" style="height: 300px; border-radius: 8px;background-color: rgba(95, 95, 95, 0.59); padding-top:6%">
+                                        <lebel id="banner2Click" class="btn btn-default  btn-lg" href="#" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
+                                            <i class="fas fa-pencil-alt">
+                                            </i>
+                                        </lebel>
+                                        <input id="banner2" type="file" />
+                                    </div>
                                 </div>
 
-                                <div class="card-body text-center " style="height: 300px;background-color: rgba(95, 95, 95, 0.59);border-radius:8px;margin-top:20px">
-                                    <a class="btn btn-default  btn-lg" href="#" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
-                                        <i class="fas fa-pencil-alt">
-                                        </i>
-                                    </a>
+                                <div class="card-body text-center" id="Div_banner_3" style="padding: 0px;margin-top: 20px;background-image:url(/css/Images/banner3.jpg);background-repeat: no-repeat;  background-position-x: center; background-position-y: top;background-attachment: fixed;">
+                                    <div class="" style="height: 300px; border-radius: 8px;background-color: rgba(95, 95, 95, 0.59); padding-top:6%">
+                                        <lebel id="banner3Click" class="btn btn-default  btn-lg" href="#" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
+                                            <i class="fas fa-pencil-alt">
+                                            </i>
+                                        </lebel>
+                                        <input id="banner3" type="file" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -96,7 +112,7 @@
                                     </a>
                                 </div>
                             </div>
-                 
+
 
                         </div>
 
@@ -249,3 +265,50 @@
     </div>
 
 </section>
+
+@Html.Partial("_Modal", new BootstrapModel { ID = "modal-EditBanner", AreaLabeledId = "EditBanner", Size = ModalSize.Large })
+
+
+<script>
+    $('#EditBannerbtn').on('click', function (e) {
+        e.preventDefault();
+
+        $('#modal-EditBanner').addClass("show");
+    })
+
+ 
+    $('#banner1Click').on('click', function (e) {
+        e.preventDefault();
+        $('#banner1').trigger('click');
+    });
+
+    $("#banner1").change('change', function (e) {
+        e.preventDefault();
+        $('#Div_banner_1').css("background-image", "url(" + URL.createObjectURL(e.target.files[0]) + ") ");
+    });
+
+
+
+    $('#banner2Click').on('click', function (e) {
+        e.preventDefault();
+        $('#banner2').trigger('click');
+    });
+
+    $("#banner2").change('change', function (e) {
+        e.preventDefault();
+        $('#Div_banner_2').css("background-image", "url(" + URL.createObjectURL(e.target.files[0]) + ") ");
+    });
+
+
+
+    $('#banner3Click').on('click', function (e) {
+        e.preventDefault();
+        $('#banner3').trigger('click');
+    });
+
+    $("#banner3").change('change', function (e) {
+        e.preventDefault();
+        $('#Div_banner_3').css("background-image", "url(" + URL.createObjectURL(e.target.files[0]) + ") ");
+    });
+
+</script>

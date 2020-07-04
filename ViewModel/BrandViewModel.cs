@@ -7,7 +7,7 @@ using Ecommerce_MVC_Core.Data;
 
 namespace Ecommerce_MVC_Core.ViewModel
 {
-    public class BannerViewModel : BaseEntity
+    public class BrandViewModel : BaseEntity
     {
         [Required]
         public int Id { get; set; }
@@ -17,7 +17,7 @@ namespace Ecommerce_MVC_Core.ViewModel
         public string SubTitle { get; set; }
     }
 
-    public class BannerListViewModel
+    public class BrandListViewModel
     {
         public int Id { get; set; }
         public int Order { get; set; }

@@ -1,0 +1,19 @@
+@model Ecommerce_MVC_Core.BootstrapModal.ModalHeader
+
+
+<div class="modal-header" style="margin-bottom:10px">
+    <h4 class="modal-title">@Model.Heading</h4>
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
+</div>
+
+<script>
+
+    $('.close').on("click", function () {
+             $(".modal").removeClass("show");
+        $("body").removeClass("modal-open");
+        $(".modal-backdrop").remove();
+    });
+
+
+</script>

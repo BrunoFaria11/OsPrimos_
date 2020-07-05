@@ -1,88 +1,48 @@
-﻿@model IEnumerable<Ecommerce_MVC_Core.ViewModel.ProductListViewModel>
-@{
-    ViewData["Title"] = "Index";
+﻿
+@model List<Ecommerce_MVC_Core.Models.Admin.Product>
+<a asp-controller="product" asp-action="AddProduct" style="float: right; margin-right: 2%; width: 200px;" >
+  <button type="button" class="btn btn-success" style="width:100%;">Add</button>
+</a>
+<div style="margin-left: 2%; margin-right: 2%; margin-top: 5%">
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th class="col-2">#</th>
+      <th class="col-2">Name</th>
+      <th class="col-4">Description</th>
+      <th class="col-2">Price</th>
+      <th class="col-1">Edit</th>
+      <th class="col-1">Delete</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var item in Model) {
+    <tr>
+        <td>
+          @Html.DisplayFor(modelItem => item.Id)
+        </td>
+        <td>
+          @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+          @Html.DisplayFor(modelItem => item.Description)
+        </td>
+        <td>
+          @Html.DisplayFor(modelItem => item.Price)
+        </td>
+        <td>
+          <a asp-controller="product" asp-action="EditProduct">
+            <button type="button" class="btn btn-secondary">Edit</button>
+          </a>
+          
+        </td>
+        <td>
+          <a asp-controller="product" asp-action="DeleteProduct" asp-route-id="@item.Id">
+            <button  type="button" class="btn btn-danger">Delete</button>
+          </a>
+        </td>    
+    </tr>
 }
-
-<div class="col-md-2">
-    <a id="createModel" data-toggle="modal" asp-controller="Product" asp-action="AddEditProduct" class="btn btn-info" data-target="#modal-popUP">
-        <i class="glyphicon glyphicon-plus"></i>Add
-    </a>
+  </tbody>
+</table>
 </div>
-<div class="col-md-3">
-    <form method="post" asp-action="Index" class="form-inline">
-        <div class="form-horizontal">
-            <div class="form-group">
-                <input type="text" name="search" value="@Html.ViewBag.SearchString" class="form-control" />
-                <input type="submit" value="Search" class="btn btn-default pull-right" />
-
-            </div>
-        </div>
-    </form>
-</div>
-<hr/>
-@{
-    if (Model.ToList().Count <= 0)
-    {
-        <h1>No Product Added Yet</h1>
-    }
-    else
-    {
-        <table class="table table-responsive table-hover">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Product</th>
-
-                    <th>Info</th>
-                    <th>Price</th>
-                    <th>Stocks</th>
-                    <th>Total Comments</th>
-                    <th>Total Images</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-
-            <tbody>
-            @{
-                int count = 1;
-                foreach (var item in Model)
-                {
-                <tr>
-                    <td>@count</td>
-                    <td>
-                        <b>Product:</b> @item.Name <br />
-                    <b> Code:</b> @item.Code <br />
-                        <b> Tag:</b> @item.Tag
-                    </td>
-                    <td>
-                      <b>Category</b>  @item.CategoryName <br />
-                        <b>Brand</b>  @item.BrandName 
-                    </td>
-                    <td>
-                        <b>Current Price</b> @(Convert.ToInt32(item.FinalPrice))<br />
-                        <b>Regular Price</b> @item.Price /@item.UnitName<br />
-                        <b>Discount</b> @item.Discount%
-                    </td>
-                    <td>@item.ProductStocks</td>
-                    <td>@item.ProductComments</td>
-                    <td>
-                        <a data-toggle="modal" asp-action="GetProdutcsImages" asp-route-id="@item.Id" data-target="#modal-popUP">@item.TotalImage</a>
-                    </td>
-                <td>
-                    <a id="editUserModal" data-toggle="modal" asp-action="AddEditProduct" asp-route-id="@item.Id" data-target="#modal-popUP"
-                       class="btn btn-info">
-                        <i class="glyphicon glyphicon-pencil"></i>  Edit
-                    </a>
-                    <a id="deleteUserModal" data-toggle="modal" asp-action="DeleteProduct" asp-route-id="@item.Id" data-target="#modal-popUP" class="btn btn-danger">
-                        <i class="glyphicon glyphicon-trash"></i>  Delete
-                    </a>
-                </td>
-                </tr>
-                    count++;
-                }
-            }
-            </tbody>
-        </table>
-    }
-}
-@Html.Partial("_Modal", new BootstrapModel { ID = "modal-popUP", AreaLabeledId = "modal-popUP-label", Size = ModalSize.Large })

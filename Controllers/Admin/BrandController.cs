@@ -26,24 +26,24 @@
 //            _unitOfWork = unitOfWork;
 //        }
 
-//        public async Task<IActionResult> Index(string search="")
-//        {
-//            List<BrandListViewModel> model = new List<BrandListViewModel>();
-//            var dbBrand = await _unitOfWork.Repository<Brand>().GetAllIncludeAsync(x => x.Products);
+        //public async Task<IActionResult> Index(string search="")
+        //{
+            //List<BrandListViewModel> model = new List<BrandListViewModel>();
+            // var dbBrand = await _unitOfWork.Repository<Brand>().GetAllIncludeAsync(x => x.Products);
 
-//            model=dbBrand.Select(b => new BrandListViewModel
-//                {
-//                    Id = b.Id,
-//                    Name = b.Name,
-//                    Description = b.Description,
-//                    TotalProduct = b.Products.Count
-//                }).ToList();
+            // model=dbBrand.Select(b => new BrandListViewModel
+            //     {
+            //         Id = b.Id,
+            //         Name = b.Name,
+            //         Description = b.Description,
+            //         TotalProduct = b.Products.Count
+            //     }).ToList();
 
-//            if (!String.IsNullOrEmpty(search)) { 
-//                model=model.Where(x => x.Name.ToLower().Contains(search.ToLower())).ToList();
-//                ViewBag.SearchString = search;
-//            return View(model);
-//            }
+            // if (!String.IsNullOrEmpty(search)) { 
+            //     model=model.Where(x => x.Name.ToLower().Contains(search.ToLower())).ToList();
+            //     ViewBag.SearchString = search;
+            // return View(model);
+            // }
             
 //            return View(model);
 //        }

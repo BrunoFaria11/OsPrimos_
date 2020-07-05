@@ -21,7 +21,7 @@ namespace Ecommerce_MVC_Core.Models.Admin
         public ProductManualMap(EntityTypeBuilder<ProductManual> entityTypeBuilder)
         {
             entityTypeBuilder.HasKey(x =>x.Id);
-            entityTypeBuilder.HasOne(x=>x.Product).WithOne(x=>x.ProductManual).HasForeignKey<ProductManual>(x=>x.ProductId);
+            //entityTypeBuilder.HasOne(x=>x.Product).WithOne(x=>x.ProductManual).HasForeignKey<ProductManual>(x=>x.ProductId);
             entityTypeBuilder.Property(x => x.ManualName);
         }
     }

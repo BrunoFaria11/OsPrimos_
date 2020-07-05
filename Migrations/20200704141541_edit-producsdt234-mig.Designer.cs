@@ -4,43 +4,22 @@ using Ecommerce_MVC_Core.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Ecommerce_MVC_Core.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200704141541_edit-producsdt234-mig")]
+    partial class editproducsdt234mig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.1.14-servicing-32113")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("Ecommerce_MVC_Core.Models.Admin.Banner", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("AddedDate");
-
-                    b.Property<string>("Image_Path");
-
-                    b.Property<DateTime>("ModifiedDate");
-
-                    b.Property<int>("Order");
-
-                    b.Property<string>("SubTitle");
-
-                    b.Property<string>("Title");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Banner");
-                });
 
             modelBuilder.Entity("Ecommerce_MVC_Core.Models.Admin.Brand", b =>
                 {
@@ -231,7 +210,7 @@ namespace Ecommerce_MVC_Core.Migrations
 
                     b.Property<DateTime>("AddedDate")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2020, 7, 3, 22, 38, 13, 664, DateTimeKind.Local));
+                        .HasDefaultValue(new DateTime(2020, 7, 4, 15, 15, 41, 309, DateTimeKind.Local));
 
                     b.Property<DateTime>("ModifiedDate");
 
@@ -355,7 +334,7 @@ namespace Ecommerce_MVC_Core.Migrations
 
                     b.Property<DateTime>("AddedDate")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2020, 7, 3, 22, 38, 13, 643, DateTimeKind.Local));
+                        .HasDefaultValue(new DateTime(2020, 7, 4, 15, 15, 41, 270, DateTimeKind.Local));
 
                     b.Property<string>("UsersId");
 

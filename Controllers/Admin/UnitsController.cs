@@ -27,26 +27,26 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
         public IActionResult Index(string search="")
         {
             List<UnitListViewModel> model = new List<UnitListViewModel>();
-            var dbData = _unitOfWork.Repository<Unit>().GetAllInclude(x => x.Products);
-            if (!String.IsNullOrEmpty(search))
-            {
-                dbData=dbData.Where(x => x.Name.ToLower().Contains(search.ToLower())).ToList();
+            // var dbData = _unitOfWork.Repository<Unit>().GetAllInclude(x => x.Products);
+            // if (!String.IsNullOrEmpty(search))
+            // {
+            //     dbData=dbData.Where(x => x.Name.ToLower().Contains(search.ToLower())).ToList();
 
-            }
+            // }
 
-            foreach (var b in dbData)
-            {
+            // foreach (var b in dbData)
+            // {
                 
-                UnitListViewModel unit = new UnitListViewModel
-                {
-                    Id = b.Id,
-                    Name = b.Name,
-                    Description = b.Description,
-                    TotalProducts = b.Products.Count
-                };
+            //     UnitListViewModel unit = new UnitListViewModel
+            //     {
+            //         Id = b.Id,
+            //         Name = b.Name,
+            //         Description = b.Description,
+            //         TotalProducts = b.Products.Count
+            //     };
 
-                model.Add(unit);
-            }
+            //     model.Add(unit);
+            // }
 
 
             return View(model);

@@ -12,8 +12,6 @@ namespace Ecommerce_MVC_Core.Models.Admin
         public int ProductId { get; set; }
         public string UserId { get; set; }
         public string Comment { get; set; }
-
-        public  Product Product { get; set; }
         public  ApplicationUsers Users { get; set; }
     }
 
@@ -23,7 +21,6 @@ namespace Ecommerce_MVC_Core.Models.Admin
         {
             entityTypeBuilder.HasKey(x => x.Id);
             entityTypeBuilder.Property(x => x.Comment).HasMaxLength(200);
-            entityTypeBuilder.HasOne(x => x.Product).WithMany(x => x.ProductCommentses).HasForeignKey(x => x.ProductId);
             entityTypeBuilder.HasOne(x => x.Users).WithMany(x => x.ProductCommentses).HasForeignKey(x => x.UserId);
         }
     }

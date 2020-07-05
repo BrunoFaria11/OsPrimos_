@@ -51,24 +51,24 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
         public List<ProductCommentsListViewModel> GetAllComments()
         {
             List<ProductCommentsListViewModel> commentsList=new List<ProductCommentsListViewModel>();
-            _unitOfWork.Repository<ProductComments>().GetAllInclude(x=>x.Product).ToList().ForEach(x =>
-            {
-                ProductCommentsListViewModel productComments = new ProductCommentsListViewModel
-                {
-                    Id = x.Id,
-                    ModifiedDate = x.ModifiedDate,
-                    ProductId = x.ProductId,
-                    AddedDate = x.AddedDate,
-                    UserId = x.UserId,
-                    Comment = x.Comment,
-                    ProductName = x.Product.Name,
+            // _unitOfWork.Repository<ProductComments>().GetAllInclude(x=>x.Product).ToList().ForEach(x =>
+            // {
+            //     ProductCommentsListViewModel productComments = new ProductCommentsListViewModel
+            //     {
+            //         Id = x.Id,
+            //         ModifiedDate = x.ModifiedDate,
+            //         ProductId = x.ProductId,
+            //         AddedDate = x.AddedDate,
+            //         UserId = x.UserId,
+            //         Comment = x.Comment,
+            //         ProductName = x.Product.Name,
                     
-                };
-                ApplicationUsers user = _userManager.FindByIdAsync(x.UserId).Result;
-                productComments.UserName = user.Name;
-                productComments.UserReaction = GetReactionOfComment(x.Comment);
-                commentsList.Add(productComments);
-            });
+            //     };
+            //     ApplicationUsers user = _userManager.FindByIdAsync(x.UserId).Result;
+            //     productComments.UserName = user.Name;
+            //     productComments.UserReaction = GetReactionOfComment(x.Comment);
+            //     commentsList.Add(productComments);
+            // });
             return commentsList;
         }
 

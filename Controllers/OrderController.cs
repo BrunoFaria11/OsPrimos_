@@ -55,10 +55,9 @@ namespace Ecommerce_MVC_Core.Controllers
                 itemInCart = valu.Value;
             }
 
-            var dbProducts = _unitOfWork.Repository<Product>().Query()
-                .Include(b => b.Brand)
-                .Include( p => p.ProductImages)
-                .Include(ps => ps.ProductStocks);
+            // var dbProducts = _unitOfWork.Repository<Product>().Query()
+            //     .Include( p => p.ProductImages)
+            //     .Include(ps => ps.ProductStocks);
             if (addToCartList!=null)
             {
                 addToCartList.ForEach(c =>
@@ -68,24 +67,22 @@ namespace Ecommerce_MVC_Core.Controllers
                     orderDetails.ProductName = c.ProductName;
                     orderDetails.FinalPrice = c.FinalPrice;
                     orderDetails.Quantity = c.Quantity;
-                    var product = dbProducts.FirstOrDefault(x => x.Id == c.ProductId);
+                    // var product = dbProducts.FirstOrDefault(x => x.Id == c.ProductId);
 
-                    if (product!=null)
-                    {
-                        orderDetails.BrandId = product.BrandId;
-                        orderDetails.BrandName = product.Brand.Name;
-                        orderDetails.Price = product.Price;
-                        orderDetails.ImagePath =product.ProductImages.FirstOrDefault(x => x.ProductId == c.ProductId)
-                            ?.ImagePath;
-                        var pStock = product.ProductStocks.FirstOrDefault(x => x.ProductId == c.ProductId);
-                        if (pStock!=null)
-                        {
-                            orderDetails.Stock = (pStock.InQuantity - pStock.OutQuantity) < 1
-                                ? 0
-                                : pStock.InQuantity - pStock.OutQuantity;
-                        }
-                        model.Add(orderDetails);
-                    }
+                    // if (product!=null)
+                    // {
+                    //     orderDetails.Price = product.Price;
+                    //     orderDetails.ImagePath =product.ProductImages.FirstOrDefault(x => x.ProductId == c.ProductId)
+                    //         ?.ImagePath;
+                    //     var pStock = product.ProductStocks.FirstOrDefault(x => x.ProductId == c.ProductId);
+                    //     if (pStock!=null)
+                    //     {
+                    //         orderDetails.Stock = (pStock.InQuantity - pStock.OutQuantity) < 1
+                    //             ? 0
+                    //             : pStock.InQuantity - pStock.OutQuantity;
+                    //     }
+                    //     model.Add(orderDetails);
+                    // }
                 });
             }
 
@@ -208,7 +205,7 @@ namespace Ecommerce_MVC_Core.Controllers
                 orderDetails.AddedDate = DateTime.Now;
                 orderDetails.ModifiedDate = DateTime.Now;
                 orderDetails.OrderId = oId;
-                orderDetails.ProductId = addToCartList[i].ProductId;
+                // orderDetails.ProductId = addToCartList[i].ProductId;
                 orderDetails.Quantity = addToCartList[i].Quantity;
                 orderDetails.Rate = addToCartList[i].FinalPrice;
                 orderDetails.Remarks = "";
@@ -242,10 +239,9 @@ namespace Ecommerce_MVC_Core.Controllers
 
             if (addToCartList != null)
             {
-                var dbProducts = _unitOfWork.Repository<Product>().Query()
-                    .Include(b => b.Brand)
-                    .Include(p => p.ProductImages)
-                    .Include(ps => ps.ProductStocks);
+                // var dbProducts = _unitOfWork.Repository<Product>().Query()
+                //     .Include(p => p.ProductImages)
+                //     .Include(ps => ps.ProductStocks);
 
                 addToCartList.ForEach(c =>
                 {
@@ -254,23 +250,21 @@ namespace Ecommerce_MVC_Core.Controllers
                     orderDetails.ProductName = c.ProductName;
                     orderDetails.FinalPrice = c.FinalPrice;
                     orderDetails.Quantity = c.Quantity;
-                    var product = dbProducts.FirstOrDefault(x => x.Id == c.ProductId);
-                    if (product!=null)
-                    {
-                        orderDetails.BrandId = product.BrandId;
-                        orderDetails.BrandName = product.Brand.Name;
-                        orderDetails.Price = product.Price;
-                        orderDetails.ImagePath = product.ProductImages.FirstOrDefault(x => x.ProductId == c.ProductId)
-                            ?.ImagePath;
-                        var pStock = product.ProductStocks.FirstOrDefault(x => x.ProductId == c.ProductId);
-                        if (pStock != null)
-                        {
-                            orderDetails.Stock = (pStock.InQuantity - pStock.OutQuantity) < 1
-                                ? 0
-                                : pStock.InQuantity - pStock.OutQuantity;
-                        }
-                        model.Add(orderDetails);
-                    }
+                    // var product = dbProducts.FirstOrDefault(x => x.Id == c.ProductId);
+                    // if (product!=null)
+                    // {
+                    //     orderDetails.Price = product.Price;
+                    //     orderDetails.ImagePath = product.ProductImages.FirstOrDefault(x => x.ProductId == c.ProductId)
+                    //         ?.ImagePath;
+                    //     var pStock = product.ProductStocks.FirstOrDefault(x => x.ProductId == c.ProductId);
+                    //     if (pStock != null)
+                    //     {
+                    //         orderDetails.Stock = (pStock.InQuantity - pStock.OutQuantity) < 1
+                    //             ? 0
+                    //             : pStock.InQuantity - pStock.OutQuantity;
+                    //     }
+                    //     model.Add(orderDetails);
+                    // }
                 });
             }
             return model;

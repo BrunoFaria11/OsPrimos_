@@ -12,8 +12,6 @@ namespace Ecommerce_MVC_Core.Models.Admin
         public int ProductId { get; set; }
         public string ImagePath { get; set; }
         public string Title { get; set; }
-
-        public  Product Product { get; set; }
     }
 
     public class ProductImageMap
@@ -24,7 +22,6 @@ namespace Ecommerce_MVC_Core.Models.Admin
             entityTypeBuilder.Property(x => x.ImagePath);
             entityTypeBuilder.Property(x => x.Title).HasMaxLength(100);
 
-            entityTypeBuilder.HasOne(x => x.Product).WithMany(x => x.ProductImages).HasForeignKey(x => x.ProductId);
         }
     }
 }

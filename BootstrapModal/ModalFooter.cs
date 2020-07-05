@@ -11,6 +11,8 @@ namespace Ecommerce_MVC_Core.BootstrapModal
         public string urlPOST { get; set; } 
         public string IdEntity { get; set; }
         public string IdForm { get; set; }
+        public string data { get; set; }
+
 
 
         public string CancelButtonText { get; set; } = "Cancel";

@@ -12,32 +12,35 @@ namespace Ecommerce_MVC_Core.Data
 {
 
 
-    public class ApplicationDbContext: IdentityDbContext<ApplicationUsers, ApplicationRoles, string>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUsers, ApplicationRoles, string>
     {
-        
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) :base(options){
-            
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+
         }
-        public  DbSet<Brand> Brands { get; set; }
-        public  DbSet<Category> Categories { get; set; }
-        public  DbSet<Country> Countries { get; set; }
-        public  DbSet<City> Cities { get; set; }
-        public  DbSet<Location> Location { get; set; }
+        public DbSet<Brand> Brands { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Country> Countries { get; set; }
+        public DbSet<City> Cities { get; set; }
+        public DbSet<Location> Location { get; set; }
         //public virtual DbSet<Users> Userses { get; set; }
-        public  DbSet<PaymentMethod> PaymentMethod { get; set; }
-        public  DbSet<Unit> Unit { get; set; }
-        public  DbSet<Product> Product { get; set; }
-        public  DbSet<Status> Status { get; set; }
-        public  DbSet<ProductComments> ProductComments { get; set; }
-        public  DbSet<ProductImage> ProductImage { get; set; }
-        //public virtual DbSet<ProductLikes> ProductLikes { get; set; }
-        public  DbSet<ProductManual> ProductManual { get; set; }
-        public  DbSet<ProductStock> ProductStock { get; set; }
+        public DbSet<PaymentMethod> PaymentMethod { get; set; }
+        public DbSet<Unit> Unit { get; set; }
+        public DbSet<Product> Product { get; set; }
+        public DbSet<Banner> Banner { get; set; }
 
-        public  DbSet<Orders> Order { get; set; }
-        public  DbSet<OrderDetails> OrderDetails { get; set; }
-        public  DbSet<OrderStatus> OrderStatus { get; set; }
+        public DbSet<Status> Status { get; set; }
+        public DbSet<ProductComments> ProductComments { get; set; }
+        public DbSet<ProductImage> ProductImage { get; set; }
+        //public virtual DbSet<ProductLikes> ProductLikes { get; set; }
+        public DbSet<ProductManual> ProductManual { get; set; }
+        public DbSet<ProductStock> ProductStock { get; set; }
+
+        public DbSet<Orders> Order { get; set; }
+        public DbSet<OrderDetails> OrderDetails { get; set; }
+        public DbSet<OrderStatus> OrderStatus { get; set; }
 
         //ModelBuilder
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -64,6 +67,8 @@ namespace Ecommerce_MVC_Core.Data
             new UnitMap(modelBuilder.Entity<Unit>());
             new ProductMap(modelBuilder.Entity<Product>());
             new StatusMap(modelBuilder.Entity<Status>());
+            new BannerMap(modelBuilder.Entity<Banner>());
+
             new ProductCommentsMap(modelBuilder.Entity<ProductComments>());
             new ProductImageMap(modelBuilder.Entity<ProductImage>());
             new ProductLikesMap(modelBuilder.Entity<ProductLikes>());
@@ -78,7 +83,7 @@ namespace Ecommerce_MVC_Core.Data
 
         }
 
-        
+
 
 
 

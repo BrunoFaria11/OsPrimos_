@@ -71,21 +71,21 @@ namespace Ecommerce_MVC_Core.Controllers
 
        
 
-        public List<BrandListViewModel> GetAllBrand()
-        {
-            List<BrandListViewModel> brandList = new List<BrandListViewModel>();
-            _unitOfWork.Repository<Brand>().GetAll().ToList().ForEach(x =>
-            {
-                BrandListViewModel brand = new BrandListViewModel
-                {
-                    Name = x.Name,
-                    Id = x.Id,
-                    Description = x.Description
-                };
-                brandList.Add(brand);
-            });
-            return brandList;
-        }
+        //public List<BrandListViewModel> GetAllBrand()
+        //{
+        //    List<BrandListViewModel> brandList = new List<BrandListViewModel>();
+        //    _unitOfWork.Repository<Brand>().GetAll().ToList().ForEach(x =>
+        //    {
+        //        BrandListViewModel brand = new BrandListViewModel
+        //        {
+        //            Name = x.Name,
+        //            Id = x.Id,
+        //            Description = x.Description
+        //        };
+        //        brandList.Add(brand);
+        //    });
+        //    return brandList;
+        //}
         #region CatrgoryMenu
 
         //public List<CategoryViewModel> GetMainCategory()
@@ -129,22 +129,22 @@ namespace Ecommerce_MVC_Core.Controllers
 
         #endregion
 
-        public IActionResult Brand()
-        {
-            List<BrandListViewModel> brandList = new List<BrandListViewModel>();
-            _unitOfWork.Repository<Brand>().GetAll().ToList().ForEach(x =>
-            {
-                BrandListViewModel brand=new BrandListViewModel
-                {
-                    Name = x.Name,
-                    Id = x.Id,
-                    Description = x.Description
-                };
-                brandList.Add(brand);
-            });
+        //public IActionResult Brand()
+        //{
+        //    List<BrandListViewModel> brandList = new List<BrandListViewModel>();
+        //    _unitOfWork.Repository<Brand>().GetAll().ToList().ForEach(x =>
+        //    {
+        //        BrandListViewModel brand=new BrandListViewModel
+        //        {
+        //            Name = x.Name,
+        //            Id = x.Id,
+        //            Description = x.Description
+        //        };
+        //        brandList.Add(brand);
+        //    });
 
-            return View(brandList);
-        }
+        //    return View(brandList);
+        //}
 
         //public IActionResult Category()
         //{

@@ -4,14 +4,16 @@ using Ecommerce_MVC_Core.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Ecommerce_MVC_Core.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200703213814_add-entity-Banner-mig")]
+    partial class addentityBannermig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -165,7 +167,7 @@ namespace Ecommerce_MVC_Core.Migrations
 
                     b.Property<int>("OrderId");
 
-                    b.Property<int?>("ProductId");
+                    b.Property<int>("ProductId");
 
                     b.Property<int>("Quantity");
 
@@ -283,7 +285,16 @@ namespace Ecommerce_MVC_Core.Migrations
 
                     b.Property<DateTime>("AddedDate");
 
+                    b.Property<int>("BrandId");
+
+                    b.Property<int>("CategoryId");
+
+                    b.Property<string>("Code")
+                        .HasMaxLength(100);
+
                     b.Property<string>("Description");
+
+                    b.Property<int>("Discount");
 
                     b.Property<DateTime>("ModifiedDate");
 
@@ -292,7 +303,18 @@ namespace Ecommerce_MVC_Core.Migrations
 
                     b.Property<double>("Price");
 
+                    b.Property<string>("Tag")
+                        .HasMaxLength(200);
+
+                    b.Property<int>("UnitId");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("BrandId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("UnitId");
 
                     b.ToTable("Product");
                 });
@@ -317,6 +339,8 @@ namespace Ecommerce_MVC_Core.Migrations
                     b.Property<int?>("UsersId1");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
 
                     b.HasIndex("UserId");
 
@@ -343,6 +367,8 @@ namespace Ecommerce_MVC_Core.Migrations
                         .HasMaxLength(100);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("ProductImage");
                 });
@@ -382,7 +408,8 @@ namespace Ecommerce_MVC_Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("ProductId")
+                        .IsUnique();
 
                     b.ToTable("ProductManual");
                 });
@@ -401,10 +428,14 @@ namespace Ecommerce_MVC_Core.Migrations
 
                     b.Property<int>("OutQuantity");
 
+                    b.Property<int>("ProductId");
+
                     b.Property<string>("Remarks")
                         .HasMaxLength(200);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("ProductStock");
                 });
@@ -727,8 +758,9 @@ namespace Ecommerce_MVC_Core.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Ecommerce_MVC_Core.Models.Admin.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId");
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Ecommerce_MVC_Core.Models.Admin.Orders", b =>
@@ -765,8 +797,31 @@ namespace Ecommerce_MVC_Core.Migrations
                         .HasForeignKey("UserId");
                 });
 
+            modelBuilder.Entity("Ecommerce_MVC_Core.Models.Admin.Product", b =>
+                {
+                    b.HasOne("Ecommerce_MVC_Core.Models.Admin.Brand", "Brand")
+                        .WithMany("Products")
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Ecommerce_MVC_Core.Models.Admin.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Ecommerce_MVC_Core.Models.Admin.Unit", "Unit")
+                        .WithMany("Products")
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Ecommerce_MVC_Core.Models.Admin.ProductComments", b =>
                 {
+                    b.HasOne("Ecommerce_MVC_Core.Models.Admin.Product", "Product")
+                        .WithMany("ProductCommentses")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("Ecommerce_MVC_Core.Models.ApplicationUsers", "Users")
                         .WithMany("ProductCommentses")
                         .HasForeignKey("UserId");
@@ -774,6 +829,14 @@ namespace Ecommerce_MVC_Core.Migrations
                     b.HasOne("Ecommerce_MVC_Core.Models.Admin.Users")
                         .WithMany("ProductCommentses")
                         .HasForeignKey("UsersId1");
+                });
+
+            modelBuilder.Entity("Ecommerce_MVC_Core.Models.Admin.ProductImage", b =>
+                {
+                    b.HasOne("Ecommerce_MVC_Core.Models.Admin.Product", "Product")
+                        .WithMany("ProductImages")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Ecommerce_MVC_Core.Models.Admin.ProductLikes", b =>
@@ -791,7 +854,15 @@ namespace Ecommerce_MVC_Core.Migrations
             modelBuilder.Entity("Ecommerce_MVC_Core.Models.Admin.ProductManual", b =>
                 {
                     b.HasOne("Ecommerce_MVC_Core.Models.Admin.Product", "Product")
-                        .WithMany()
+                        .WithOne("ProductManual")
+                        .HasForeignKey("Ecommerce_MVC_Core.Models.Admin.ProductManual", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Ecommerce_MVC_Core.Models.Admin.ProductStock", b =>
+                {
+                    b.HasOne("Ecommerce_MVC_Core.Models.Admin.Product", "Product")
+                        .WithMany("ProductStocks")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

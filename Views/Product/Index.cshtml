@@ -1,8 +1,10 @@
 ﻿
 @model List<Ecommerce_MVC_Core.Models.Admin.Product>
-<a asp-controller="product" asp-action="AddProduct" style="float: right; margin-right: 2%; width: 200px;" >
-  <button type="button" class="btn btn-success" style="width:100%;">Add</button>
+
+<a data-toggle="modal" asp-controller="product" asp-action="EditProduct" data-target="#modal-EditProduct" id="AddProductbtn" style="float:right; margin-right: 2%;">
+  <button type="button" class="btn btn-success" style="width: 200px;">Add</button>
 </a>
+
 <div style="margin-left: 2%; margin-right: 2%; margin-top: 5%">
 <table class="table">
   <thead class="thead-dark">
@@ -31,10 +33,9 @@
           @Html.DisplayFor(modelItem => item.Price)
         </td>
         <td>
-          <a asp-controller="product" asp-action="EditProduct">
-            <button type="button" class="btn btn-secondary">Edit</button>
+          <a data-toggle="modal" asp-route-id="@item.Id" asp-controller="product" asp-action="EditProduct" data-target="#modal-EditProduct">
+            <button id="EditProductbtn('@item.Id')" type="button" class="btn btn-secondary EditProductbtn">Edit</button>
           </a>
-          
         </td>
         <td>
           <a asp-controller="product" asp-action="DeleteProduct" asp-route-id="@item.Id">
@@ -46,3 +47,16 @@
   </tbody>
 </table>
 </div>
+
+@Html.Partial("_Modal", new BootstrapModel { ID = "modal-EditProduct", AreaLabeledId = "EditProduct", Size = ModalSize.Large })
+
+<script>
+    $('#EditProductbtn').on('click', function (e) {
+        e.preventDefault();
+        $('#modal-EditProduct').addClass("show");
+    })
+    $('#AddProductbtn').on('click', function (e) {
+        e.preventDefault();
+        $('#modal-EditProduct').addClass("show");
+    })
+</script>

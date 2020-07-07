@@ -44,14 +44,20 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
             return View(productByID);
         }
 
-        public IActionResult AddProduct(ProductViewModel model)
+        [HttpGet]
+        public IActionResult AddProduct(){
+            return PartialView("~/Views/Product/EditProductModal.cshtml");
+        }
+
+        [HttpPost]
+        public JsonResult AddProduct(ProductViewModel model)
         {  
             
             Product product = new Product
                 {
-                    Name = "Pila",
-                    Description = "Pila",
-                    Price = 200,
+                    Name = model.Name,
+                    Description = model.Description,
+                    Price = model.Price,
                     AddedDate = DateTime.Now,
                     ModifiedDate = DateTime.Now
                 };
@@ -59,27 +65,67 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
             //Insert product (need to pass object with data received)
             var addProduct = _unitOfWork.Repository<Product>().Insert(product);
 
-            return RedirectToAction(nameof(Index));
+             return Json("Produto Inserido com sucesso");
         }
 
-
-        public IActionResult EditProduct(ProductViewModel model)
+        [HttpGet]
+        public IActionResult EditProduct(int id)
         {  
-
-            //Update product
-            Product product =  _unitOfWork.Repository<Product>().GetById(1);
-
-            product.Name = model.Name;
-            product.Description = model.Description;
-            product.Price = model.Price;
-            product.AddedDate = DateTime.Now;
-            product.ModifiedDate = DateTime.Now;
-            
-            _unitOfWork.Repository<Product>().Update(product);
-
-            return RedirectToAction(nameof(Index));
+            try {
+                ProductViewModel product = new ProductViewModel();
+                if(id > 0){
+                    
+                    var productByID =  _unitOfWork.Repository<Product>().GetById(id);
+                    product.Id = productByID.Id;
+                    product.Name = productByID.Name;
+                    product.Description = productByID.Description;
+                    product.Price = productByID.Price;
+                }
+                return PartialView("~/Views/Product/EditProductModal.cshtml", product);
+                
+            } catch (Exception) {
+                throw ;
+            }
         }
 
+        [HttpPost]
+        public JsonResult EditProduct(int id, ProductViewModel model)
+        {  
+            if (!ModelState.IsValid)
+            {
+                return Json("Error");
+            }
+            
+            if(id > 0){
+                Product product =  _unitOfWork.Repository<Product>().GetById(id);
+                if (product != null)
+                {
+                    product.Name = model.Name;
+                    product.Description = model.Description;
+                    product.Price = model.Price;
+
+                    _unitOfWork.Repository<Product>().Update(product);
+                }   
+            }
+            else {
+                Product product = new Product
+                {
+                    Name = model.Name,
+                    Description = model.Description,
+                    Price = model.Price,
+                    AddedDate = DateTime.Now,
+                    ModifiedDate = DateTime.Now
+                };
+
+                //Insert product (need to pass object with data received)
+                var addProduct = _unitOfWork.Repository<Product>().Insert(product);
+
+                return Json("Produto Inserido com sucesso");
+            }
+            
+            return Json("Texto do benner editado com sucesso");
+        }
+        
         public IActionResult DeleteProduct(int id)
         {  
             

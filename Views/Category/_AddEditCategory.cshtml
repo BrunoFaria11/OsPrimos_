@@ -1,0 +1,109 @@
+﻿@model Ecommerce_MVC_Core.ViewModel.CategoryViewModel
+<style>
+    input[type="file"] {
+        display: none;
+    }
+</style>
+<form id="frm" enctype="multipart/form-data">
+    @await Html.PartialAsync("_ModalHeader", new ModalHeader { Heading = $"{(Model.Id <= 0 ? "" : "")} Categoria" })
+
+    <div class="form-horizontal" style="padding:24px">
+
+        <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+        @Html.HiddenFor(m => m.Id)
+
+        <div class="form-group row">
+            <label for="inputEmail3" class="col-sm-2 col-form-label">Categoria</label>
+            <div class="col-sm-10">
+                <input asp-for="Name" class="form-control" autofocus="" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">
+            </div>
+            <div class="col-6">
+                <div class="card-body text-center" id="Div_catImage" style="padding: 0px;background-image:url(@Model.Image_Path);background-repeat: no-repeat; background-position-x: center; background-position-y: center;">
+                    <div class="" style="height: 300px; border-radius: 8px;background-color: rgba(95, 95, 95, 0.59); padding-top:25%">
+                        <lebel id="catImageClick" class="btn btn-default  btn-lg" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
+                            <i class="fas fa-pencil-alt">
+                            </i>
+                        </lebel>
+                        <input id="catImage" type="file" />
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    @await Html.PartialAsync("_ModalFooter", new ModalFooter { urlPOST = "/Category/AddEditCategory", IdEntity = Model.Id.ToString(), IdForm = "frm" })
+
+</form>
+
+
+<script>
+
+    $(document).on("submit", "form", function (event) {
+        const IdCat =  doAjax("/Category/AddEditCategory", "@Model.Id", "#frm");
+    })
+
+   function doAjax(url, IdEntity, IdForm) {
+        event.preventDefault();
+        debugger;
+        $.post(url, { id: IdEntity, model: $(IdForm).serializeFormJSON() }, function (htmlresponse) {
+            if (htmlresponse.result != "error") {
+                Toast.fire({
+                    icon: 'success',
+                    title: htmlresponse.result
+                })
+
+                if (htmlresponse.id != "" && htmlresponse.id != "0" && htmlresponse.id != null && htmlresponse.id != undefined) {
+                    UploadFile("catImage", htmlresponse.id);
+                    window.location.reload();
+                }
+
+            }
+            else {
+                Toast.fire({
+                    icon: 'error',
+                    title: ''
+                })
+            }
+        });
+    }
+
+    $('#catImageClick').on('click', function (e) {
+        e.preventDefault();
+        $('#catImage').trigger('click');
+    });
+
+    $("#catImage").change('change', function (e) {
+        e.preventDefault();
+        $('#Div_catImage').css("background-image", "url(" + URL.createObjectURL(e.target.files[0]) + ") ");
+
+    });
+
+
+    function UploadFile(inputId, IdCat) {
+        debugger;
+        var fileUpload = $("#" + inputId).get(0);
+        var files = fileUpload.files;
+        var data = new FormData();
+        data.append(IdCat, files[0]);
+        $.ajax({
+            type: "POST",
+            url: "/Category/UploadImages",
+            contentType: false,
+            processData: false,
+            data: data,
+            async: false,
+            success: function (message) {
+            },
+            error: function () {
+            },
+        });
+    };
+
+</script>

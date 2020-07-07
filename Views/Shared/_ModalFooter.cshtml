@@ -11,39 +11,14 @@
 </div>
 <script>
 
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000
-    });
 
 
     $(document).on("submit", "form", function (event) {
         event.preventDefault();
-        doAjax();
-        $("#@Model.IdForm").closest('.modal').removeClass("show");
-        $("body").removeClass("modal-open");
-        $(".modal-backdrop").remove();
+        doAjax("/@Model.urlPOST", "@Model.IdEntity", "#@Model.IdForm")
+   CloseModal();
     });
 
-    async function doAjax(args) {
-        event.preventDefault();
-        debugger;
-        $.post("/@Model.urlPOST", {  id: "@Model.IdEntity", model: $("#@Model.IdForm").serializeFormJSON()  }, function (htmlresponse) {
-            if (htmlresponse != "error") {
-                Toast.fire({
-                    icon: 'success',
-                    title: htmlresponse
-                })
-            }
-            else {
-                Toast.fire({
-                    icon: 'error',
-                    title: ''
-                })
-            }
-        });
-    }
+
 
 </script>

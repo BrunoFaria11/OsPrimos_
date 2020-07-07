@@ -29,7 +29,7 @@
                                             </i>
                                         </lebel>
                                         <input id="banner1" type="file" />
-                                        <a data-toggle="modal"  asp-controller="Banner" asp-action="EditBanner" data-target="#modal-EditBanner" id="EditBannerbtn" class="btn btn-default  btn-lg" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
+                                        <a data-toggle="modal" asp-controller="Banner" asp-action="EditBanner" data-target="#modal-EditBanner" id="EditBannerbtn" class="btn btn-default  btn-lg" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
                                             <i class="fas fa-quote-right">
                                             </i>
                                         </a>
@@ -69,7 +69,7 @@
         <div class="row">
             <div class="card card-secondary w-100">
                 <div class="card-header">
-                    <h3 class="card-title">Tipo de Produtos</h3>
+                    <h3 class="card-title">Categorias</h3>
 
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
@@ -81,41 +81,31 @@
                     <form role="form">
                         <div class="row">
                             <div class="col-3">
-                                <div class="card-body text-center" style="height: 300px;background-color: rgba(95, 95, 95, 0.59);border-radius:8px">
-                                    <a class="btn btn-default  btn-lg" href="#" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
-                                        <i class="fas fa-pencil-alt">
+                                <div class="card-body text-center" style="height: 300px;background-color: rgba(95, 95, 95, 0.59);border-radius:8px;padding-top:25%">
+                                    <a class="btn btn-default  btn-lg AddEditCategorybtn" data-toggle="modal" asp-controller="Category" asp-action="AddEditCategory" data-target="#modal-AddEditCategory" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
+                                        <i class="fas fa-plus">
                                         </i>
                                     </a>
                                 </div>
                             </div>
-                            <div class="col-3">
-                                <div class="card-body text-center" style="height: 300px;background-color: rgba(95, 95, 95, 0.59);border-radius:8px">
-                                    <a class="btn btn-default  btn-lg" href="#" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
-                                        <i class="fas fa-pencil-alt">
-                                        </i>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="card-body text-center" style="height: 300px;background-color: rgba(95, 95, 95, 0.59);border-radius:8px">
-                                    <a class="btn btn-default  btn-lg" href="#" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
-                                        <i class="fas fa-pencil-alt">
-                                        </i>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-3">
-                                <div class="card-body text-center" style="height: 300px;background-color: rgba(95, 95, 95, 0.59);border-radius:8px">
-                                    <a class="btn btn-default  btn-lg" href="#" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
-                                        <i class="fas fa-pencil-alt">
-                                        </i>
-                                    </a>
-                                </div>
-                            </div>
+                            @foreach (var cat_ in ViewBag.Category as ICollection<Ecommerce_MVC_Core.Models.Admin.Category>)
+                            {
 
 
+                                <div class="col-3">
+                                    <div class="card-body text-center" style="padding: 0px;background-image:url(@cat_.Image_Path) ;background-repeat: no-repeat; background-position-x: center; background-position-y: center;margin-bottom:20px">
+                                        <div class="" style="height: 300px; border-radius: 8px;background-color: rgba(95, 95, 95, 0.59); padding-top:25%">
+
+                                            <a class="btn btn-default  btn-lg AddEditCategorybtn" data-toggle="modal" asp-controller="Category" asp-action="AddEditCategory" data-target="#modal-AddEditCategory" asp-route-id="@cat_.Id" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
+                                                <i class="fas fa-pencil-alt">
+                                                </i>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            }
                         </div>
-
                         <div class="form-group">
                         </div>
                     </form>
@@ -264,19 +254,26 @@
         </div>
     </div>
 
-</section>
 
-@Html.Partial("_Modal", new BootstrapModel { ID = "modal-EditBanner", AreaLabeledId = "EditBanner", Size = ModalSize.Large })
+</section>
+    @Html.Partial("_Modal", new BootstrapModel { ID = "modal-EditBanner", AreaLabeledId = "EditBanner", Size = ModalSize.Large })
+    @Html.Partial("_Modal", new BootstrapModel { ID = "modal-AddEditCategory", AreaLabeledId = "AddEditCategory", Size = ModalSize.Large })
 
 
 <script>
+
+
     $('#EditBannerbtn').on('click', function (e) {
         e.preventDefault();
-
         $('#modal-EditBanner').addClass("show");
     })
 
- 
+    $('.AddEditCategorybtn').on('click', function (e) {
+        e.preventDefault();
+        $('#modal-AddEditCategory').addClass("show");
+    })
+
+
     $('#banner1Click').on('click', function (e) {
         e.preventDefault();
         $('#banner1').trigger('click');
@@ -285,6 +282,7 @@
     $("#banner1").change('change', function (e) {
         e.preventDefault();
         $('#Div_banner_1').css("background-image", "url(" + URL.createObjectURL(e.target.files[0]) + ") ");
+        UploadFile("banner1", "banner1");
     });
 
 
@@ -297,6 +295,7 @@
     $("#banner2").change('change', function (e) {
         e.preventDefault();
         $('#Div_banner_2').css("background-image", "url(" + URL.createObjectURL(e.target.files[0]) + ") ");
+        UploadFile("banner2", "banner2");
     });
 
 
@@ -309,6 +308,39 @@
     $("#banner3").change('change', function (e) {
         e.preventDefault();
         $('#Div_banner_3').css("background-image", "url(" + URL.createObjectURL(e.target.files[0]) + ") ");
+        UploadFile("banner3", "banner3");
     });
+
+    function UploadFile(inputId, NameImage) {
+
+        var fileUpload = $("#" + inputId).get(0);
+        var files = fileUpload.files;
+        var data = new FormData();
+        data.append(NameImage, files[0]);
+
+        $.ajax({
+            type: "POST",
+            url: "/Admin/UploadImages",
+            contentType: false,
+            processData: false,
+            data: data,
+            async: false,
+            success: function (message) {
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Imagem edidata com sucesso'
+                })
+
+            },
+            error: function () {
+                Toast.fire({
+                    icon: 'error',
+                    title: ''
+                })
+                alert("Error!");
+            },
+        });
+
+    };
 
 </script>

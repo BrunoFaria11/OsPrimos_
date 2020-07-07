@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Ecommerce_MVC_Core.Models.Admin;
 using Ecommerce_MVC_Core.Repository;
 using Ecommerce_MVC_Core.ViewModel;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json.Linq;
@@ -41,7 +43,6 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
                 {
                     model.Title = banner.Title;
                     model.SubTitle = banner.SubTitle;
-
                 }
 
             }
@@ -53,29 +54,40 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
         [HttpPost]
         public  JsonResult EditBanner(int id,  BannerViewModel model)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return Json("error");
-            }
-
-            var Order = 1;
-            if (Order > 0)
-            {
-                Banner banner =  _unitOfWork.Repository<Banner>().Find(x => x.Order == Order);
-                if (banner != null)
+                if (!ModelState.IsValid)
                 {
-                    banner.Title = model.Title;
-                    banner.SubTitle = model.SubTitle;
-
-                     _unitOfWork.Repository<Banner>().Update(banner);
+                    return Json("error");
                 }
+
+                var Order = 1;
+                if (Order > 0)
+                {
+                    Banner banner = _unitOfWork.Repository<Banner>().Find(x => x.Order == Order);
+                    if (banner != null)
+                    {
+                        banner.Title = model.Title;
+                        banner.SubTitle = model.SubTitle;
+
+                        _unitOfWork.Repository<Banner>().Update(banner);
+                    }
+                }
+                else
+                {
+                    return Json("error");
+                }
+                return Json("   Texto do benner editado com sucesso");
             }
-            else
+            catch (Exception)
             {
                 return Json("error");
+                throw;
             }
-            return Json("   Texto do benner editado com sucesso");
         }
 
+
+
+   
     }
 }

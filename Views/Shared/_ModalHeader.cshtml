@@ -8,12 +8,7 @@
 </div>
 
 <script>
-
-    $('.close').on("click", function () {
-        $(".modal").removeClass("show");
-        $("body").removeClass("modal-open");
-        $(".modal-backdrop").remove();
-    });
-
-
+    $('.modal').on('hidden.bs.modal', function () {
+      CloseModal();
+    })
 </script>

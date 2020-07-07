@@ -8,7 +8,6 @@ using Ecommerce_MVC_Core.ViewModel;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Nancy.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Ecommerce_MVC_Core.Controllers.Admin

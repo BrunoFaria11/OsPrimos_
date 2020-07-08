@@ -226,6 +226,11 @@ namespace Ecommerce_MVC_Core.Repository
             return entity;
         }
 
+        public void addOrUpdate(EntityState EntityState, T entity)
+        {
+            _context.Entry(entity).State = EntityState;
+            _context.SaveChanges();
+        }
         public async Task<T> InsertAsync(T entity)
         {
             _context.Set<T>().Add(entity);

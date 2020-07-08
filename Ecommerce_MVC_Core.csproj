@@ -5,9 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="%2a%2a\**" />
     <Compile Remove="Pages\**" />
+    <Content Remove="%2a%2a\**" />
     <Content Remove="Pages\**" />
+    <EmbeddedResource Remove="%2a%2a\**" />
     <EmbeddedResource Remove="Pages\**" />
+    <None Remove="%2a%2a\**" />
     <None Remove="Pages\**" />
   </ItemGroup>
 
@@ -595,10 +599,6 @@
     <Content Update="wwwroot\lib\jquery\dist\jquery.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\uploads\ProductManuals\" />
   </ItemGroup>
 
   <ItemGroup>

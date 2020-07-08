@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 
 namespace Ecommerce_MVC_Core.Controllers.Admin
@@ -56,37 +57,21 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
             if (!ModelState.IsValid)
             {
 
-                return Json(new { Result = "error"});
+                return Json(new { Result = "error" });
             }
 
-            if (id > 0)
+            Category category = _unitOfWork.Repository<Category>().GetById(id);
+            category = new Category
             {
-                Category category = _unitOfWork.Repository<Category>().GetById(id);
-                if (category != null)
-                {
-                    category.Name = model.Name;
+                Id = model.Id,
 
-                    category.ModifiedDate = DateTime.Now;
-                    _unitOfWork.Repository<Category>().Update(category);
-                }
-                var result = new { Result = "Categoria inserida com sucesso", Id = category.Id };
-                return Json(result);
-            }
-            else
-            {
-                Category category = new Category
-                {
-                    Name = model.Name,
-
-                    AddedDate = DateTime.Now,
-                    ModifiedDate = DateTime.Now
-                };
-                _unitOfWork.Repository<Category>().Insert(category);
-
-                var result = new { Result = "Categoria inserida com sucesso", Id = category.Id };
-                return Json(result);
-            }
-
+                Name = model.Name,
+                AddedDate = DateTime.Now,
+                ModifiedDate = DateTime.Now
+            };
+            _unitOfWork.Repository<Category>().addOrUpdate(id > 0 ? EntityState.Modified : EntityState.Added, category);
+            var result = new { Result = "Categoria inserida com sucesso", Id = category.Id };
+            return Json(result);
         }
 
         public string UploadImages()

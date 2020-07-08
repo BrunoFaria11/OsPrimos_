@@ -91,10 +91,10 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
         [HttpPost]
         public JsonResult EditProduct(int id, ProductViewModel model)
         {  
-            if (!ModelState.IsValid)
-            {
-                return Json("Error");
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return Json("Error");
+            //}
             
             if(id > 0){
                 Product product =  _unitOfWork.Repository<Product>().GetById(id);

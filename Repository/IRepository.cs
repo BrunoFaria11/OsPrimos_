@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -75,6 +76,8 @@ namespace Ecommerce_MVC_Core.Repository
         IList<T> GetIncludeList(Func<T, bool> where, params Expression<Func<T, object>>[] navigationProperties);
 
         T GetSingleInclude(Func<T, bool> where, params Expression<Func<T, object>>[] navigationProperties);
+
+        void addOrUpdate(EntityState EntityState, T entity);
         Task<T> GetSingleIncludeAsync(Expression<Func<T, bool>> where, params Expression<Func<T, object>>[] navigationProperties);
     }
 }

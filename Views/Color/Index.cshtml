@@ -1,0 +1,76 @@
+﻿
+@model List<Ecommerce_MVC_Core.Models.Admin.Colors>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-6">
+                <div class="card card-secondary w-100">
+                    <div class="card-header">
+                        <h3 class="card-title">Cor</h3>
+                    </div>
+                    <div class="card-body">
+                        <a data-toggle="modal" asp-controller="color" asp-action="AddColor" data-target="#modal-AddColor" id="AddColortbtn" style="float:right; margin-right: 2%;" class="btn bg-gradient-secondary">
+                            <i class="fas fa-plus"></i>
+                        </a>
+                        <div style="margin-top: 70px">
+                            <table id="colorTable" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Cor</th>
+                                        <th data-orderable="false" width="1"></th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Color)
+                                            </td>
+                                            <td>
+                                                <span class=""><i class="fas fa-square" style="color:@item.Color"></i></span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                @await Html.PartialAsync("/Views/ProductSize/Index.cshtml") 
+            </div>
+
+            <!-- /.card-body -->
+        </div>
+        </div>
+</section>
+
+
+
+@Html.Partial("_Modal", new BootstrapModel { ID = "modal-AddColor", AreaLabeledId = "AddColor", Size = ModalSize.Small })
+
+<script>
+
+
+    $('#colorTable').DataTable({
+        "paging": true,
+
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+  
+    });
+
+
+
+    $('#AddColortbtn').on('click', function (e) {
+        e.preventDefault();
+        $('#modal-AddColor').addClass("show");
+    })
+</script>

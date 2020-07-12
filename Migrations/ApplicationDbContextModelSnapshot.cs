@@ -103,6 +103,23 @@ namespace Ecommerce_MVC_Core.Migrations
                     b.ToTable("City");
                 });
 
+            modelBuilder.Entity("Ecommerce_MVC_Core.Models.Admin.Colors", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("AddedDate");
+
+                    b.Property<string>("Color");
+
+                    b.Property<DateTime>("ModifiedDate");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Colors");
+                });
+
             modelBuilder.Entity("Ecommerce_MVC_Core.Models.Admin.Country", b =>
                 {
                     b.Property<int>("Id")
@@ -231,7 +248,7 @@ namespace Ecommerce_MVC_Core.Migrations
 
                     b.Property<DateTime>("AddedDate")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2020, 7, 3, 22, 38, 13, 664, DateTimeKind.Local));
+                        .HasDefaultValue(new DateTime(2020, 7, 9, 22, 41, 5, 488, DateTimeKind.Local));
 
                     b.Property<DateTime>("ModifiedDate");
 
@@ -281,9 +298,25 @@ namespace Ecommerce_MVC_Core.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<bool>("Active");
+
                     b.Property<DateTime>("AddedDate");
 
+                    b.Property<int>("CategoryId");
+
                     b.Property<string>("Description");
+
+                    b.Property<double>("Discount");
+
+                    b.Property<double>("FinalPrice");
+
+                    b.Property<bool>("HaveStock");
+
+                    b.Property<string>("ImagePath");
+
+                    b.Property<string>("ImagePath2");
+
+                    b.Property<string>("ImagePath3");
 
                     b.Property<DateTime>("ModifiedDate");
 
@@ -293,6 +326,8 @@ namespace Ecommerce_MVC_Core.Migrations
                     b.Property<double>("Price");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("Product");
                 });
@@ -355,7 +390,7 @@ namespace Ecommerce_MVC_Core.Migrations
 
                     b.Property<DateTime>("AddedDate")
                         .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2020, 7, 3, 22, 38, 13, 643, DateTimeKind.Local));
+                        .HasDefaultValue(new DateTime(2020, 7, 9, 22, 41, 5, 463, DateTimeKind.Local));
 
                     b.Property<string>("UsersId");
 
@@ -387,6 +422,23 @@ namespace Ecommerce_MVC_Core.Migrations
                     b.ToTable("ProductManual");
                 });
 
+            modelBuilder.Entity("Ecommerce_MVC_Core.Models.Admin.ProductSize", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("AddedDate");
+
+                    b.Property<DateTime>("ModifiedDate");
+
+                    b.Property<string>("Size");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProductSize");
+                });
+
             modelBuilder.Entity("Ecommerce_MVC_Core.Models.Admin.ProductStock", b =>
                 {
                     b.Property<int>("Id")
@@ -395,16 +447,23 @@ namespace Ecommerce_MVC_Core.Migrations
 
                     b.Property<DateTime>("AddedDate");
 
+                    b.Property<int>("ColorId");
+
                     b.Property<int>("InQuantity");
 
                     b.Property<DateTime>("ModifiedDate");
 
-                    b.Property<int>("OutQuantity");
+                    b.Property<int>("ProductId");
 
-                    b.Property<string>("Remarks")
-                        .HasMaxLength(200);
+                    b.Property<int>("SizeId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ColorId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("SizeId");
 
                     b.ToTable("ProductStock");
                 });
@@ -765,6 +824,14 @@ namespace Ecommerce_MVC_Core.Migrations
                         .HasForeignKey("UserId");
                 });
 
+            modelBuilder.Entity("Ecommerce_MVC_Core.Models.Admin.Product", b =>
+                {
+                    b.HasOne("Ecommerce_MVC_Core.Models.Admin.Category", "Category")
+                        .WithMany("Product")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Ecommerce_MVC_Core.Models.Admin.ProductComments", b =>
                 {
                     b.HasOne("Ecommerce_MVC_Core.Models.ApplicationUsers", "Users")
@@ -793,6 +860,24 @@ namespace Ecommerce_MVC_Core.Migrations
                     b.HasOne("Ecommerce_MVC_Core.Models.Admin.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Ecommerce_MVC_Core.Models.Admin.ProductStock", b =>
+                {
+                    b.HasOne("Ecommerce_MVC_Core.Models.Admin.Colors", "Colors")
+                        .WithMany("ProductStock")
+                        .HasForeignKey("ColorId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Ecommerce_MVC_Core.Models.Admin.Product", "Product")
+                        .WithMany("ProductStock")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Ecommerce_MVC_Core.Models.Admin.ProductSize", "ProductSize")
+                        .WithMany("ProductStock")
+                        .HasForeignKey("SizeId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

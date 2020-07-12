@@ -162,30 +162,30 @@ namespace Ecommerce_MVC_Core.Controllers
         //    return View(categoryList);
         //}
 
-        public IActionResult Product(int Brand=0,int Category=0,string search="")
-        {
-            List<ProductListViewModel> products = new List<ProductListViewModel>();
-            products = GetAllProductList();
+        //public IActionResult Product(int Brand=0,int Category=0,string search="")
+        //{
+        //    List<ProductListViewModel> products = new List<ProductListViewModel>();
+        //    products = GetAllProductList();
 
-            if (!String.IsNullOrEmpty(search))
-            {
-                search=search.ToLower();
-                products = products.Where(x => x.Name.ToLower().Contains(search) || x.BrandName.ToLower().Contains(search) || x.CategoryName.ToLower().Contains(search)).ToList();
+        //    if (!String.IsNullOrEmpty(search))
+        //    {
+        //        search=search.ToLower();
+        //        products = products.Where(x => x.Name.ToLower().Contains(search) || x.BrandName.ToLower().Contains(search) || x.CategoryName.ToLower().Contains(search)).ToList();
 
-            }
+        //    }
 
-            if (Brand>0)
-            {
-                products = products.Where(x => x.BrandId == Brand).ToList();
-            }
-            if (Category>0)
-            {
-                products = products.Where(x => x.CategoryId == Category).ToList();
-            }
+        //    if (Brand>0)
+        //    {
+        //        products = products.Where(x => x.BrandId == Brand).ToList();
+        //    }
+        //    if (Category>0)
+        //    {
+        //        products = products.Where(x => x.CategoryId == Category).ToList();
+        //    }
 
 
-            return View(products);
-        }
+        //    return View(products);
+        //}
 
         public List<ProductListViewModel> GetAllProductList( int id=0,int take=1000,int ctgid=0)
         {

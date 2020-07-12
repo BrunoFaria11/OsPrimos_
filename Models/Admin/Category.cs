@@ -11,10 +11,10 @@ namespace Ecommerce_MVC_Core.Models.Admin
 {
     public class Category:BaseEntity
     {
-        public int Id { get; set; }
         public string Image_Path { get; set; }
         public string Name { get; set; }
         public bool Active { get; set; }
+        public ICollection<Product> Product { get; set; }
 
     }
 

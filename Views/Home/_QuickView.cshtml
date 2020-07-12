@@ -2,7 +2,7 @@
 @await Html.PartialAsync("_ModalHeader", new ModalHeader { Heading = "" })
     <div class="quick_view">
     
-        <div class="row">
+        @*<div class="row">
             <div class="col-md-6 product_img">
                 <img src="~/uploads/ProductImages/@(Model.ImagePath ?? "noproductimage.png")" class="img-responsive">
             </div>
@@ -28,7 +28,7 @@
                     <a asp-controller="Home" asp-action="ProductDetails" asp-route-product="@Model.Id" class="btn btn-info">More Info..</a>
                 </div>
             </div>
-        </div>
+        </div>*@
     </div> 
 
 

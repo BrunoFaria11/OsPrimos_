@@ -1,62 +1,100 @@
 ﻿
 @model List<Ecommerce_MVC_Core.Models.Admin.Product>
 
-<a data-toggle="modal" asp-controller="product" asp-action="EditProduct" data-target="#modal-EditProduct" id="AddProductbtn" style="float:right; margin-right: 2%;">
-  <button type="button" class="btn btn-success" style="width: 200px;">Add</button>
-</a>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="card card-secondary w-100">
+                <div class="card-header">
+                    <h3 class="card-title">Produtos</h3>
+                </div>
+                <div class="card-body">
+                    <a data-toggle="modal" asp-controller="product" asp-action="AddEditProduct" data-target="#modal-AddEditProduct" style="float:right; margin-right: 2%;" class="btn bg-gradient-secondary AddEditProductbtn">
+                        <i class="fas fa-plus"></i> 
+                    </a>
+                    <div style="margin-top: 70px">
+                        <table id="ProductTable" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Categoria</th>
+                                    <th>Preço</th>
 
-<div style="margin-left: 2%; margin-right: 2%; margin-top: 5%">
-<table class="table">
-  <thead class="thead-dark">
-    <tr>
-      <th class="col-2">#</th>
-      <th class="col-2">Name</th>
-      <th class="col-4">Description</th>
-      <th class="col-2">Price</th>
-      <th class="col-1">Edit</th>
-      <th class="col-1">Delete</th>
-    </tr>
-  </thead>
-  <tbody>
-    @foreach (var item in Model) {
-    <tr>
-        <td>
-          @Html.DisplayFor(modelItem => item.Id)
-        </td>
-        <td>
-          @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-          @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        <td>
-          @Html.DisplayFor(modelItem => item.Price)
-        </td>
-        <td>
-          <a data-toggle="modal" asp-route-id="@item.Id" asp-controller="product" asp-action="EditProduct" data-target="#modal-EditProduct" class="EditProductbtn">
-            <button  type="button" class="btn btn-secondary ">Edit</button>
-          </a>
-        </td>
-        <td>
-          <a asp-controller="product" asp-action="DeleteProduct" asp-route-id="@item.Id">
-            <button  type="button" class="btn btn-danger">Delete</button>
-          </a>
-        </td>    
-    </tr>
-}
-  </tbody>
-</table>
-</div>
+                                    <th>Desconto</th>
+                                    <th>Descrição</th>
+                                    <th>Data</th>
+                                    <th data-orderable="false" width="1"></th>
+                                    @*<th>Desativar</th>*@
 
-@Html.Partial("_Modal", new BootstrapModel { ID = "modal-EditProduct", AreaLabeledId = "EditProduct", Size = ModalSize.Large })
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                    
+                                @foreach (var item in Model)
+                                {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Category.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Price) €
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Discount) %
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Description)
+                                    </td>
+                                    <td>
+                                      @item.AddedDate.Date.ToShortDateString()
+                                    </td>
+                                    <td>
+                                        <a data-toggle="modal" asp-route-id="@item.Id" asp-controller="product" asp-action="AddEditProduct" data-target="#modal-AddEditProduct" class="AddEditProductbtn">
+                                            <button type="button" class="btn btn-sm btn-info "><i class="fas fa-edit"></i>  </button>
+                                        </a>
+                                    </td>
+                                    @*<td>
+                                        <a asp-controller="product" asp-action="DeleteProduct" asp-route-id="@item.Id">
+                                            <button type="button" class="btn btn-danger">Delete</button>
+                                        </a>
+                                    </td>*@
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card-body -->
+        </div>
+    </div>
+</section>
+
+
+
+@Html.Partial("_Modal", new BootstrapModel { ID = "modal-AddEditProduct", AreaLabeledId = "AddEditProduct", Size = ModalSize.Large })
 
 <script>
-    $('.EditProductbtn').on('click', function (e) {
+
+
+    $('#ProductTable').DataTable({
+        "paging": true,
+        "searching": true,
+        "ordering": true,
+        "info": true,
+        "autoWidth": true,
+        "responsive": true,
+    });
+
+
+    $('.AddEditProductbtn').on('click', function (e) {
+        debugger;
         e.preventDefault();
-        $('#modal-EditProduct').addClass("show");
+        $('#modal-AddEditProduct').addClass("show");
     })
-    $('#AddProductbtn').on('click', function (e) {
-        e.preventDefault();
-        $('#modal-EditProduct').addClass("show");
-    })
+
 </script>

@@ -9,10 +9,15 @@ namespace Ecommerce_MVC_Core.Models.Admin
 {
     public class ProductStock:BaseEntity
     {
+        public int ColorId { get; set; }
+        public int ProductId { get; set; }
+        public int SizeId { get; set; }
         public int InQuantity { get; set; }
-        public int OutQuantity { get; set; }
-        public string Remarks { get; set; }
-        
+        public Colors Colors { get; set; }
+        public ProductSize ProductSize { get; set; }
+
+        public Product Product { get; set; }
+
     }
 
     public class ProductStockMap
@@ -21,9 +26,17 @@ namespace Ecommerce_MVC_Core.Models.Admin
         {
             entityTypeBuilder.HasKey(x => x.Id);
             entityTypeBuilder.Property(x => x.InQuantity);
-            entityTypeBuilder.Property(x => x.OutQuantity);
-            entityTypeBuilder.Property(x => x.Remarks).HasMaxLength(200);
-            
+
+
+            entityTypeBuilder.HasOne(x => x.Product).WithMany(x => x.ProductStock)
+       .HasForeignKey(x => x.ProductId);
+
+            entityTypeBuilder.HasOne(x => x.ProductSize).WithMany(x => x.ProductStock)
+         .HasForeignKey(x => x.SizeId);
+
+            entityTypeBuilder.HasOne(x => x.Colors).WithMany(x => x.ProductStock)
+           .HasForeignKey(x => x.ColorId);
+
         }
     }
 }

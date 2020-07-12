@@ -115,6 +115,21 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
             }
             return result;
         }
+        public JsonResult GetCategories(string q,int catId)
+        {
+            var CategoryList = _unitOfWork.Repository<Category>().GetAll().Select(x => new SelectListItem
+            {
+                Text = x.Name,
+                Value = x.Id.ToString()
+            }).ToList();
+           
+            if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+            {
+                CategoryList = CategoryList.Where(x => x.Text.ToLower().StartsWith(q.ToLower())).ToList();
+            }
+
+            return Json(CategoryList);
+        }
 
         [HttpGet]
         public async Task<IActionResult> Delete(int id)

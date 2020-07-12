@@ -1,0 +1,44 @@
+﻿@model Ecommerce_MVC_Core.ViewModel.ColorsViewModel
+<style>
+    input[type="file"] {
+        display: none;
+    }
+</style>
+<form id="color_form" tabindex="-1" enctype="multipart/form-data">
+    @await Html.PartialAsync("_ModalHeader", new ModalHeader { Heading = $"{(Model.Id <= 0 ? "" : "")} Cor" })
+
+    <div class="form-horizontal" style="padding:24px">
+
+        <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+        @Html.HiddenFor(m => m.Id)
+
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group">
+                    <label asp-for="Color" class="col-sm-2 col-form-label">Cor</label>
+                    <div class="input-group my-colorpicker2 colorpicker-element" data-colorpicker-id="2">
+                        <input type="color"  asp-for="Color"  class="form-control colorpicker_" data-original-title="" title="">
+
+                        <div class="input-group-append">
+                            <span class="input-group-text"><i class="fas fa-square square" style="color: rgb(0, 0, 0);"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    @await Html.PartialAsync("_ModalFooter", new ModalFooter { urlPOST = "color/AddColor", IdEntity = Model.Id.ToString(), IdForm = "color_form" })
+</form>
+
+<script>
+
+
+    $('.colorpicker_').on('change', function (event) {
+
+        $('.square').css('color', $(this).val());
+    });
+
+</script>

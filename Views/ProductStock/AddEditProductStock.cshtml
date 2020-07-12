@@ -10,16 +10,7 @@
         <div class="text-danger" asp-validation-summary="ModelOnly"></div>
 
         
-        <div class="form-group">
-            <label asp-for="ProductId" class="col-md-3 control-label"></label>
-            <div class="col-md-8">
-                <input type="text" asp-for="ProductName" id="txtProduct" class="form-control" autofocus="" />
-
-                <input asp-for="ProductId" type="hidden" id="txtProductId" class="form-control" />
-                <span asp-validation-for="ProductId" class="text-danger"></span>
-            </div>
-        </div>
-
+     
         <div class="form-group">
             <label asp-for="InQuantity" class="col-md-3 control-label"></label>
             <div class="col-md-8">
@@ -27,27 +18,7 @@
                 <span asp-validation-for="InQuantity" class="text-danger"></span>
             </div>
         </div>
-        @{
-            if (Model.Id>0)
-            {
-                <div class="form-group">
-                    <label asp-for="OutQuantity" class="col-md-3 control-label"></label>
-                    <div class="col-md-8">
-                        <input asp-for="OutQuantity" class="form-control" />
-                        <span asp-validation-for="OutQuantity" class="text-danger"></span>
-                    </div>
-                </div>
-            }
-        }
-        <div class="form-group">
-            <label asp-for="Remarks" class="col-md-3 control-label"></label>
-            <div class="col-md-8">
-                <div>  
-                    <input type="text" asp-for="Remarks" class="form-control" title="search image" id="file" onchange="show(this)" /> 
-                </div> 
-                <span asp-validation-for="Remarks" class="text-danger"></span>
-            </div>
-        </div>
+    
 
         <div class="form-group">
             <div class="col-md-3"></div>

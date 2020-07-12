@@ -1,103 +1,241 @@
 ﻿@model Ecommerce_MVC_Core.ViewModel.ProductViewModel
-<form asp-action="AddEditProduct" id="frm" enctype="multipart/form-data">
-    <div class="form-horizontal">
-        @await Html.PartialAsync("_ModalHeader", new ModalHeader { Heading = $"{(Model.Id <= 0 ? "Add" : "Edit")} Product" })
-        <hr />
+<style>
+    input[type="file"] {
+        display: none;
+    }
+</style>
+<form id="product_form" tabindex="-1" enctype="multipart/form-data">
+    @await Html.PartialAsync("_ModalHeader", new ModalHeader { Heading = $"{(Model.Id <= 0 ? "" : "")} Produtos" })
+
+    <div class="form-horizontal" style="padding:24px">
+
         <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+        @Html.HiddenFor(m => m.Id)
 
-        <div class="form-group">
-            <label asp-for="Name" class="col-md-3 control-label"></label>
-            <div class="col-md-8">
-                <input asp-for="Name" class="form-control" autofocus="" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="Code" class="col-md-3 control-label"></label>
-            <div class="col-md-8">
-                <input asp-for="Code" class="form-control" autofocus="" />
-                <span asp-validation-for="Code" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="Tag" class="col-md-3 control-label"></label>
-            <div class="col-md-8">
-                <input asp-for="Tag" class="form-control" autofocus="" />
-                <span asp-validation-for="Tag" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="CategoryId" class="col-md-3 control-label"></label>
-            <div class="col-md-8">
-                <select asp-for="CategoryId" asp-items="@Model.CategoryList" class="form-control"></select>
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="BrandId" class="col-md-3 control-label"></label>
-            <div class="col-md-8">
-                <select asp-for="BrandId" asp-items="@Model.BrandList" class="form-control"></select>
-                <span asp-validation-for="BrandId" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="UnitId" class="col-md-3 control-label"></label>
-            <div class="col-md-8">
-                <select asp-for="UnitId" asp-items="@Model.UnitList" class="form-control"></select>
-                <span asp-validation-for="UnitId" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="Price" class="col-md-3 control-label"></label>
-            <div class="col-md-8">
-                <input asp-for="Price" class="form-control" autofocus="" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="Discount" class="col-md-3 control-label"></label>
-            <div class="col-md-8">
-                <input asp-for="Discount" class="form-control" autofocus="" />
-                <span asp-validation-for="Discount" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="Description" class="col-md-3 control-label"></label>
-            <div class="col-md-8">
-                <textarea asp-for="Description" class="form-control"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-        </div>
-
-        @if (Model.Id <= 0)
-        {
-            <div class="form-group">
-                <label class="col-md-3 control-label">Product Images</label>
-                <div class="col-md-8">
-                    <input type="file" class="form-control" asp-for="Images" multiple />
+        <div class="row">
+            <div class="col-6">
+                <div class="form-group">
+                    <label asp-for="Name" class="col-sm-2 col-form-label">Nome</label>
+                    <input asp-for="Name" class="form-control" autofocus="" />
                 </div>
             </div>
-            <div class="form-group">
-                <label class="col-md-3 control-label">Product Manual</label>
-                <div class="col-md-8">
-                    <input type="file" class="form-control" asp-for="Manual" />
+            <div class="col-6">
+                <div class="form-group">
+                    <label asp-for="CategoryId" class="col-sm-2 col-form-label">Categoria</label>
+                    <select asp-for="CategoryId" class="form-control select2" id="cat" style="width: 100%;"></select>
                 </div>
             </div>
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+                <div class="form-group">
+                    <label asp-for="Price" class="col-sm-2 col-form-label">Preço</label>
+                    <input asp-for="Price" class="form-control" autofocus="" />
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label asp-for="Discount" class="col-sm-2 col-form-label">Desconto</label>
+                    <input asp-for="Discount" class="form-control" autofocus="" />
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-4">
+                <div class="card-body text-center" id="Div_ProductImage1" style="padding: 0px;background-image:url(@Model.ImagePath);background-repeat: no-repeat; background-position-x: center; background-position-y: center;">
+                    <div class="" style="height: 235px; border-radius: 8px;background-color: rgba(95, 95, 95, 0.59); padding-top:25%">
+                        <lebel id="ProductImage1Click" class="btn btn-default  btn-lg" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
+                            <i class="fas fa-pencil-alt">
+                            </i>
+                        </lebel>
+                        <input id="ProductImage1" type="file" />
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card-body text-center" id="Div_ProductImage2" style="padding: 0px;background-image:url(@Model.ImagePath2);background-repeat: no-repeat; background-position-x: center; background-position-y: center;">
+                    <div class="" style="height: 235px; border-radius: 8px;background-color: rgba(95, 95, 95, 0.59); padding-top:25%">
+                        <lebel id="ProductImage2Click" class="btn btn-default  btn-lg" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
+                            <i class="fas fa-pencil-alt">
+                            </i>
+                        </lebel>
+                        <input id="ProductImage2" type="file" />
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card-body text-center" id="Div_ProductImage3" style="padding: 0px;background-image:url(@Model.ImagePath3);background-repeat: no-repeat; background-position-x: center; background-position-y: center;">
+                    <div class="" style="height: 235px; border-radius: 8px;background-color: rgba(95, 95, 95, 0.59); padding-top:25%">
+                        <lebel id="ProductImage3Click" class="btn btn-default  btn-lg" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
+                            <i class="fas fa-pencil-alt">
+                            </i>
+                        </lebel>
+                        <input id="ProductImage3" type="file" />
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group">
+                    <label asp-for="Description" class="col-sm-2 col-form-label">Descrição</label>
+                    <textarea asp-for="Description" class="form-control" rows="3" placeholder=""></textarea>
+                </div>
+            </div>
+        </div>
+
+        @if(Model.Id > 0) { 
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group">
+                    <label asp-for="Active" class="col-sm-2 col-form-label">Activar/Desativar</label>
+                </div>
+                <input type="checkbox" asp-for="Active" name="my-checkbox" checked data-bootstrap-switch data-off-color="danger" data-on-color="success" class="form-control">
+
+            </div>
+        </div>
         }
-
-
     </div>
-    @await Html.PartialAsync("_ModalFooter", new ModalFooter { })
+    @await Html.PartialAsync("_ModalFooter", new ModalFooter { urlPOST = "", IdEntity = Model.Id.ToString(), IdForm = "product_form" })
 </form>
 
 <script>
-    $.validator.unobtrusive.parse("#frm");
+
+    $("#cat").select2({
+        cache: true,
+        placeholder: "Selecione uma Categoria",
+    });
+
+    $("input[data-bootstrap-switch]").each(function () {
+        $(this).bootstrapSwitch('state', $(this).prop('checked'));
+    });
+
+    loadCats();
+
+    $('#ProductImage1Click').on('click', function (e) {
+        e.preventDefault();
+        $('#ProductImage1').trigger('click');
+    });
+
+    $("#ProductImage1").change('change', function (e) {
+        e.preventDefault();
+        $('#Div_ProductImage1').css("background-image", "url(" + URL.createObjectURL(e.target.files[0]) + ") ");
+
+    });
+
+    $('#ProductImage2Click').on('click', function (e) {
+        e.preventDefault();
+        $('#ProductImage2').trigger('click');
+    });
+
+    $("#ProductImage2").change('change', function (e) {
+        e.preventDefault();
+        $('#Div_ProductImage2').css("background-image", "url(" + URL.createObjectURL(e.target.files[0]) + ") ");
+
+    });
+
+
+    $('#ProductImage3Click').on('click', function (e) {
+        e.preventDefault();
+        $('#ProductImage3').trigger('click');
+    });
+
+    $("#ProductImage3").change('change', function (e) {
+        e.preventDefault();
+        $('#Div_ProductImage3').css("background-image", "url(" + URL.createObjectURL(e.target.files[0]) + ") ");
+
+    });
+
+
+    $(document).on("submit", "form", function (event) {
+        const IdProduct = doAjax("product/AddEditProduct", "@Model.Id", "#product_form");
+    })
+
+   function doAjax(url, IdEntity, IdForm) {
+        event.preventDefault();
+        debugger;
+        $.post(url, { id: IdEntity, model: $(IdForm).serializeFormJSON() }, function (htmlresponse) {
+            if (htmlresponse.result != "error") {
+                if (htmlresponse.id != "" && htmlresponse.id != "0" && htmlresponse.id != null && htmlresponse.id != undefined) {
+                    UploadFile( htmlresponse.id);
+
+
+                    window.location.reload();
+                }
+                Toast.fire({
+                    icon: 'success',
+                    title: htmlresponse.result
+                })
+            }
+            else {
+                Toast.fire({
+                    icon: 'error',
+                    title: ''
+                })
+            }
+        });
+    }
+
+   function UploadFile(IdProduct) {
+        debugger;
+        var fileUpload1 = $("#ProductImage1").get(0);
+        var files1 = fileUpload1.files;
+
+        var fileUpload2 = $("#ProductImage2").get(0);
+        var files2 = fileUpload2.files;
+
+        var fileUpload3 = $("#ProductImage3").get(0);
+        var files3 = fileUpload1.files;
+
+        var data = new FormData();
+        data.append(IdProduct, files1[0]);
+        data.append(IdProduct, files2[0]);
+        data.append(IdProduct, files3[0]);
+
+
+        $.ajax({
+            type: "POST",
+            url: "/Product/UploadImages",
+            contentType: false,
+            processData: false,
+            data: data ,
+            async: false,
+            success: function (message) {
+            },
+            error: function () {
+            },
+        });
+    };
+
+   function loadCats() {
+        $.ajax({
+            url: '/Category/GetCategories',
+            type: 'GET',
+            dataType: 'json',
+            success: function (response) {
+                $("#cat").append('<option value=' + 0 + ' disabled >Selecione uma Categoria</option>');
+                $.each(response, function (key, value) {
+                    debugger;
+
+                    $("#cat").append('<option value=' + value.value + '>' + value.text + '</option>');
+                });
+                    if ("@Model.CategoryId" > 0) {
+                        $('#cat').val("@Model.CategoryId").trigger('change');;
+                }
+                    else {
+                        $("#cat").val(0).trigger('change');
+                    }
+            }
+        });
+    };
+
+
 </script>

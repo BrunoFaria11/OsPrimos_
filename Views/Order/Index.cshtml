@@ -1,149 +1,243 @@
-﻿@model IEnumerable<Ecommerce_MVC_Core.ViewModel.Public.OrderDetailsViewModel>
+﻿@model List<Ecommerce_MVC_Core.ViewModel.ProductViewModel>
 @{
-    ViewData["Title"] = "Index";
-    Layout = "_Layout";
+    Layout = "_LayoutAdmin";
 }
+<style>
+    .img-center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+</style>
 
-@if (Model.Any())
-{
-    <div class="container">
+<section class="content">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-12 col-md-10 col-md-offset-1">
-                <form method="post" asp-action="Index">
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Quantity</th>
-                            <th class="text-center">Price</th>
-                            <th class="text-center">Total</th>
-                            <th> </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @{
-                            var product = Model.ToList();
-                            for (int i = 0; i < product.Count; i++)
-                            {
-  
-                        
+            <div class="card card-secondary w-100">
+                <div class="card-header">
+                    <h3 class="card-title">Encomendas @( ViewBag.TypeOrder == 1 ? "(não pagas)" : ViewBag.TypeOrder == 2 ?  "(já pagas)"  : "")</h3>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.TypeOrder == 1)
+                    {
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <label style="padding-right:20px"> <i class="nav-icon far fa-circle text-success"></i> - Não processada</label>
+                                <label style="padding-right: 20px"> <i class="nav-icon far fa-circle text-warning"></i> - Não paga (Referência Multibanco) </label>
+                                <label style="padding-right: 20px"> <i class="nav-icon far fa-circle text-danger"></i> - Erro (Visa ou MarsterCard)</label>
+                            </div>
+                        </div>
+                    }
+                    @if (ViewBag.TypeOrder == 2)
+                    {
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <label style="padding-right:20px"> <i class="nav-icon far fa-circle text-success"></i> - Pagas</label>
+                            </div>
+                        </div>
+                    }
+                    @if (ViewBag.TypeOrder == 3)
+                    {
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <label style="padding-right:20px"> <i class="nav-icon far fa-circle text-success"></i> - Enviadas</label>
+                            </div>
+                        </div>
+                    }
+
+                    <div style="margin-top: 70px">
+                        <table id="OrderTable" class="table table-bordered table-striped">
+                            <thead>
                                 <tr>
-                                    <td class="col-sm-8 col-md-6">
-                                        <div class="media">
-                                            <a class="thumbnail pull-left" href="#"> <img class="media-object" src="~/uploads/ProductImages/@product[i].ImagePath" style="width: 72px; height: 72px;"> </a>
-                                            <div class="media-body" style="padding-left: 10px;">
-                                                <h4 class="media-heading"><a asp-controller="Home" asp-action="ProductDetails" asp-route-product="@product[i].ProductId">@product[i].ProductName</a></h4>
-                                                <h5 class="media-heading"> by <a href="#">@product[i].BrandName</a></h5>
-
-                                                @if (product[i].Stock > 0)
-                                                {
-                                                    <span> Status: </span><span class="text-success">
-                                                                              <strong>In Stock</strong>
-
-                                                                          </span>
-                                                }
-                                                else
-                                                {
-                                                    <span> Status: </span><span class="text-danger">
-                                                                              <strong>Stock Out</strong>
-
-                                                                          </span>
-                                                }
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="col-sm-1 col-md-1" style="text-align: center">
-                                        <input type="number" class="qnt form-control" asp-for="@product[i].Quantity" value="@product[i].Quantity">
-
-                                
-                                    </td>
-                                    <td class="col-sm-1 col-md-1 text-center"><strong class="price">@product[i].FinalPrice</strong></td>
-                                    <td class="col-sm-1 col-md-1 text-center"><strong class="total">@product[i].FinalPrice</strong></td>
-                                    <td class="col-sm-1 col-md-1">
-                                        <a asp-action="RemoveItemFromCart" data-toggle="modal" class="btn btn-danger" data-target="#modal-popUP" asp-route-product="@product[i].ProductId"> <span class="glyphicon glyphicon-remove">Remove</span></a>
-
-                                
-                                        <input type="hidden" asp-for="@product[i].ProductName" />
-                                        <input type="hidden" asp-for="@product[i].FinalPrice" />
-                                        <input type="hidden" asp-for="@product[i].ProductId" />
-
-                                    </td>
+                                    <th>#</th>
+                                    <th>Nome</th>
+                                    <th>NIF</th>
+                                    <th>Endereço</th>
+                                    <th>Email</th>
+                                    <th>Número de telefone</th>
+                                    <th>Preço</th>
+                                    <th>Número de produtos</th>
+                                    <th>Método de pagamento</th>
+                                    <th>Estado</th>
+                                    <th></th>
                                 </tr>
-                        
-                        
-                            }
-                        }
+                            </thead>
 
-
-                        <tr>
-                            <tr>
-                                <td>
-                                </td>
-
-                                <td>
-                                    <label>Sub Total: </label>
-                                    <label class="subtotal">0</label>
-                                </td>
-                                <td>
-                                    <label>Estimated Shipping: </label>
-                                    <label class="shipping">0</label>
-                                </td>
-                                <td>
-                                    <label>Grand Total: </label>
-                                    <label class="grantotal">0</label>
-                                
-
-                                </td>
-                            </tr>
-                        </tr>
-                        <tr>
-                            <td> </td>
-                            <td> </td>
-                            <td> </td>
-                            <td>
-                                <a asp-controller="Home" asp-action="Product" class="btn btn-default">Continue Shopping</a>
-                            </td>
-                            <td>
-                                <button type="submit" class="btn btn-success">
-                                    Checkout <span class="glyphicon glyphicon-play"></span>
-                                </button>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </form>
+                        </table>
+                    </div>
+                </div>
             </div>
+            <!-- /.card-body -->
         </div>
     </div>
-    @Html.Partial("_Modal", new BootstrapModel { ID = "modal-popUP", AreaLabeledId = "modal-popUP-label", Size = ModalSize.Medium })
-}
-else
-{
-    <div class="text-center" style="padding-top: 30px;">
-        <h1>No Product added to cart. <a asp-controller="Home" asp-action="Product">Continue Shopping</a></h1>
-    </div>
-}
-<script type="text/javascript">
-    $(document).ready(function(){
-    
-        $('.qnt').focusout(function(){
-            var qnt = $(this).closest('tr').find('.qnt').val();
-            var price = $(this).closest('tr').find('.price').text();
-            var aTotal =  $(this).closest('tr').find('.total').text(qnt * price);
-        
-            var subtotal = 0;
-            $('.total').each(function(){
-                var cTotal = $(this).text();
-                subtotal = subtotal + parseFloat(cTotal);   
-            });
-       
-            $('.subtotal').text(subtotal);
-       
-            //var shipping = $('.shipping').text();
-            var grantotal =  parseFloat(subtotal);
-            $('.grantotal').text(grantotal);
-        });
-    
+
+</section>
+
+
+@Html.Partial("_Modal", new BootstrapModel { ID = "modal-SeeDetailsOrder", AreaLabeledId = "SeeDetailsOrder", Size = ModalSize.Large })
+
+
+<script>
+    $('.SeeDetailsOrder').on('click', function (e) {
+        e.preventDefault();
+        $('#modal-SeeDetailsOrder').addClass("show");
     })
+
+    function sendOrder(Id) {
+        var id =Id;
+        $.ajax({
+            url: '/order/SendOrder',
+            type: 'POST',
+            data: { 'Id': id },
+            dataType: 'json',
+            success: function (response) {
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Encomenda marcada como enviada'
+                })
+                TableLaod();
+            }
+        })    }
+   
+
+    TableLaod();
+    function TableLaod() {
+        debugger;
+        $("#OrderTable").DataTable({
+            "destroy": true,
+            "searching": false,
+            "processing": false, // for show progress bar
+            "serverSide": true, // for process server side
+            "filter": true, // this is for disable filter (search box)
+            "orderMulti": false, // for disable multiple column at once
+            "pageLength": 10,
+
+            "ajax": {
+                "url": "/Order/LoadData?TypeOrder=@ViewBag.TypeOrder",
+                "type": "POST",
+                "datatype": "json"
+            },
+
+            "columnDefs":
+                [{
+                    "targets": [0],
+                    "className": 'text-center'
+                },
+                {
+                    "targets": [1],
+                    "className": 'text-center'
+                },
+                {
+                    "targets": [2],
+                    "className": 'text-center'
+
+                },
+                {
+                    "targets": [3],
+                    "className": 'text-center'
+
+                },
+                {
+                    "targets": [4],
+                    "className": 'text-center'
+                },
+                {
+                    "targets": [5],
+                    "className": 'text-center'
+                },
+                {
+                    "targets": [6],
+                    "className": 'text-center'
+                    },
+                    {
+                        "targets": [7],
+                        "className": 'text-center'
+                    },
+                    {
+                        "targets": [8],
+                        "className": 'text-center'
+                    },
+                    {
+                        "targets": [9],
+                        "className": 'text-center'
+                    },
+                    {
+                        "targets": [10],
+                        "className": 'text-center'
+                    },
+                ],
+
+            "columns": [
+
+                { "data": 'number', "name": "#", "autoWidth": true },
+                { "data": "name", "name": "Nome", "autoWidth": true },
+                { "data": "nif", "name": "NIF", "autoWidth": true },
+                { "data": "address", "name": "Endereço", "autoWidth": true },
+                { "data": "email", "name": "Email", "autoWidth": true },
+                { "data": "phoneNumber", "name": "Número de telefone", "autoWidth": true },
+                {
+                    "render": function (data, type, full, meta) { return full.total + " €" }
+                },
+
+                { "data": "productsNumber", "name": "Número de produtos", "autoWidth": true },
+
+                { "data": "paymentMethod", "name": "Método de pagamento", "autoWidth": true },
+                {
+                    "render": function (data, type, full, meta) {
+                        var html = "";
+                        if (full.status == 1 || full.status == 3) {
+                            html = '<i class="nav-icon far fa-circle text-success"></i>'
+                        }
+                        if (full.status == 5) {
+                            html = html + '<i class="nav-icon far fa-circle text-warning"></i>'
+                        }
+                        if (full.status == 6) {
+                            html = html + '<i class="nav-icon far fa-circle text-danger"></i>'
+                        }
+                        if (full.status == 3) {
+                            html = '<i class="nav-icon far fa-circle text-success"></i>'
+                        }
+                        if (full.status == 4) {
+                            html = '<i class="nav-icon far fa-circle text-success"></i>'
+                        }
+                        return html
+                    }
+                },
+                {
+                    "render": function (data, type, full, meta) {
+                        var page = "@ViewBag.TypeOrder";
+                        var html = '<a class="btn btn-sm btn-table btn-outline-info SeeDetailsOrder" data-toggle="modal" href="/order/Details/' + full.id + '" data-target="#modal-SeeDetailsOrder" type="button" >'
+                            + '<i class="fas fa-eye"></i>'
+                            + '</a>'
+                        if (page == 2) {
+                            html = html + '<button class="btn btn-sm btn-table btn-outline-success " onclick="sendOrder(' + full.id + ')" data-id="' + full.id + '" type="button" style="margin-left: 3px;" >'
+                                + '<i class="fas fa-paper-plane"></i>'
+                                + '</button>';
+                        }
+                        return html
+                    }
+                },
+            ]
+
+        });
+    }
+
+    function formatDate(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+
+        return [day, month, year].join('-');
+    }
+
+   
+
+
 
 </script>

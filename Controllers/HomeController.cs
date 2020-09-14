@@ -16,9 +16,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
+using System.IO;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace Ecommerce_MVC_Core.Controllers
 {
+
     public class HomeController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -33,491 +39,368 @@ namespace Ecommerce_MVC_Core.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        //List<int> test=new List<int>();
-        public IActionResult Index(int categoryId=0)
+        public IActionResult Index()
         {
-            HomePage homePage=new HomePage();
-            //homePage.Categories = GetMainCategory();
-           
-            homePage.ProductList= new List<ProductListViewModel>();
+            try
+            {
+                HomePage homePage = new HomePage();
+                //homePage.Categories = GetMainCategory();
+                homePage.ProductList = new List<ProductListViewModel>();
 
-            //var ctgList = _unitOfWork.Repository<Category>().Query().OrderBy(x=>x.Order).Take(3).ToList();
-            //ViewBag.CategoryNameList = ctgList!=null? ctgList.Select(x => x.Name).ToList():new List<string>();
-            //homePage.SecondTab = new List<ProductListViewModel>();
-            //homePage.FirstTab = new List<ProductListViewModel>();
-            //homePage.ThirdTab = new List<ProductListViewModel>();
-            //var counter = 0;
-            //foreach (var item in ctgList)
-            //{
-            //    if (counter ==0)
-            //    {
-            //        homePage.FirstTab = GetAllProductList(ctgid: item.Id, take: 8);
-            //    }
-            //    if (counter == 1)
-            //    {
-            //        homePage.SecondTab = GetAllProductList(ctgid: item.Id, take: 8);
-            //    }
-            //    if (counter == 2)
-            //    {
-            //        homePage.ThirdTab = GetAllProductList(ctgid: item.Id, take: 8);
-            //    }
-            //    counter++;
-            //}
-            
-            //homePage.BrandList = GetAllBrand();
-            
-            return View(homePage);
-        }
+                var Sections = _unitOfWork.Repository<Sections>().GetAll().Where(x => x.PageId == 1).ToList();
+                var ListSections_HTML = _unitOfWork.Repository<Sections_HTML>().GetAll().Where(x => Sections.Select(Y => Y.Id).Contains(x.SectionId)).ToList();
 
-       
+                Dictionary<string, string> DicTags = new Dictionary<string, string>();
 
-        //public List<BrandListViewModel> GetAllBrand()
-        //{
-        //    List<BrandListViewModel> brandList = new List<BrandListViewModel>();
-        //    _unitOfWork.Repository<Brand>().GetAll().ToList().ForEach(x =>
-        //    {
-        //        BrandListViewModel brand = new BrandListViewModel
-        //        {
-        //            Name = x.Name,
-        //            Id = x.Id,
-        //            Description = x.Description
-        //        };
-        //        brandList.Add(brand);
-        //    });
-        //    return brandList;
-        //}
-        #region CatrgoryMenu
+                foreach (var item in ListSections_HTML.ToList().Distinct())
+                {
+                    DicTags.Add(item.Tag_HTML, item.Tag_HTML_Value);
 
-        //public List<CategoryViewModel> GetMainCategory()
-        //{
-        //    List<CategoryViewModel> categoryList = new List<CategoryViewModel>();
-        //    _unitOfWork.Repository<Category>().GetAll().Where(x => x.CategoryId == null).OrderBy(x=>x.Order).ToList().ForEach(c =>
-        //    {
-        //        CategoryViewModel ctg = new CategoryViewModel
-        //        {
-        //            Id = c.Id,
-        //            Name = c.Name,
-        //            CategoryId = c.Id,
+                }
 
-        //        };
-        //        ctg.CategoryMenus = GetSubCategory(c.Id);
-        //        categoryList.Add(ctg);
-        //    });
+                ViewBag.categories = _unitOfWork.Repository<Category>().GetAllInclude(x => x.Product).Where(x => x.Product.Where(t => t.Active).Any() && x.Active).ToList();
+                ViewBag.products = GetProducts(true);
 
-            
-        //    return categoryList;
-        //}
+                ViewBag.Tags = DicTags;
+                return View(homePage);
+            }
+            catch (Exception)
+            {
 
-        //public List<CategoryViewModel> GetSubCategory(int id)
-        //{
-        //    List<CategoryViewModel> categoryList = new List<CategoryViewModel>();
-        //    _unitOfWork.Repository<Category>().GetAll().Where(x => x.CategoryId == id).ToList().ForEach(c =>
-        //    {
-        //        CategoryViewModel ctg = new CategoryViewModel
-        //        {
-        //            Name = c.Name,
-        //            CategoryId = c.CategoryId,
-        //            Id = c.Id
-
-        //        };
-        //        ctg.CategoryMenus = GetSubCategory(c.Id);
-        //        categoryList.Add(ctg);
-        //        //test.Add(c.Id);
-        //    });
-        //    return categoryList;
-        //}
-
-        #endregion
-
-        //public IActionResult Brand()
-        //{
-        //    List<BrandListViewModel> brandList = new List<BrandListViewModel>();
-        //    _unitOfWork.Repository<Brand>().GetAll().ToList().ForEach(x =>
-        //    {
-        //        BrandListViewModel brand=new BrandListViewModel
-        //        {
-        //            Name = x.Name,
-        //            Id = x.Id,
-        //            Description = x.Description
-        //        };
-        //        brandList.Add(brand);
-        //    });
-
-        //    return View(brandList);
-        //}
-
-        //public IActionResult Category()
-        //{
-        //    List<CategoryListViewModel> categoryList = new List<CategoryListViewModel>();
-        //    _unitOfWork.Repository<Category>().GetAllInclude(x=>x.Categoris,p=>p.Products).ToList().ForEach(c =>
-        //    {
-        //        CategoryListViewModel category = new CategoryListViewModel
-        //        {
-        //            Id = c.Id,
-        //            Name = c.Name,
-              
-        //        };
-        //        categoryList.Add(category);
-        //    });
-        //    return View(categoryList);
-        //}
-
-        //public IActionResult Product(int Brand=0,int Category=0,string search="")
-        //{
-        //    List<ProductListViewModel> products = new List<ProductListViewModel>();
-        //    products = GetAllProductList();
-
-        //    if (!String.IsNullOrEmpty(search))
-        //    {
-        //        search=search.ToLower();
-        //        products = products.Where(x => x.Name.ToLower().Contains(search) || x.BrandName.ToLower().Contains(search) || x.CategoryName.ToLower().Contains(search)).ToList();
-
-        //    }
-
-        //    if (Brand>0)
-        //    {
-        //        products = products.Where(x => x.BrandId == Brand).ToList();
-        //    }
-        //    if (Category>0)
-        //    {
-        //        products = products.Where(x => x.CategoryId == Category).ToList();
-        //    }
-
-
-        //    return View(products);
-        //}
-
-        public List<ProductListViewModel> GetAllProductList( int id=0,int take=1000,int ctgid=0)
-        {
-            List<ProductListViewModel> productList = new List<ProductListViewModel>();
-            // IQueryable<Product> dbProducts = _unitOfWork.Repository<Product>().Query()
-            //     .Include(pc => pc.ProductCommentses)
-            //     .Include(pi => pi.ProductImages)
-            //     .Include(ps => ps.ProductStocks);
-
-
-            // dbProducts = dbProducts.OrderByDescending(x => x.AddedDate).Take(take);
-            // foreach (var b in dbProducts)
-            // {
-            //     ProductListViewModel product = new ProductListViewModel
-            //     {
-            //         Id = b.Id,
-            //         Name = b.Name,
-            //         Description = b.Description,
-            //         Price = b.Price
-            //     };
-
-            //     // var prdctStocks = b.ProductStocks.FirstOrDefault(x => x.ProductId == b.Id);
-            //     // product.ProductStocks = prdctStocks != null
-            //     //     ? product.ProductStocks = prdctStocks.InQuantity - prdctStocks.OutQuantity
-            //     //     : product.ProductStocks = 0;
-
-            //     // var productImageList = b.ProductImages.Where(x => x.ProductId == b.Id).ToList();
-
-            //     var productImage = productImageList.FirstOrDefault();
-            //     if (productImage != null)
-            //     {
-            //         product.ImageTitle = productImage.Title;
-            //         product.ImagePath = productImage.ImagePath;
-            //         // if (productImageList.Count > 1)
-            //         // {
-            //         //     product.SecondImagePath = productImageList.Skip(1).FirstOrDefault()?.ImagePath;
-            //         // }
-            //         // else
-            //         // {
-            //         //     product.SecondImagePath = product.ImagePath;
-            //         // }
-            //     }
-            //     else
-            //     {
-            //         product.ImagePath = "noproductimage.png";
-            //         product.SecondImagePath = "noproductimage.png";
-            //     }
-
-
-
-            //     productList.Add(product);
-            // }
-            
-            
-            return productList;
+                throw;
+            }
 
         }
 
-
-        public List<ProductListViewModel> GetNewAriveProduct()
+        public List<ProductViewModel> GetProducts(bool Active)
         {
-            List<ProductListViewModel> productsList = new List<ProductListViewModel>();
+            try
+            {
+                List<ProductViewModel> productList = new List<ProductViewModel>();
+                _unitOfWork.Repository<Product>().GetAllInclude(x => x.Category, ps => ps.ProductStock).Where(x => x.Active == Active && x.Category.Active).ToList().ForEach(x =>
+                {
+                    ProductViewModel product = new ProductViewModel
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        Description = x.Description,
+                        Price = x.Price,
 
-            
-                // _unitOfWork.Repository<Product>().Query().Include(x => x.Brand)
-                //     .Include(c => c.Category)
-                //     .Include(u => u.Unit)
-                //     .Include(pc => pc.ProductCommentses)
-                //     .Include(pi => pi.ProductImages)
-                //     .Include(ps => ps.ProductStocks).OrderByDescending(x=>x.AddedDate).Take(12).ToList().ForEach(b =>
-                // {
-                //     ProductListViewModel product = new ProductListViewModel
-                //     {
-                //         Id = b.Id,
-                //         Name = b.Name,
-                //         Code = b.Code,
-                //         Tag = b.Tag,
-                //         CategoryId = b.CategoryId,
-                //         BrandId = b.BrandId,
-                //         UnitId = b.UnitId,
-                //         Description = b.Description,
-                //         Price = b.Price,
-                //         BrandName = b.Brand.Name,
-                //         CategoryName = b.Category.Name,
-                //         UnitName = b.Unit.Name,
-                //         Discount = b.Discount,
-                //         FinalPrice = (b.Price - ((b.Price * b.Discount) / 100)),
-                //         ProductComments = b.ProductCommentses.Count(x => x.ProductId == b.Id),
-                //         TotalImage = b.ProductImages.Count(x => x.ProductId == b.Id)
-                //     };
-                //     var prdctStocks = b.ProductStocks.FirstOrDefault(x => x.ProductId == b.Id);
-                //     product.ProductStocks = prdctStocks != null ? product.ProductStocks = prdctStocks.InQuantity - prdctStocks.OutQuantity : product.ProductStocks = 0;
-                //     productsList.Add(product);
-                // });
+                        FinalPrice = x.FinalPrice,
+                        HaveStock = false,
+
+                        IsNew = false,
+                        CategoryId = x.CategoryId,
+                        Discount = x.Discount,
+                        CategoryName = x.Category.Name,
+                        Active = x.Active,
+                        AddedDate = x.AddedDate,
+                        ModifiedDate = x.ModifiedDate,
+                        ImagePath = x.ImagePath,
+                        ImagePath2 = x.ImagePath2,
+                        ImagePath3 = x.ImagePath3,
 
 
+                    };
+                    if (x.ProductStock.Any(t => t.HaveStock))
+                    {
+                        product.HaveStock = true;
+                    }
+                    int totalDias = (DateTime.Now.Date.Subtract(x.AddedDate.Date)).Days;
+                    if (totalDias < 15)
+                    {
+                        product.IsNew = true;
+                    }
+                    productList.Add(product);
+                });
+                return productList;
+            }
+            catch (Exception)
+            {
 
+                throw;
+            }
 
-            return productsList;
         }
 
-        public IActionResult About()
+        public IActionResult Cart()
         {
-            ViewData["Message"] = "Your application description page.";
+            var Sections = _unitOfWork.Repository<Sections>().GetAll().ToList();
+            var Country = _unitOfWork.Repository<Country>().GetAll().ToList();
+
+            var ListSections_HTML = _unitOfWork.Repository<Sections_HTML>().GetAll().Where(x => Sections.Select(Y => Y.Id).Contains(x.SectionId)).ToList();
+
+            Dictionary<string, string> DicTags = new Dictionary<string, string>();
+
+            foreach (var item in ListSections_HTML.ToList().Distinct())
+            {
+                DicTags.Add(item.Tag_HTML, item.Tag_HTML_Value);
+
+            }
+
+            ViewBag.Tags = DicTags;
+            ViewBag.Country = Country;
 
             return View();
         }
 
-        public IActionResult Contact()
-        {
-            
-            ViewData["Message"] ="Hello" ;
-
-            return View();
-        }
-
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        public async Task<IActionResult> QuickViewProduct(int product)
-        {
-            ProductListViewModel pList = new ProductListViewModel();
-           //Product pro= await _unitOfWork.Repository<Product>().GetSingleIncludeAsync(x=>x.Id== product,b=>b.Brand,c=>c.Category,u=>u.Unit,rc=>rc.ProductCommentses,pi=>pi.ProductImages);
-            // if (pro!=null)
-            // {
-
-            //     pList.Id = pro.Id;
-            //     pList.Name = pro.Name;
-            //     // pList.Code = pro.Code;
-            //     // pList.Tag = pro.Tag;
-            //     // pList.CategoryId = pro.CategoryId;
-            //     // pList.BrandId = pro.BrandId;
-            //     // pList.UnitId = pro.UnitId;
-            //     pList.Description = pro.Description;
-            //     pList.Price = pro.Price;
-            //     // pList.BrandName = pro.Brand.Name;
-            //     // pList.CategoryName = pro.Category.Name;
-            //     // pList.UnitName = pro.Unit.Name;
-            //     // pList.Discount = pro.Discount;
-            //     // pList.FinalPrice = (pro.Price - ((pro.Price * pro.Discount) / 100));
-            //     pList.ProductComments =pro.ProductCommentses.Count(x => x.ProductId == pro.Id);
-            //     pList.TotalImage = pro.ProductImages.Count(x => x.ProductId == pro.Id);
 
 
-                
-
-            //     var productImageList = pro.ProductImages.Where(x => x.ProductId == pro.Id).ToList();
-
-            //     var productImage = productImageList.FirstOrDefault();
-            //     if (productImage != null)
-            //     {
-            //         pList.ImageTitle = productImage.Title;
-            //         pList.ImagePath = productImage.ImagePath;
-
-            //     }
-                
-            // }
-            return PartialView("_QuickView", pList);
-        }
 
         public async Task<IActionResult> ProductDetails(int product)
         {
-            ProductListViewModel pList = new ProductListViewModel();
-            // Product pro = await _unitOfWork.Repository<Product>().GetSingleIncludeAsync(x => x.Id == product, b => b.Brand, c => c.Category, u => u.Unit, rc => rc.ProductCommentses, pi => pi.ProductImages); ;
-            // if (pro != null)
-            // {
-
-            //     pList.Id = pro.Id;
-            //     pList.Name = pro.Name;
-            //     pList.Code = pro.Code;
-            //     pList.Tag = pro.Tag;
-            //     pList.CategoryId = pro.CategoryId;
-            //     pList.BrandId = pro.BrandId;
-            //     pList.UnitId = pro.UnitId;
-            //     pList.Description = pro.Description;
-            //     pList.Price = pro.Price;
-            //     pList.BrandName = pro.Brand.Name;
-            //     pList.CategoryName = pro.Category.Name;
-            //     pList.UnitName = pro.Unit.Name;
-            //     pList.Discount = pro.Discount;
-            //     pList.FinalPrice = (pro.Price - ((pro.Price * pro.Discount) / 100));
-            //     pList.ProductComments = pro.ProductCommentses.Count(x => x.ProductId == pro.Id);
-            //     pList.TotalImage = pro.ProductImages.Count(x => x.ProductId == pro.Id);
-            //     pList.ProductCommentsList = GetAllCommentsByProduct(pro.Id);
-
-            //     pList.ImageList=new List<ProductImageListViewModel>();
-
-            //     var productImageList = pro.ProductImages.Where(x => x.ProductId == pro.Id).ToList();
-
-            //     var productImage = productImageList.FirstOrDefault();
-            //     if (productImage != null)
-            //     {
-            //         pList.ImageTitle = productImage.Title;
-            //         pList.ImagePath = productImage.ImagePath;
-            //         productImageList.ForEach(x =>
-            //         {
-            //             ProductImageListViewModel image=new ProductImageListViewModel
-            //             {
-            //                 Id = x.Id,
-            //                 ImagePath = x.ImagePath,
-            //                 Title = x.Title,
-            //             };
-            //             pList.ImageList.Add(image);
-            //          });
-            //     }
-
-            // }
-            return View(pList);
-        }
-
-        public List<CommentsListViewModel> GetAllCommentsByProduct(int productId)
-        {
-            List<CommentsListViewModel> commentsList=new List<CommentsListViewModel>();
-            // _unitOfWork.Repository<ProductComments>().GetIncludeList(x => x.ProductId == productId,p=>p.Product).OrderByDescending(x=>x.AddedDate).ToList().ForEach(x =>
-            // {
-            //     CommentsListViewModel comments=new CommentsListViewModel
-            //     {
-            //         ProductId = x.ProductId,
-            //         Comment = x.Comment,
-            //         // ProductName = x.Product.Name,
-            //         UserId = x.UserId
-            //     };
-            //     DateTime date = x.AddedDate;
-            //     comments.AddedDate = TimeAgoCustom.TimeAgo(date);
-
-            //     ApplicationUsers user = _userManager.FindByIdAsync(x.UserId).Result;
-            //     comments.UserName = user.Name;
-            //     commentsList.Add(comments);
-            // });
-
-            return commentsList;
-        }
-
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> AddComment(string commentMessage,int pro)
-        {
-            if (commentMessage!=null)
+            try
             {
-                ApplicationUsers user = _userManager.GetUserAsync(HttpContext.User).Result;
-                ProductComments comments=new ProductComments();
-                comments.Comment = commentMessage;
-                comments.ProductId = pro;
-                comments.AddedDate=DateTime.Now;
-                comments.ModifiedDate=DateTime.Now;
-                comments.UserId = user.Id;
-               await _unitOfWork.Repository<ProductComments>().InsertAsync(comments);
-               
-            }
-            return RedirectToAction("ProductDetails", new { product = pro });
+                var Sections = _unitOfWork.Repository<Sections>().GetAll().ToList();
+                var ListSections_HTML = _unitOfWork.Repository<Sections_HTML>().GetAll().Where(x => Sections.Select(Y => Y.Id).Contains(x.SectionId)).ToList();
 
-        }
+                Dictionary<string, string> DicTags = new Dictionary<string, string>();
 
-        #region ProductCart
-
-        [HttpGet]
-        public async Task<IActionResult> AddToCart(int product)
-        {
-            
-            if (product>0)
-            {
-                Models.Admin.Product pro =await _unitOfWork.Repository<Product>().GetByIdAsync(product);
-                if (pro!=null)
+                foreach (var item in ListSections_HTML.ToList().Distinct())
                 {
-                    AddToCartViewModel addTo=new AddToCartViewModel
-                    {
-                        ProductId = pro.Id,
-                        ProductName = pro.Name,
-                        //FinalPrice = (pro.Price - ((pro.Price * pro.Discount) / 100)),
-                        Quantity = 1
-                    };
-                    ViewBag.productId = product;
-                    return PartialView("_AddtoCart", addTo);
+                    DicTags.Add(item.Tag_HTML, item.Tag_HTML_Value);
+
                 }
-            }
-            
-            return PartialView("_AddtoCart");
-        }
 
-        [HttpPost]
-        public IActionResult AddToCart(int prodcut, AddToCartViewModel model)
-        {
-            List<AddToCartViewModel> addToCart = new List<AddToCartViewModel>();
-            List<AddToCartViewModel> addToCartList = HttpContext.Session.Get<List<AddToCartViewModel>>("CartItem");
-            int itemInCart=0;
-            var valu = HttpContext.Session.GetInt32("itemCount");
-            if (valu != null)
-            {
-                itemInCart = valu.Value;
-            }
+                ViewBag.Tags = DicTags;
 
-            if (addToCartList == null)
+                ProductViewModel pList = new ProductViewModel();
+
+                var Product_ = _unitOfWork.Repository<Product>().GetAllInclude(ps => ps.ProductStock, c => c.Category).FirstOrDefault(x => x.Id == product && x.Category.Active);
+                if (Product_ != null)
                 {
-                    AddToCartViewModel cart = new AddToCartViewModel();
-                    cart.ProductId = model.ProductId;
-                    cart.FinalPrice = model.FinalPrice;
-                    cart.ProductName = model.ProductName;
-                    cart.Quantity = model.Quantity;
-                    addToCart.Add(cart);
-                    HttpContext.Session.Set<List<AddToCartViewModel>>("CartItem",addToCart);
-                    itemInCart= 1;
+                    if (Product_.Active)
+                    {
+                        var ProductStock = _unitOfWork.Repository<ProductStock>().GetAllInclude(x => x.Colors, s => s.ProductSize).Where(x => x.ProductId == product);
+
+                        ViewBag.HaveStock = Product_.ProductStock.Any(t => t.HaveStock);
+                        ViewBag.Sizes = GetSizesToProduct(product, ProductStock.ToList()).ToList();
+                        ViewBag.Colors = ProductStock.Where(x => x.IsActive && x.HaveStock).Select(x => x.Colors).Distinct().ToList();
+
+                        Product pro = await _unitOfWork.Repository<Product>().GetSingleIncludeAsync(x => x.Id == product, c => c.Category); ;
+                        if (pro != null)
+                        {
+                            pList.Id = pro.Id;
+                            pList.Name = pro.Name;
+                            pList.Description = pro.Description;
+                            pList.Price = pro.Price;
+                            pList.ImagePath = pro.ImagePath;
+                            pList.ImagePath2 = pro.ImagePath2;
+                            pList.ImagePath3 = pro.ImagePath3;
+                            pList.CategoryName = pro.Category.Name;
+                            pList.CategoryName = pro.Category.Name;
+
+                            pList.Discount = pro.Discount;
+                            pList.CategoryId = pro.CategoryId;
+                            pList.FinalPrice = (pro.Price - ((pro.Price * pro.Discount) / 100));
+                        }
+
+                        List<ProductViewModel> Related_Products_ = new List<ProductViewModel>();
+
+                        //List<Product> Related_Products =  _unitOfWork.Repository<Product>().GetAllInclude(x=>x.ProductStock)?.Where( && x.Active ).ToList();
+
+                        //foreach (var item in Related_Products)
+                        //{
+                        //    ProductViewModel Related_Product = new ProductViewModel();
+
+                        //    Related_Product.Id = item.Id;
+                        //    Related_Product.Name = item.Name;
+                        //    Related_Product.Description = item.Description;
+                        //    Related_Product.Price = item.Price;
+                        //    Related_Product.ImagePath = item.ImagePath;
+
+
+                        //    Related_Product.CategoryName = pro.Category.Name;
+                        //    Related_Product.Discount = item.Discount;
+                        //    Related_Product.FinalPrice = (item.Price - ((item.Price * item.Discount) / 100));
+                        //    Related_Products_.Add(Related_Product);
+                        //}
+
+                        ViewBag.ListProducts = GetProducts(true)?.Where(x => x.CategoryId == pro.CategoryId).ToList();
+                        return View(pList);
+                    }
+                    else
+                    {
+                        return View("~/Views/Shared/Error.cshtml");
+                    }
                 }
                 else
                 {
-                     
-                    if (addToCartList.Where(x => x.ProductId == model.ProductId).ToList().Count<1)
-                    {
-                    AddToCartViewModel cart = new AddToCartViewModel();
-                        cart.ProductId = model.ProductId;
-                        cart.FinalPrice = model.FinalPrice;
-                        cart.ProductName = model.ProductName;
-                        cart.Quantity = model.Quantity;
-                        addToCartList.Add(cart);
-                        HttpContext.Session.Set<List<AddToCartViewModel>>("CartItem", addToCartList);
-                        itemInCart = HttpContext.Session.Get<List<AddToCartViewModel>>("CartItem").Count;
-                    }
+                    return View("~/Views/Shared/Error.cshtml");
                 }
 
+            }
+            catch (Exception)
+            {
 
-            HttpContext.Session.SetInt32("itemCount",itemInCart);
-            return RedirectToAction(nameof(Product));
+                throw;
+            }
+
         }
 
-
-
-        [HttpGet]
-        public IActionResult RemoveCartItem(int product)
+        public List<ProductSizeListViewModel> GetSizesToProduct(int productId, List<ProductStock> ProductStock)
         {
-            return View();
+            try
+            {
+                List<ProductSizeListViewModel> ProductSizeList = new List<ProductSizeListViewModel>();
+                _unitOfWork.Repository<ProductSize>().GetAll().ToList().ForEach(x =>
+                {
+                    var Available_aux = true;
+                    if (ProductStock.Any(X => X.SizeId == x.Id))
+                    {
+                        if (ProductStock.Any(X => X.SizeId == x.Id && X.HaveStock && X.IsActive))
+                        {
+                            Available_aux = false;
+                        }
+
+                        ProductSizeListViewModel ProductSize = new ProductSizeListViewModel
+                        {
+                            Id = x.Id,
+                            Size = x.Size,
+                            Available_ = Available_aux,
+                        };
+                        ProductSizeList.Add(ProductSize);
+                    }
+
+
+                });
+                return ProductSizeList;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
-        #endregion
+
+        public List<ColorsViewModel> GetAvailableColors(int productId, int size)
+        {
+            try
+            {
+                List<ColorsViewModel> ProductColorist = new List<ColorsViewModel>();
+                var ProductStock = _unitOfWork.Repository<ProductStock>().GetAllInclude(y => y.Colors, s => s.ProductSize).Where(p => p.ProductId == productId);
+
+                ProductStock.Where(x => x.IsActive && x.HaveStock).Select(x => x.Colors).Distinct().ToList().ForEach(x =>
+                {
+                    var Available_aux = true;
+
+                    if (ProductStock.Any(ps => ps.SizeId == size && ps.HaveStock && ps.IsActive && ps.ColorId == x.Id))
+                    {
+                        Available_aux = false;
+                    }
+                    ColorsViewModel ProductColor = new ColorsViewModel
+                    {
+                        Id = x.Id,
+                        Color = x.Color,
+                        Available_ = Available_aux,
+                    };
+                    ProductColorist.Add(ProductColor);
+                });
+                return ProductColorist;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public int GetAvailabilityToCount(int productId, int size, int Quantity, int color)
+        {
+            try
+            {
+                var ProductStock = _unitOfWork.Repository<ProductStock>().Find(p => p.ProductId == productId && p.SizeId == size && p.ColorId == color);
+                var Product = _unitOfWork.Repository<Product>().Find(p => p.Id == productId);
+
+                if (ProductStock == null || !ProductStock.IsActive || !Product.Active)
+                {
+                    return 0;
+
+                    //TODO: FATAL ERROR
+                    //return View("~/Views/Shared/Error.cshtml");
+                }
+                else
+                {
+                    var AvailabilityQuantity = ProductStock.InQuantity - ProductStock.MinQuantity;
+
+
+                    if (Quantity <= AvailabilityQuantity)
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return AvailabilityQuantity;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+
+
+        public IActionResult Category(int cat)
+        {
+            try
+            {
+                var Sections = _unitOfWork.Repository<Sections>().GetAll().ToList();
+                var ListSections_HTML = _unitOfWork.Repository<Sections_HTML>().GetAll().Where(x => Sections.Select(Y => Y.Id).Contains(x.SectionId)).ToList();
+
+                Dictionary<string, string> DicTags = new Dictionary<string, string>();
+
+                foreach (var item in ListSections_HTML.ToList().Distinct())
+                {
+                    DicTags.Add(item.Tag_HTML, item.Tag_HTML_Value);
+
+                }
+
+                ViewBag.Tags = DicTags;
+
+                var catAux = _unitOfWork.Repository<Category>().GetAllInclude(x => x.Product).Where(x => x.Product.Where(t => t.Active).Any()).FirstOrDefault(x => x.Id == cat);
+                if (catAux == null)
+                {
+                    return View("~/Views/Shared/Error.cshtml");
+                }
+
+                List<CategoryViewModel> AllCategories = new List<CategoryViewModel>();
+
+                var All_Categories = _unitOfWork.Repository<Category>().GetAllInclude(x => x.Product).Where(x => x.Product.Where(t => t.Active).Any());
+                foreach (var item in All_Categories)
+                {
+                    CategoryViewModel cat_ = new CategoryViewModel();
+                    cat_.Id = item.Id;
+                    cat_.Image_Path = item.Image_Path;
+                    cat_.Name = item.Name;
+                    AllCategories.Add(cat_);
+                }
+
+                CategoryViewModel CategorySelect = new CategoryViewModel();
+                CategorySelect.Id = catAux.Id;
+                CategorySelect.Image_Path = catAux.Image_Path;
+                CategorySelect.Name = catAux.Name;
+
+
+                ViewBag.AllCategories = AllCategories;
+                //ViewBag.MostExpensive = _unitOfWork.Repository<Product>().GetAll().OrderByDescending(x=>x.Price).FirstOrDefault().Price;
+                //ViewBag.Colors = _unitOfWork.Repository<Colors>().GetAll().ToList();
+                ViewBag.ProductsOffCat = GetProducts(true).Where(x => x.CategoryId == cat).ToList();
+                ViewBag.ProductsOffCatCount = GetProducts(true).Where(x => x.CategoryId == cat).Count();
+
+
+
+                return View(CategorySelect);
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
+
     }
 }

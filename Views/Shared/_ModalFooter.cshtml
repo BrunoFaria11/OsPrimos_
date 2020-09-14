@@ -3,25 +3,32 @@
 
 <div class="modal-footer">
     @*<button data-dismiss="modal" id="@Model.CancelButtonID" class="btn btn-default" type="button">@Model.CancelButtonText</button>*@
-    @if (!Model.OnlyCancelButton)
+    @if (Convert.ToInt32(Model.IdEntity) > 0)
     {
         <button class="btn btn-success" id="submit" type="submit">
-            @Model.SubmitButtonText
-        </button>}
+            Editar
+        </button>
+    }
+    else
+    {
+        <button class="btn btn-success" id="submit" type="submit">
+            Inserir
+        </button>
+    }
 </div>
 <script>
 
 
-
+       if ("@Model.urlPOST" != "") {
     $(document).on("submit", "form", function (event) {
         event.preventDefault();
-        if ("/@Model.urlPOST" != "") {
+
         doAjax("/@Model.urlPOST", "@Model.IdEntity", "#@Model.IdForm")
 
-        }
+
         CloseModal();
     });
-
+       }
 
 
 </script>

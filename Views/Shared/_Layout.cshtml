@@ -1,111 +1,449 @@
-﻿<!DOCTYPE html>
+﻿@{ 
+
+    var Tags = ViewBag.Tags as Dictionary<string, string>;
+
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <title>Os Primos</title>
     <meta charset="UTF-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <environment include="Development">
+    <environment include="Development,Production,Staging">
         <!--===============================================================================================-->
-        <link rel="icon" type="image/png" href="~/css/public/images/icons/favicon.png" />
+        <link rel="icon" type="image/png" href="~/uploads/Images/Logo.jpg" />
         <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="~/css/public/vendor/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="~/Template/public/vendor/bootstrap/css/bootstrap.min.css">
         <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="~/css/public/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="~/Template/public/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
         <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="~/css/public/fonts/themify/themify-icons.css">
+        <link rel="stylesheet" type="text/css" href="~/Template/public/fonts/themify/themify-icons.css">
         <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="~/css/public/fonts/Linearicons-Free-v1.0.0/icon-font.min.css">
+        <link rel="stylesheet" type="text/css" href="~/Template/public/fonts/Linearicons-Free-v1.0.0/icon-font.min.css">
         <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="~/css/public/fonts/elegant-font/html-css/style.css">
+        <link rel="stylesheet" type="text/css" href="~/Template/public/fonts/elegant-font/html-css/style.css">
         <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="~/css/public/vendor/animate/animate.css">
+        <link rel="stylesheet" type="text/css" href="~/Template/public/vendor/animate/animate.css">
         <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="~/css/public/vendor/css-hamburgers/hamburgers.min.css">
+        <link rel="stylesheet" type="text/css" href="~/Template/public/vendor/css-hamburgers/hamburgers.min.css">
         <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="~/css/public/vendor/animsition/css/animsition.min.css">
+        <link rel="stylesheet" type="text/css" href="~/Template/public/vendor/animsition/css/animsition.min.css">
         <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="~/css/public/vendor/select2/select2.min.css">
+        <link rel="stylesheet" type="text/css" href="~/Template/public/vendor/select2/select2.min.css">
         <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="~/css/public/vendor/daterangepicker/daterangepicker.css">
+        <link rel="stylesheet" type="text/css" href="~/Template/public/vendor/daterangepicker/daterangepicker.css">
         <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="~/css/public/vendor/slick/slick.css">
+        <link rel="stylesheet" type="text/css" href="~/Template/public/vendor/slick/slick.css">
         <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="~/css/public/vendor/lightbox2/css/lightbox.min.css">
+        <link rel="stylesheet" type="text/css" href="~/Template/public/vendor/lightbox2/css/lightbox.min.css">
         <!--===============================================================================================-->
-        <link rel="stylesheet" type="text/css" href="~/css/public/css/util.css">
+        <link rel="stylesheet" type="text/css" href="~/Template/public/css/util.css">
+        <!--===============================================================================================-->
 
-        <link rel="stylesheet" type="text/css" href="~/css/public/css/main.css">
+        <link rel="stylesheet" type="text/css" href="~/Template/public/css/main.css">
         <!--===============================================================================================-->
+        <script type="text/javascript" src="~/Template/public/vendor/jquery/jquery-3.2.1.min.js"></script>
+        <!--===============================================================================================-->
+        <script type="text/javascript" src="~/Template/public/vendor/select2/select2.min.js"></script>
+        <script src="~/Template/adminCss/plugins/jquery-validation/jquery.validate.min.js"></script>
+        <script src="~/Template/public/js/jquery.payform.min.js"></script>
+        <script src="~/Template/public/js/script.js"></script>
+        <script src="~/Template/adminCss/plugins/inputmask/min/jquery.inputmask.bundle.min.js"></script>
+
+        <style>
+            .invalid-feedback {
+                display: none;
+                width: 100%;
+                margin-top: .25rem;
+                font-size: 80%;
+                color: #dc3545;
+            }
+
+            .names-ToUpper {
+                text-transform: uppercase;
+            }
+
+            #toTop {
+                display: none !important;
+            }
+        </style>
     </environment>
 </head>
 <body class="animsition">
 
     @Html.Partial("publicHeader")
 
-
-
-
-
-
+ 
     <div>
         @RenderBody()
-        <hr />
-        <footer>
-            <div class="container text-center">
-                <p>&copy; 2017-2018 - HatBazar.com</p>
-                lict_tup_off_h_47_dotNet
-            </div>
-        </footer>
+
     </div>
-    <environment include="Development">
-        <!--===============================================================================================-->
-        <script type="text/javascript" src="~/css/public/vendor/jquery/jquery-3.2.1.min.js"></script>
-        <!--===============================================================================================-->
-        <script type="text/javascript" src="~/css/public/vendor/animsition/js/animsition.min.js"></script>
-        <!--===============================================================================================-->
-        <script type="text/javascript" src="~/css/public/vendor/bootstrap/js/popper.js"></script>
-        <script type="text/javascript" src="~/css/public/vendor/bootstrap/js/bootstrap.min.js"></script>
-        <!--===============================================================================================-->
-        <script type="text/javascript" src="vendor/select2/select2.min.js"></script>
-        <script type="text/javascript">
-            $(".selection-1").select2({
-                minimumResultsForSearch: 20,
-                dropdownParent: $('#dropDownSelect1')
-            });
-        </script>
-        <!--===============================================================================================-->
-        <script type="text/javascript" src="~/css/public/vendor/slick/slick.min.js"></script>
-        <script type="text/javascript" src="~/css/public/js/slick-custom.js"></script>
-        <!--===============================================================================================-->
-        <script type="text/javascript" src="~/css/public/vendor/countdowntime/countdowntime.js"></script>
-        <!--===============================================================================================-->
-        <script type="text/javascript" src="~/css/public/vendor/lightbox2/js/lightbox.min.js"></script>
-        <!--===============================================================================================-->
-        <script type="text/javascript" src="~/css/public/vendor/sweetalert/sweetalert.min.js"></script>
-        <script type="text/javascript">
-            $('.block2-btn-addcart').each(function () {
-                var nameProduct = $(this).parent().parent().parent().find('.block2-name').html();
-                $(this).on('click', function () {
-                    swal(nameProduct, "is added to cart !", "success");
-                });
-            });
+    <environment include="Development,Production,Staging">
 
-            $('.block2-btn-addwishlist').each(function () {
-                var nameProduct = $(this).parent().parent().parent().find('.block2-name').html();
-                $(this).on('click', function () {
-                    swal(nameProduct, "is added to wishlist !", "success");
-                });
-            });
+        <script type="text/javascript" src="~/Template/public/vendor/animsition/js/animsition.min.js"></script>
+        <!--===============================================================================================-->
+        <script type="text/javascript" src="~/Template/public/vendor/bootstrap/js/popper.js"></script>
+        <script type="text/javascript" src="~/Template/public/vendor/bootstrap/js/bootstrap.min.js"></script>
+        <!--===============================================================================================-->
+        <!--===============================================================================================-->
+        <script type="text/javascript" src="~/Template/public/vendor/slick/slick.min.js"></script>
+        <script type="text/javascript" src="~/Template/public/js/slick-custom.js"></script>
+        <!--===============================================================================================-->
+        <script type="text/javascript" src="~/Template/public/vendor/countdowntime/countdowntime.js"></script>
+        <!--===============================================================================================-->
+        <script type="text/javascript" src="~/Template/public/vendor/lightbox2/js/lightbox.min.js"></script>
+        <!--===============================================================================================-->
+        <script type="text/javascript" src="~/Template/public/vendor/sweetalert/sweetalert.min.js"></script>
+        <script type="text/javascript">
+            //$('.block2-btn-addcart').each(function () {
+            //    var nameProduct = $(this).parent().parent().parent().find('.block2-name').html();
+            //    $(this).on('click', function () {
+            //        swal(nameProduct, "is added to cart !", "success");
+            //    });
+            //});
+
+            //$('.block2-btn-addwishlist').each(function () {
+            //    var nameProduct = $(this).parent().parent().parent().find('.block2-name').html();
+            //    $(this).on('click', function () {
+            //        swal(nameProduct, "is added to wishlist !", "success");
+            //    });
+            //});
         </script>
 
         <!--===============================================================================================-->
-        <script type="text/javascript" src="~/css/publicvendor/parallax100/parallax100.js"></script>
+        <script type="text/javascript" src="~/Template/public/vendor/parallax100/parallax100.js"></script>
         <script type="text/javascript">
             $('.parallax100').parallax100();
         </script>
         <!--===============================================================================================-->
-        <script src="~/css/public/js/main.js"></script>
+        <script src="~/Template/public/js/main.js"></script>
+
+
+        <script>
+
+            // ************************************************
+            // Shopping Cart API
+            // ************************************************
+
+            var shoppingCart = (function () {
+                // =============================
+                // Private methods and propeties
+                // =============================
+                cart = [];
+
+                // Constructor
+                function Item(id, name, price, imagePath, Color, Size, count) {
+                    this.id = id;
+                    this.name = name;
+                    this.price = price;
+                    this.imagePath = imagePath;
+                    this.Color = Color;
+                    this.Size = Size;
+                    this.count = count;
+                }
+
+                // Save cart
+                function saveCart() {
+                    sessionStorage.setItem('shoppingCart', JSON.stringify(cart));
+                }
+
+                // Load cart
+                function loadCart() {
+                    cart = JSON.parse(sessionStorage.getItem('shoppingCart'));
+                }
+                if (sessionStorage.getItem("shoppingCart") != null) {
+                    loadCart();
+                }
+
+
+                // =============================
+                // Public methods and propeties
+                // =============================
+                var obj = {};
+
+                // Add to cart
+                obj.addItemToCart = function (id, name, price, imagePath, Color, Size, count) {
+                    for (var item in cart) {
+                        if (cart[item].id === id && cart[item].name === name && cart[item].Color === Color && cart[item].Size === Size) {
+                            cart[item].count++;
+                            saveCart();
+                            return;
+                        }
+                    }
+                    var item = new Item(id, name, price, imagePath, Color, Size, count);
+                    cart.push(item);
+                    saveCart();
+                }
+                // Set count from item
+                obj.setCountForItem = function (id, count) {
+                    for (var i in cart) {
+                        if (cart[i].id === id) {
+                            cart[i].count = count;
+                            break;
+                        }
+                    }
+                };
+                // Remove item from cart
+                obj.removeItemFromCart = function (id, name, Color, Size) {
+                    for (var item in cart) {
+                        if (cart[item].id === id && cart[item].name === name && cart[item].Color === Color && cart[item].Size === Size) {
+                            cart[item].count--;
+                            if (cart[item].count === 0) {
+                                cart.splice(item, 1);
+                            }
+                            break;
+                        }
+                    }
+                    saveCart();
+                }
+
+                // Remove all items from cart
+                obj.removeItemFromCartAll = function (id) {
+                    for (var item in cart) {
+                        if (cart[item].id === id) {
+                            cart.splice(item, 1);
+                            break;
+                        }
+                    }
+                    saveCart();
+                }
+
+                // Clear cart
+                obj.clearCart = function () {
+                    cart = [];
+                    saveCart();
+                }
+
+                // Count cart
+                obj.totalCount = function () {
+                    var totalCount = 0;
+                    for (var item in cart) {
+                        totalCount += cart[item].count;
+                    }
+                    return totalCount;
+                }
+
+                // Total cart
+                obj.totalCart = function () {
+                    var totalCart = 0;
+                    for (var item in cart) {
+                        totalCart += cart[item].price * cart[item].count;
+                    }
+                    return Number(totalCart.toFixed(2));
+                }
+
+                // List cart
+                obj.listCart = function () {
+                    var cartCopy = [];
+                    for (i in cart) {
+                        item = cart[i];
+                        itemCopy = {};
+                        for (p in item) {
+                            itemCopy[p] = item[p];
+
+                        }
+                        itemCopy.total = Number(item.price * item.count).toFixed(2);
+                        cartCopy.push(itemCopy)
+                    }
+                    return cartCopy;
+                }
+
+                // cart : Array
+                // Item : Object/Class
+                // addItemToCart : Function
+                // removeItemFromCart : Function
+                // removeItemFromCartAll : Function
+                // clearCart : Function
+                // countCart : Function
+                // totalCart : Function
+                // listCart : Function
+                // saveCart : Function
+                // loadCart : Function
+                return obj;
+            })();
+
+
+            // *****************************************
+            // Triggers / Events
+            // *****************************************
+            // Add item
+            $('.add-to-cart').click(function (event) {
+                debugger;
+                event.preventDefault();
+                var id = $(this).data('id');
+                var name = $(this).data('name');
+                var price = 0;
+                if (Number.isInteger(($(this).data('price')))) {
+                    price = Number($(this).data('price'));
+                }
+                else {
+                    price = parseFloat($(this).data('price').replace(",", "."));
+                }
+
+                debugger;
+                var imagePath = $(this).data('imagepath');
+                var Color = $(".ColorId").val();
+                var Size = $("#size-select option:selected").text();
+                var SizeId = $("#size-select").val();
+
+                var count = Number($('.num-product').val());
+
+                var itsOk = true;
+                if (Color == "") {
+                    itsOk = false;
+                    $("#error-color").show();
+                }
+                debugger;
+                if (SizeId == 0 || SizeId == "") {
+                    itsOk = false;
+                    $("#error-size").show();
+                }
+                if (itsOk) {
+
+                    var color_ = $(".ColorId").attr("data-id");
+                    var Size_ = $("#size-select").val();
+                    $.ajax({
+                        url: '/Home/GetAvailabilityToCount',
+                        type: 'GET',
+                        dataType: 'json',
+                        data: { "productId": id, "size": Size_, "Quantity": count, "color": color_ },
+                        success: function (response) {
+                            if (response == 0) {
+                                $('#error-quantity').hide();
+
+                                shoppingCart.addItemToCart(id, name, price, imagePath, Color, Size, count);
+                                displayCart();
+                            }
+                            else {
+                                $('#error-quantity').show();
+                                $(".count-vr").text(response);
+
+                            }
+
+                        }
+                    });
+                }
+
+            });
+
+            // Clear items
+            $('.clear-cart').click(function () {
+                shoppingCart.clearCart();
+                displayCart();
+            });
+
+
+            function displayCart() {
+                debugger;
+                var cartArray = shoppingCart.listCart();
+                var output = "";
+                var outputTab = "";
+
+                for (var i in cartArray) {
+                    output += "<li class='header-cart-item'>" +
+                        "<div class='header-cart-item-img delete-item-cart'  data-name='" + cartArray[i].name + "'  data-Color='" + cartArray[i].Color + "'  data-Size='" + cartArray[i].Size + "' data-id='" + cartArray[i].id + "'>"
+                        + "<img src='" + cartArray[i].imagePath + "' alt='IMG' >"
+                        + "</div>"
+                        + "<div class='header-cart-item-txt'>"
+                        + "<a  href='/Home/ProductDetails?product=" + cartArray[i].id+"' class='header-cart-item-name' >"
+                        + cartArray[i].name + " - " + cartArray[i].Size + " - <span class=''><i class='fa fa-circle' style='font-size:15px;margin-top:10px;color:" + cartArray[i].Color + "'></i></span>"
+                        + "</a>"
+                        + "<span class='header-cart-item-info'>"
+                        + "" + cartArray[i].count + " x " + cartArray[i].price + "€"
+                        + "</span>"
+                        + "</div>"
+                        + "</li>";
+
+                    outputTab +=
+                        "<tr class='table-row'>"
+                        + "<td class='column-1'>"
+                    + "<div class='cart-img-product b-rad-4 o-f-hidden'  data-name='" + cartArray[i].name + "'  data-Color='" + cartArray[i].Color + "'  data-Size='" + cartArray[i].Size + "' data-id='" + cartArray[i].id + "'> "
+                        + "<img src='" + cartArray[i].imagePath + "' alt='IMG-PRODUCT'>"
+                        + "</div>"
+                        + "</td>"
+                        + "<td class='column-2'>" + cartArray[i].name + "</td>"
+                        + "<td class='column-3'>" + cartArray[i].price + " €</td>"
+                        + "<td class='column-4 text-center'>"
+                        + cartArray[i].count
+                        + "</td>"
+                        + "<td class='column-5 text-center'>" + cartArray[i].Size + " </td>"
+                        + "<td class='column-6  text-center'><span class=''><i class='fa fa-circle' style='font-size:37px;color:" + cartArray[i].Color + "'></i></span> </td>"
+
+                        + "<td class='column-7'>" + cartArray[i].count * cartArray[i].price + " €</td>"
+                        + "</tr>";
+                }
+                debugger;
+                $('.table-shopping-cart-body').html(outputTab);
+                $('.header-cart-wrapitem').html(output);
+                $('.total-cart').html(shoppingCart.totalCart());
+                $('.total-count').html(shoppingCart.totalCount());
+            }
+
+            // Delete item button
+
+
+            function GetAvailability(id) {
+
+            }
+
+            $('.header-cart-wrapitem').on("click", ".delete-item-cart", function (event) {
+                var id = $(this).data('id');
+                var name = $(this).data('name');
+                var Color = $(this).data('color');
+                var Size = $(this).data('Size');
+
+                shoppingCart.removeItemFromCart(id, name, Color, Size);
+                displayCart();
+            })
+
+            $('.header-cart-wrapitem').on("click", ".header-cart-item-img", function (event) {
+                var id = $(this).data('id');
+                var name = $(this).data('name');
+                var Color = $(this).data('color');
+                var Size = $(this).data('Size');
+                shoppingCart.removeItemFromCartAll(id);
+                displayCart();
+            })
+
+
+            $('.table-shopping-cart').on("click", ".cart-img-product", function (event) {
+                var id = $(this).data('id');
+
+                shoppingCart.removeItemFromCartAll(id);
+                displayCart();
+            })
+
+            // -1
+            $('.show-cart').on("click", ".minus-item", function (event) {
+                var id = $(this).data('id');
+
+                shoppingCart.removeItemFromCart(id);
+                displayCart();
+            })
+            // +1
+            $('.show-cart').on("click", ".plus-item", function (event) {
+                var id = $(this).data('id');
+
+                shoppingCart.addItemToCart(id);
+                displayCart();
+            })
+
+            // Item count input
+            $('.show-cart').on("change", ".item-count", function (event) {
+                var id = $(this).data('id');
+                var count = Number($(this).val());
+                shoppingCart.setCountForItem(id, count);
+                displayCart();
+            });
+
+            displayCart();
+
+            $('[data-mask]').inputmask()
+
+
+        
+        </script>
     </environment>
 
 </body>

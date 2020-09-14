@@ -11,7 +11,7 @@
         <div class="form-group">
             <label asp-for="CategoryId" class="col-md-3 control-label"></label>
             <div class="col-md-8">
-                <select asp-for="CategoryId" autofocus="" asp-items="@Model.Categories" class="form-control"></select>
+                <select asp-for="CategoryId" autofocus="" asp-items="@ViewBag.Categories" class="form-control"></select>
                 <span asp-validation-for="CategoryId" class="text-danger"></span>
             </div>
         </div>

@@ -8,6 +8,7 @@ using Ecommerce_MVC_Core.Data;
 using Ecommerce_MVC_Core.Models.Admin;
 using Ecommerce_MVC_Core.Repository;
 using Ecommerce_MVC_Core.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -28,21 +29,37 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
             _unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index(string search)
+        [Authorize(Roles = "Admin")]
+        public IActionResult Index(bool Active = true)
         {
-            //Get List of All Products
-            var allProducts = _unitOfWork.Repository<Product>().GetAllInclude(x=>x.Category);
+            try
+            {
+                //Get List of All Products
+                ViewBag.Active = Active;
+                ViewBag.AnyCat = _unitOfWork.Repository<Category>().Any(x=>x.Id > 0 );
 
-            return View(allProducts);
+                return View();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
         }
 
         public IActionResult GetById(int id)
         {
+            try
+            {
+                var productByID = _unitOfWork.Repository<Product>().GetById(id);
 
-            //Get Product By ID
-            var productByID = _unitOfWork.Repository<Product>().GetById(id);
-
-            return View(productByID);
+                return View(productByID);
+            }
+            catch (Exception)
+            {
+                throw;
+            }     
         }
 
         [HttpGet]
@@ -60,14 +77,12 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
                     product.Description = productByID.Description;
                     product.Price = productByID.Price;
                     product.CategoryId = productByID.CategoryId;
-                    product.Discount = productByID.Discount; 
+                    product.Discount = productByID.Discount;
+                    product.Active = productByID.Active;
+
                     product.ImagePath = productByID.ImagePath;
                     product.ImagePath2 = productByID.ImagePath2;
                     product.ImagePath3 = productByID.ImagePath3;
-
-
-
-
                 }
 
                 return PartialView("~/Views/Product/_AddEditProduct.cshtml", product);
@@ -79,55 +94,177 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
             }
         }
 
-        [HttpPost]
-        public JsonResult AddEditProduct(int id, ProductViewModel model)
+
+        public ActionResult LoadData(bool Active)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    return Json("Error");
-            //}
-
-            if (id > 0)
+            try
             {
-                Product product = _unitOfWork.Repository<Product>().GetById(id);
-                if (product != null)
+                //Creating instance of DatabaseContext class  
+                var draw_ = new Microsoft.Extensions.Primitives.StringValues();
+                var start_ = new Microsoft.Extensions.Primitives.StringValues();
+                var length_ = new Microsoft.Extensions.Primitives.StringValues();
+                var aux = new Microsoft.Extensions.Primitives.StringValues();
+                var sortcolumndir_ = new Microsoft.Extensions.Primitives.StringValues();
+                var searchvalue_ = new Microsoft.Extensions.Primitives.StringValues();
+                var sortcolumn_ = new Microsoft.Extensions.Primitives.StringValues();
+
+
+                var draw = Request.Form.TryGetValue("draw", out draw_);
+                var start = Request.Form.TryGetValue("start", out start_);
+                var length = Request.Form.TryGetValue("length", out length_);
+                var aux_ = Request.Form.TryGetValue("order[0][column]", out aux);
+                var sortcolumn = Request.Form.TryGetValue("columns[" + aux_ + "][name]", out sortcolumn_);
+                var sortcolumndir = Request.Form.TryGetValue("order[0][dir]", out sortcolumndir_);
+                var searchvalue = Request.Form.TryGetValue("search[value]", out searchvalue_);
+
+
+                //Paging Size (10,20,50,100)    
+                int pageSize = length != null ? Convert.ToInt32(length_) : 0;
+                int skip = start != null ? Convert.ToInt32(start_) : 0;
+                int recordsTotal = 0;
+
+                // Getting all Customer data    
+                var ProductsStockList = GetProducts(Active).ToList();
+
+                //Sorting    
+                if (!(string.IsNullOrEmpty(sortcolumn_) && string.IsNullOrEmpty(sortcolumndir_)))
                 {
-                    product.Name = model.Name;
-                    product.Description = model.Description;
-                    product.Price = model.Price;
-                    product.CategoryId = model.CategoryId;
-                    product.Discount = model.Discount;
-                    product.Active = model.Active;
-                    _unitOfWork.Repository<Product>().Update(product);           
+                    ProductsStockList = ProductsStockList.OrderBy(x => x.Name).ToList();
                 }
-                var result = new { Result = "Produto Inserido com sucesso", Id = product.Id };
-                return Json(result);
+                //Search    
+                //if (!string.IsNullOrEmpty(searchvalue_))
+                //{
+                //    ProductsStockList = ProductsStockList.Where(m => m.ProductName == searchvalue_);
+                //}
+
+                //total number of rows count     
+                recordsTotal = ProductsStockList.Count();
+                //Paging     
+                var data = ProductsStockList.Skip(skip).Take(pageSize).ToList();
+                //Returning Json Data    
+                return Json(new { draw = draw_, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
+
             }
-            else
+            catch (Exception)
             {
-                Product product = new Product
-                {
-                    Name = model.Name,
-                    Description = model.Description,
-                    Price = model.Price,
-                    CategoryId = model.CategoryId,
-                    Discount = model.Discount,
-                    AddedDate = DateTime.Now,
-                    ModifiedDate = DateTime.Now,
-                    Active = true
-                };
-
-                var addProduct = _unitOfWork.Repository<Product>().Insert(product);
-
-                string FilePath = Path.Combine(_hosingEnv.WebRootPath, $"css\\Images\\Products\\Products_{addProduct.Id}");
-                System.IO.Directory.CreateDirectory(FilePath);
-
-                var result = new { Result = "Produto Inserido com sucesso", Id = addProduct.Id };
-                return Json(result);
+                throw;
             }
 
         }
 
+
+        [HttpPost]
+        public JsonResult AddEditProduct(int id, ProductViewModel model)
+        {
+            try
+            {
+
+                if (!ModelState.IsValid)
+                {
+                    var result = new { Result = "Erro", Error = true, Id = 0 };
+                    return Json(result);
+                }
+
+                if (id > 0)
+                {
+                    Product product = _unitOfWork.Repository<Product>().GetById(id);
+                    if (product != null)
+                    {
+                        product.Name = model.Name;
+                        product.Description = model.Description;
+                        product.Price = model.Price;
+                        product.CategoryId = model.CategoryId;
+                        product.Discount = model.Discount;
+          
+                        product.Active = model.Active;
+                        if (model.Discount > 0)
+                        {
+                            product.FinalPrice = (model.Price - ((model.Price * model.Discount) / 100));
+                        }
+                        else
+                        {
+                            product.FinalPrice = model.Price;
+                        }
+                        _unitOfWork.Repository<Product>().Update(product);
+                    }
+                    var result = new { Result = "Produto Atualizado com sucesso", Error = false, Id = product.Id };
+                    return Json(result);
+                }
+                else
+                {
+                    Product product = new Product
+                    {
+                        Name = model.Name,
+                        Description = model.Description,
+                        Price = model.Price,
+                        CategoryId = model.CategoryId,
+                        Discount = model.Discount,
+                        AddedDate = DateTime.Now,
+                        ModifiedDate = DateTime.Now,
+                        Active = true,
+                        FinalPrice = model.Price,
+                    };
+                    if (model.Discount > 0)
+                    {
+                        product.FinalPrice = (model.Price - ((model.Price * model.Discount) / 100));
+                    }  
+                    var addProduct = _unitOfWork.Repository<Product>().Insert(product);
+
+                    string FilePath = Path.Combine(_hosingEnv.WebRootPath, $"css\\Images\\Products\\Products_{addProduct.Id}");
+                    System.IO.Directory.CreateDirectory(FilePath);
+
+                    var result = new { Result = "Produto Inserido com sucesso", Error = false, Id = product.Id };
+                    return Json(result);
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+           
+
+        }
+
+        public List<ProductViewModel> GetProducts(bool Active)
+        {
+            try
+            {
+                List<ProductViewModel> productList = new List<ProductViewModel>();
+                _unitOfWork.Repository<Product>().GetAllInclude(x => x.Category).Where(x => x.Active == Active).ToList().ForEach(x =>
+                {
+                    ProductViewModel product = new ProductViewModel
+                    {
+                        Id = x.Id,
+
+                        Name = x.Name,
+                        Description = x.Description,
+                        Price = x.Price,
+                        FinalPrice = x.FinalPrice,
+
+                        CategoryId = x.CategoryId,
+                        Discount = x.Discount,
+                        CategoryName = x.Category.Name,
+                        Active = x.Active,
+                        AddedDate = x.AddedDate,
+                        ModifiedDate = x.ModifiedDate,
+                        ImagePath = x.ImagePath,
+                        ImagePath2 = x.ImagePath2,
+                        ImagePath3 = x.ImagePath3,
+
+
+                    };
+                    productList.Add(product);
+                });
+                return productList;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+           
+        }
 
         public string UploadImages()
         {
@@ -136,16 +273,17 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
             {
                 long size = 0;
                 var file = Request.Form.Files;
+
                 var getLastProduct = new Product();
 
-                var idProduct = ContentDispositionHeaderValue.Parse(file[0].ContentDisposition).Name.Trim('"');
+                var idProduct = Request.Form["idProduct"].ToString();
 
 
                 if (idProduct != "" && idProduct != "0")
                 {
                     getLastProduct = _unitOfWork.Repository<Product>().GetById(Convert.ToInt32(idProduct));
                 }
-                string FilePath = Path.Combine(_hosingEnv.WebRootPath, $"css\\Images\\Products\\Products_{getLastProduct.Id}");
+                string FilePath = Path.Combine(_hosingEnv.WebRootPath, $"uploads\\Products\\Products_{getLastProduct.Id}");
 
                 bool exists = System.IO.Directory.Exists(FilePath);
 
@@ -156,36 +294,38 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
 
                 if (getLastProduct != null)
                 {
-                    for (int i = 0; i < 3; i++)
+                    foreach (var item in file)
                     {
-                        var filename = $"ProductImage_{getLastProduct.Id }_{ i + 1}";
+                        var image = ContentDispositionHeaderValue.Parse(item.ContentDisposition).Name.Trim('"');
+                        var filename = $"ProductImage_{getLastProduct.Id }_{ image }";
                         var file_ = Path.Combine(FilePath, filename + ".jpg");
 
-                        size += file[i].Length;
+                        size += item.Length;
 
                         using (FileStream fs = System.IO.File.Create(file_))
                         {
-                            file[i].CopyTo(fs);
+                            item.CopyTo(fs);
                             fs.Flush();
                         }
 
-                        switch (i)
+                        switch (image)
                         {
-                            case 0:
-                                getLastProduct.ImagePath = $"/css/Images/Products/Products_{getLastProduct.Id}/{filename}.jpg";
+                            case "image1":
+                                getLastProduct.ImagePath = $"/uploads/Products/Products_{getLastProduct.Id}/{filename}.jpg";
                                 break;
-                            case 1:
-                                getLastProduct.ImagePath2 = $"/css/Images/Products/Products_{getLastProduct.Id}/{filename}.jpg";
+                            case "image2":
+                                getLastProduct.ImagePath2 = $"/uploads/Products/Products_{getLastProduct.Id}/{filename}.jpg";
                                 break;
-                            case 2:
-                                getLastProduct.ImagePath3 = $"/css/Images/Products/Products_{getLastProduct.Id}/{filename}.jpg";
+                            case "image3":
+                                getLastProduct.ImagePath3 = $"/uploads/Products/Products_{getLastProduct.Id}/{filename}.jpg";
                                 break;
                             default:
                                 break;
                         }
+                        _unitOfWork.Repository<Product>().Update(getLastProduct);
 
                     }
-                    _unitOfWork.Repository<Product>().Update(getLastProduct);
+
 
                 }
             }
@@ -197,214 +337,7 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
             return result;
         }
 
-        public IActionResult DeleteProduct(int id)
-        {
-
-            //Delete product
-            var productByID = _unitOfWork.Repository<Product>().GetById(id);
-            _unitOfWork.Repository<Product>().Delete(productByID);
-
-            return RedirectToAction(nameof(Index));
-        }
-
-        // [HttpGet]
-        // public async Task<IActionResult> AddEditProduct(int id)
-        // {
-        //     ProductViewModel model = new ProductViewModel();
-        //     model.BrandList = _unitOfWork.Repository<Brand>().GetAll().Select(x => new SelectListItem
-        //     {
-        //         Text = x.Name,
-        //         Value = x.Id.ToString()
-        //     }).ToList();
-
-        //     model.CategoryList = _unitOfWork.Repository<Category>().GetAll().Select(x => new SelectListItem
-        //     {
-        //         Text = x.Name,
-        //         Value = x.Id.ToString()
-        //     }).ToList();
-
-        //     model.UnitList = _unitOfWork.Repository<Unit>().GetAll().Select(x => new SelectListItem
-        //     {
-        //         Text = x.Name,
-        //         Value = x.Id.ToString()
-        //     }).ToList();
-
-        //     if (id > 0)
-        //     {
-        //         Product product =await _unitOfWork.Repository<Product>().GetByIdAsync(id);
-        //         model.Name = product.Name;
-        //         // model.Code = product.Code;
-        //         // model.Tag = product.Tag;
-        //         // model.CategoryId = product.CategoryId;
-        //         // model.BrandId = product.BrandId;
-        //         // model.UnitId = product.UnitId;
-        //         model.Description = product.Description;
-        //         model.Price = product.Price;
-        //         // model.Discount = product.Discount;
-        //     }
-
-        //     return PartialView("_AddEditProduct", model);
-        // }
-
-        // [HttpPost]
-        // public async Task<IActionResult> AddEditProduct(int id, ProductViewModel model)
-        // {
-        //     if (!ModelState.IsValid)
-        //     {
-        //         ModelState.AddModelError("","Something Wrong");
-        //         return View("_AddEditProduct", model);
-        //     }
-        //     if (id>0)
-        //     {
-        //         Product product = await _unitOfWork.Repository<Product>().GetByIdAsync(id);
-        //         if (product!=null)
-        //         {
-        //             product.Name = model.Name;
-        //             // product.Code = model.Code;
-        //             // product.Tag = model.Tag;
-        //             // product.CategoryId = model.CategoryId;
-        //             // product.BrandId = model.BrandId;
-        //             // product.UnitId = model.UnitId;
-        //             product.Description = model.Description;
-        //             product.Price = model.Price;
-        //             // product.Discount = model.Discount;
-
-        //             product.ModifiedDate = DateTime.Now;
-        //             await _unitOfWork.Repository<Product>().UpdateAsync(product);
-        //         }
-
-        //     }
-        //     else
-        //     {
-        //         Product product = new Product
-        //         {
-        //             Name = model.Name,
-        //             // Code = model.Code,
-        //             // Tag = model.Tag,
-        //             // CategoryId = model.CategoryId,
-        //             // BrandId = model.BrandId,
-        //             // UnitId = model.UnitId,
-        //             Description = model.Description,
-        //             Price = model.Price,
-        //             // Discount = model.Discount,
-        //             AddedDate = DateTime.Now,
-        //             ModifiedDate = DateTime.Now
-        //         };
-        //         await _unitOfWork.Repository<Product>().InsertAsync(product);
-        //         if (model.Images.Count()>0)
-        //         {
-        //             await UploadProductImages(model.Images, product.Name, product.Id);
-        //         }
-
-        //         if (model.Manual!=null)
-        //         {
-        //             await UploadProductManual(model.Manual,product.Id,product.Name);
-        //         }
-        //     }
-        //     return RedirectToAction(nameof(Index));
-        // }
 
 
-        // private async Task UploadProductImages(IList<IFormFile> list,string productName,int productId)
-        // {
-        //     foreach (var file in list)
-        //     {
-        //         if (file != null && (file.ContentType == "image/png" || file.ContentType == "image/jpg" || file.ContentType == "image/jpeg"))
-        //         {
-        //             var productImage=new ProductImage
-        //             {
-        //                 AddedDate = DateTime.Now,
-        //                 ModifiedDate = DateTime.Now,
-        //                 ProductId = productId,
-        //                 Title = productName
-        //             };
-        //             var uploads = Path.Combine(_hosingEnv.WebRootPath, "uploads/ProductImages");
-        //             var fileName = Path.Combine(uploads, productName + "_" + Guid.NewGuid().ToString().Substring(0, Guid.NewGuid().ToString().IndexOf("-", StringComparison.Ordinal)) + ".png");
-        //             //Model
-        //             productImage.ImagePath = Path.GetFileName(fileName);
-
-        //             await _unitOfWork.Repository<ProductImage>().InsertAsync(productImage);
-
-        //             using (var fileStream = new FileStream(Path.Combine(uploads, fileName), FileMode.Create))
-        //             {
-        //                 await file.CopyToAsync(fileStream);
-        //             }
-        //         }
-        //     }
-        // }
-
-        // public async Task UploadProductManual(IFormFile file,int productId,string productName)
-        // {
-        //     var pManual=new ProductManual
-        //     {
-        //         AddedDate = DateTime.Now,
-        //         ModifiedDate = DateTime.Now,
-        //         ProductId = productId
-        //     };
-
-        //     if (file != null && file.ContentType == "application/pdf")
-        //     {
-
-        //         var uploads = Path.Combine(_hosingEnv.WebRootPath, "uploads/ProductManuals");
-        //         var fileName = Path.Combine(uploads, productName + "_" + productId + ".pdf");
-        //         pManual.ManualName = Path.GetFileName(fileName);
-        //         await _unitOfWork.Repository<ProductManual>().InsertAsync(pManual);
-        //         using (var fileStream = new FileStream(Path.Combine(uploads, fileName), FileMode.Create))
-        //         {
-        //             await file.CopyToAsync(fileStream);
-        //         }
-
-        //         //await model.ImageFile.CopyToAsync(new FileStream(fileName,FileMode.Create));
-        //     }
-        // }
-
-        // [HttpGet]
-        // public async Task<IActionResult> DeleteProduct(int id)
-        // {
-        //     Product product = await _unitOfWork.Repository<Product>().GetByIdAsync(id);
-
-        //     return PartialView("_DeleteProduct", product?.Name);
-        // }
-
-        // [HttpPost]
-        // public async Task<IActionResult> DeleteProduct(int id, IFormCollection form)
-        // {
-        //     Product product = await _unitOfWork.Repository<Product>().GetByIdAsync(id);
-        //     if (product != null)
-        //     {
-        //         await _unitOfWork.Repository<Product>().DeleteAsync(product);
-        //     }
-        //     return RedirectToAction(nameof(Index));
-        // }
-
-        // public IActionResult ListImageView(int id)
-        // {
-        //     ProductImageListByProduct productImage=new ProductImageListByProduct();
-        //     //productImage.ProuctImages = GetProdutcsImages(id);
-        //     productImage.Path = productImage.ProuctImages.Max(x => x.ImagePath);
-
-        //     //return PartialView("_ShowImageByProduct", productImage);
-        //     return View();
-        // }
-
-        // public PartialViewResult GetProdutcsImages(int id)
-        // {
-        //     List<ProductImageListViewModel> productImageList = new List<ProductImageListViewModel>();
-        //     ViewBag.productName =  _unitOfWork.Repository<Product>().GetById(id).Name;
-        //      _unitOfWork.Repository<ProductImage>().GetAll().Where(x => x.ProductId == id).ToList().ForEach(x =>
-        //     {
-        //         ProductImageListViewModel pImage = new ProductImageListViewModel
-        //         {
-        //             Id = x.Id,
-        //             ProductId = x.ProductId,
-        //             ImagePath = x.ImagePath,
-        //             Title = x.Title,
-        //             ProductName =  _unitOfWork.Repository<Product>().GetById(id).Name
-        //         };
-        //         productImageList.Add(pImage);
-        //     });
-        //     return PartialView("_ShowImageByProduct", productImageList);
-
-        // }
     }
 }

@@ -1,0 +1,38 @@
+﻿[
+  {
+    "outputFile": "wwwroot/Template/adminCss/build/scss/_buttons.css",
+    "inputFile": "wwwroot/Template/adminCss/build/scss/_buttons.scss"
+  },
+  {
+    "outputFile": "wwwroot/Template/adminCss/build/scss/AdminLTE.css",
+    "inputFile": "wwwroot/Template/adminCss/build/scss/AdminLTE.scss"
+  },
+  {
+    "outputFile": "wwwroot/Template/public/vendor/slick/slick.css",
+    "inputFile": "wwwroot/Template/public/vendor/slick/slick.scss"
+  },
+  {
+    "outputFile": "wwwroot/Template/public/vendor/slick/slick.es5.js",
+    "inputFile": "wwwroot/Template/public/vendor/slick/slick.js"
+  },
+  {
+    "outputFile": "wwwroot/Template/public/js/slick-custom.es5.js",
+    "inputFile": "wwwroot/Template/public/js/slick-custom.js"
+  },
+  {
+    "outputFile": "wwwroot/Template/adminCss/plugins/fullcalendar/locales-all.es5.js",
+    "inputFile": "wwwroot/Template/adminCss/plugins/fullcalendar/locales-all.js"
+  },
+  {
+    "outputFile": "wwwroot/Template/adminCss/plugins/fullcalendar/main.es5.js",
+    "inputFile": "wwwroot/Template/adminCss/plugins/fullcalendar/main.js"
+  },
+  {
+    "outputFile": "wwwroot/Template/adminCss/build/config/postcss.config.es5.js",
+    "inputFile": "wwwroot/Template/adminCss/build/config/postcss.config.js"
+  },
+  {
+    "outputFile": "wwwroot/Template/adminCss/build/js/AdminLTE.es5.js",
+    "inputFile": "wwwroot/Template/adminCss/build/js/AdminLTE.js"
+  }
+]

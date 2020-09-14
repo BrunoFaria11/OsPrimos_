@@ -1,4 +1,4 @@
-﻿@model Ecommerce_MVC_Core.ViewModel.CityViewModel
+﻿@*@model Ecommerce_MVC_Core.ViewModel.CityViewModel
 <form asp-action="AddEditCity" id="frm">
     <div class="form-horizontal">
         @await Html.PartialAsync("_ModalHeader", new ModalHeader { Heading = $"{(Model.Id <= 0 ? "Add" : "Edit")} Brand" })
@@ -27,4 +27,4 @@
 
 <script>
     $.validator.unobtrusive.parse("#frm");
-</script>
+</script>*@

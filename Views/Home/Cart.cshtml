@@ -1,18 +1,506 @@
 ﻿@{
     ViewData["Title"] = "Contact";
     Layout = "_Layout";
+    var YearNow = DateTime.Now.Year;
 }
-<h2>@ViewData["Title"]</h2>
-<h3>@ViewData["Message"]</h3>
 
-<address>
-    One Microsoft Way<br />
-    Redmond, WA 98052-6399<br />
-    <abbr title="Phone">P:</abbr>
-    425.555.0100
-</address>
+<!-- Title Page -->
+<section class="flex-col-c-m p-l-0 p-r-0" style="background: url(/css/Images/banner3.jpg) center top no-repeat fixed">
+    <div class="wrap-content-slide1 sizefull flex-col-c-m p-l-0 p-r-0  p-t-150 p-b-170 " style="background-color:rgba(95, 95, 95, 0.59);height: 10px;">
+        <h2 class="l-text2 t-center">
+            Paga oh trapaceiro
+        </h2>
+    </div>
 
-<address>
-    <strong>Support:</strong> <a href="mailto:Support@example.com">Support@example.com</a><br />
-    <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-</address>
+</section>
+
+<!-- Cart -->
+<section class="cart bgwhite p-t-70 p-b-100">
+    <div class="container">
+        <!-- Cart item -->
+        <div class="container-table-cart pos-relative">
+            <div class="wrap-table-shopping-cart bgwhite">
+                <table class="table-shopping-cart">
+                    <tr class="table-head">
+                        <th class="column-1"></th>
+                        <th class="column-2">Produto</th>
+                        <th class="column-3">Preço</th>
+                        <th class="column-4 p-l-70">Qunatidade</th>
+                        <th class="column-4 p-l-70">Tamanho</th>
+                        <th class="column-4 p-l-70">Cor</th>
+                        <th class="column-5">Total</th>
+                    </tr>
+                    <tbody class="table-shopping-cart-body" style="border-top: 1px solid #e6e6e6; border-bottom: 1px solid #e6e6e6;">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="flex-w flex-sb-m p-t-25 p-b-25 bo8 p-l-35 p-r-60 p-lr-15-sm">
+            <div class="flex-w flex-m w-full-sm">
+
+
+                <div class="size12 trans-0-4 m-t-10 m-b-10 m-r-10">
+                    <!-- Button -->
+                    <button class="flex-c-m sizefull bg1 bo-rad-23 hov1 s-text1 trans-0-4 clear-cart">
+                        Limpar
+                    </button>
+                </div>
+            </div>
+
+
+        </div>
+
+        <!-- Total -->
+        <form class="bo9 w-size20 p-l-40 p-r-40 p-t-30 p-b-38 m-t-30 m-r-0 m-l-auto p-lr-15-sm" id="form-order">
+            <h5 class="m-text20 p-b-24">
+                TOTAL DO CARRINHO
+            </h5>
+
+            <!--  -->
+            <!--  -->
+            <div class="flex-w flex-sb bo10 p-t-15 p-b-20">
+                <span class="s-text20 w-size19 w-full-sm">
+                    ENVIO:
+                </span>
+
+                <div class="w-size20 w-full-sm">
+                    <p class="s-text8 p-b-23">
+                        #TAG
+                    </p>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <div class="size13 bo4 ">
+                                    <input class="sizefull s-text7 p-l-15 p-r-15" type="text" name="FirstName" placeholder="Primeiro Nome">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="size13 bo4 ">
+                                    <input class="sizefull s-text7 p-l-15 p-r-15" type="text" name="LastName" placeholder="Último Nome">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="size13 bo4 ">
+                                    <input class="sizefull s-text7 p-l-15 p-r-15" type="text" name="Email" placeholder="Email">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="size13 bo4 ">
+                                    <input class="sizefull s-text7 p-l-15 p-r-15" type="text" name="PhoneNumber"  placeholder="Nº Telemóvel" data-inputmask='"mask": "999 999 999"' data-mask >
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="form-group">
+
+                                <div class="rs2-select2 rs3-select2 rs4-select2 bo4 of-hidden w-size21 ">
+                                    <select class="selection-2" name="CountryId">
+                                        <option value="">Selecione um país...</option>
+                                        @foreach (var Country in ViewBag.Country as ICollection<Ecommerce_MVC_Core.Models.Admin.Country>)
+                                        {
+                                            <option value="@Country.Id" style="text-transform:uppercase">@Country.CountryName</option>
+                                        }
+
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="size13 bo4 ">
+                                    <input class="sizefull s-text7 p-l-15 p-r-15" type="text" name="City" placeholder="Cidade">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="size13 bo4 ">
+                                    <input class="sizefull s-text7 p-l-15 p-r-15" type="text" name="PostalCode" placeholder="Código Postal" data-inputmask='"mask": "9999-999"' data-mask>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="size13 bo4 ">
+                                    <input class="sizefull s-text7 p-l-15 p-r-15" type="text" name="Address" placeholder="Morada">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-group">
+                                <div class="size13 bo4 ">
+                                    <input class="sizefull s-text7 p-l-15 p-r-15" type="text" name="NIF" placeholder="NIF"  data-inputmask='"mask": "999999999"' data-mask>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+            <div class="flex-w flex-sb  p-t-15 p-b-20">
+                <span class="s-text20 m-text22 w-size19 w-full-sm">
+                    Total:
+                </span>
+
+                <div class="w-size20 w-full-sm">
+                    <span class="total-cart">
+                    </span> €
+                    <div class="row">
+                        <div id="payment">
+                            <div id="checkout" class=" ">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <input class="card card-btn" id="visa" type="button" name="card" value="">
+                                    </div>
+                                    <div class="col-4">
+                                        <input class="card card-btn" id="mastercard" type="button" name="card" value="">
+                                    </div>
+                                    <div class="col-4">
+                                        <input class="card mb-btn" id="MB" type="button" name="card" value="">
+                                    </div>
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="card-validate">
+                                        <label>Número do cartão </label>
+                                        <input id="cardnumber" type=text pattern="[0-9]{13,16}" class="bo4" name="cardnumber" requierd="true" placeholder="XXXX-XXXX-XXXX-XXXX">
+                                        <span id="Card-Error" class=" invalid-feedback">Número do cartão incorreto</span>
+
+                                        <div class="row" style="margin-top:15px">
+                                            <div class="col-6">
+                                                <label class="col-12">DATA DE VALIDADE</label>
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <div class="rs2-select2 rs3-select2 rs4-select2 bo4 of-hidden  ">
+                                                            <select class="selection-2" id="month" name="MonthValidation">
+                                                                <option value="">MM</option>
+                                                                <option value="01">01</option>
+                                                                <option value="02">02</option>
+                                                                <option value="03">03</option>
+                                                                <option value="04">04</option>
+                                                                <option value="05">05</option>
+                                                                <option value="06">06</option>
+                                                                <option value="07">07</option>
+                                                                <option value="08">08</option>
+                                                                <option value="09">09</option>
+                                                                <option value="10">10</option>
+                                                                <option value="11">11</option>
+                                                                <option value="12">12</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-6">
+                                                        <div class="rs2-select2 rs3-select2 rs4-select2 bo4 of-hidden  ">
+                                                            <select class="selection-2" id="year" name="YearValidation">
+                                                                <option value="">YY</option>
+                                                                <option value="@YearNow">@(YearNow % 100)</option>
+                                                                <option value="@(YearNow + 1)">@((YearNow + 1)% 100)</option>
+                                                                <option value="@(YearNow + 2)">@((YearNow + 2)% 100)</option>
+                                                                <option value="@(YearNow + 3)">@((YearNow + 3)% 100)</option>
+                                                                <option value="@(YearNow + 4)">@((YearNow + 4)% 100)</option>
+                                                                <option value="@(YearNow + 5)">@((YearNow + 5)% 100)</option>
+                                                                <option value="@(YearNow + 6)">@((YearNow + 6)% 100)</option>
+                                                                <option value="@(YearNow + 7)">@((YearNow + 7) % 100)</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <span id="Date-Error" class=" invalid-feedback" style=" margin-left: 11%;">Data de validação incorreto</span>
+
+                                            </div>
+                                            <div class="col-4">
+                                                <label id="cvc-label" class="col-12">CVV</label>
+                                                <input id="cvc" type="text" lass="col-12"  placeholder="CVV" name="CVV" maxlength="3" />
+                                                <span id="cvv-Error" class=" invalid-feedback" style=" margin-left: 11%;">CVV incorreto</span>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="size15 trans-0-4">
+                <!-- Button -->
+                <button type="submit" class="flex-c-m sizefull  bg1 bo-rad-23 hov1 s-text1 trans-0-4" style=" max-width: 160PX;">
+                    COMPRAR
+                </button>
+            </div>
+        </form>
+
+
+    </div>
+</section>
+<div id="dropDownSelect1"></div>
+<div id="dropDownSelect2"></div>
+
+<script>
+    debugger;
+    $(document).ready(function () {
+        if ($('.table-shopping-cart tr').length == 1) {
+            $("#form-order").hide();
+        }
+        else {
+            $("#form-order").show();
+        }
+    });
+
+    $(".selection-1").select2({
+        minimumResultsForSearch: 20,
+        dropdownParent: $('#dropDownSelect1')
+    });
+
+    $(".selection-2").select2({
+        minimumResultsForSearch: 20,
+        dropdownParent: $('#dropDownSelect2')
+    });
+
+
+    $.validator.setDefaults({
+        submitHandler: function () {
+            event.preventDefault();
+            doAjax("/Order/NewOrder", "", "#form-order");
+        }
+    });
+
+    $('#form-order').validate({
+        rules: {
+            FirstName: {
+                required: true,
+               
+            },
+            LastName: {
+                required: true,
+            },
+            Email: {
+                required: true,
+                email: true,
+                minlength:5
+
+            },
+            PhoneNumber: {
+                required: true,
+                minlength: 11,
+                maxlength:11
+            },
+            CountryId: {
+                required: true,
+            },
+            City: {
+                required: true,
+                minlength: 3
+            },
+
+            PostalCode: {
+                required: true,
+                minlength: 8,
+                maxlength: 8,
+
+            },
+            Address: {
+                required: true,
+                minlength: 4
+            },
+            NIF: {
+                required: true,
+                minlength: 9,
+                maxlength: 9,
+            },
+
+        },
+        messages: {
+            FirstName: {
+                required: "Campo obrigatório",
+            },
+
+            LastName: {
+                required: "Campo obrigatório",
+            },
+
+            Email: {
+                required: "Campo obrigatório",
+                email: "Campo incorreto",
+                minlength: "Campo incorreto"
+            },
+
+            PhoneNumber: {
+                required: "Campo obrigatório",
+                minlength: "Campo incorreto",
+                maxlength: "Campo incorreto"
+            },
+
+            CountryId: {
+                required: "Campo obrigatório",
+            },
+
+            City: {
+                required: "Campo obrigatório",
+                minlength: "Campo incorreto",
+
+            },
+
+            PostalCode: {
+                required: "Campo obrigatório",
+                minlength: "Campo incorreto",
+                maxlength: "Campo incorreto"
+            },
+
+            Address: {
+                required: "Campo obrigatório",
+                minlength: "Campo incorreto",
+
+            },
+
+            NIF: {
+                required: "Campo obrigatório",
+                minlength: "Campo incorreto",
+                maxlength: "Campo incorreto"
+            },
+        },
+
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+            debugger;
+            if ($(".card-validate").is(":visible")) {
+                var isCardValid = $.payform.validateCardNumber(cardNumber.val());
+                var isCvvValid = $.payform.validateCardCVC(CVV.val());
+                if (!isCardValid) {
+                    $("#Card-Error").show()
+                }
+                else {
+                    $("#Card-Error").hide()
+
+                }
+                if (!isCvvValid) {
+                    $("#cvv-Error").show();
+                }
+                else {
+                    $("#cvv-Error").hide()
+
+                }
+                if ($("#year").val() == "" || $("#month").val() == "") {
+                    $("#Date-Error").show();
+                }
+                else {
+                    $("#Date-Error").show();
+                }
+               
+            }
+            error.addClass('invalid-feedback');
+            element.closest('.form-group').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        }
+    });
+
+
+   function doAjax(url, IdEntity, IdForm) {
+       event.preventDefault();
+       var validCard = true;
+   
+
+       debugger
+       var obj = $(IdForm).serializeFormJSON();
+       var ListProducts = "";
+       
+       dict = new Object();
+       dict2 = new Object();
+       dict3 = new Object();
+
+
+       $.each(shoppingCart.listCart(), function (i, e) {
+           debugger;
+           dict[e.id] = e.count;
+           dict2[e.id] = e.Color;
+           dict3[e.id] = e.Size;
+
+       });
+
+       if ($(".card-validate").is(":visible")) {
+
+           var isCardValid = $.payform.validateCardNumber(cardNumber.val());
+           var isCvvValid = $.payform.validateCardCVC(CVV.val());
+           if (!isCardValid) {
+               $("#Card-Error").show()
+               validCard = false;
+           }
+           else {
+               $("#Card-Error").hide()
+           }
+           if (!isCvvValid) {
+               $("#cvv-Error").show();
+               validCard = false;
+
+           } 
+           else {
+               $("#cvv-Error").hide()
+
+           }
+           if ($("#year").val() == "" || $("#month").val() == "") {
+               $("#Date-Error").show();
+               validCard = false;
+
+           }
+           else {
+               $("#Date-Error").hide();
+
+           }
+           if (!validCard) {
+               return
+           }
+           obj["PaymentMethodId"] = 1;
+       }
+       else {
+           obj["PaymentMethodId"] = 2;
+
+       }
+
+       obj["ProductCountList"] = dict;
+       obj["ProductColorList"] = dict2;
+       obj["ProductSizeList"] = dict3;
+
+       obj["Total"] = shoppingCart.totalCart();
+       obj["ProductsNumber"] = shoppingCart.totalCount();
+
+
+
+       $.post(url, { model: obj}, function (htmlresponse) {
+           if (!htmlresponse.error) {
+
+           }
+           else {
+              
+           }
+       });
+
+
+    }
+    var cardNumber = $('#cardnumber');
+    var cardNumberField = $('#card-number-field');
+    var CVV = $("#cvc");
+    var mastercard = $("#mastercard");
+    var visa = $("#visa");
+
+    cardNumber.payform('formatCardNumber');
+    CVV.payform('formatCardCVC');
+
+    $('[data-mask]').inputmask()
+
+   
+ 
+    
+
+</script>

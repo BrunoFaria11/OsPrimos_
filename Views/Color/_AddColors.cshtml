@@ -30,7 +30,7 @@
     </div>
 
 
-    @await Html.PartialAsync("_ModalFooter", new ModalFooter { urlPOST = "color/AddColor", IdEntity = Model.Id.ToString(), IdForm = "color_form" })
+    @await Html.PartialAsync("_ModalFooter", new ModalFooter { urlPOST = "", IdEntity = Model.Id.ToString(), IdForm = "color_form" })
 </form>
 
 <script>
@@ -39,6 +39,42 @@
     $('.colorpicker_').on('change', function (event) {
 
         $('.square').css('color', $(this).val());
+    });
+
+
+      $.validator.setDefaults({
+        submitHandler: function () {
+            event.preventDefault();
+
+              const IdProduct = doAjax("Color/AddColor", "@Model.Id", "#color_form");
+        }
+    });
+
+    $('#color_form').validate({
+        rules: {
+            color: {
+                required: true,
+            },     
+        },
+        messages: {
+            Name: {
+                required: "Insira uma cor",
+            },
+           
+        },
+
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+         
+            error.addClass('invalid-feedback');
+            element.closest('.form-group').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        }
     });
 
 </script>

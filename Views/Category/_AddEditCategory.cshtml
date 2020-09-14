@@ -22,32 +22,50 @@
             <div class="col-3">
             </div>
             <div class="col-6">
-                <div class="card-body text-center" id="Div_catImage" style="padding: 0px;background-image:url(@Model.Image_Path);background-repeat: no-repeat; background-position-x: center; background-position-y: center;">
-                    <div class="" style="height: 300px; border-radius: 8px;background-color: rgba(95, 95, 95, 0.59); padding-top:25%">
-                        <lebel id="catImageClick" class="btn btn-default  btn-lg" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
+                <div class="card-body text-center upload-image-div" id="Div_catImage" style="background-image:url(@Model.Image_Path);">
+                    <div class="upload-image-gray">
+                        <lebel class="btn btn-default btn-lg upload-btn">
                             <i class="fas fa-pencil-alt">
                             </i>
                         </lebel>
-                        <input id="catImage" type="file" />
-
+                        <input id="catImage" asp-for="Image_Path" name="Image_Path" type="file" class="input-type-file" />
                     </div>
                 </div>
-
+                <span id="Image_Path_Error" class=" invalid-feedback">Insira uma Imagem</span>
             </div>
         </div>
 
+        @if (Model.Id > 0)
+        {
+            <div class="row">
+                <div class="col-6">
+                    <div class="form-group">
+                        <label asp-for="Active" class="col-sm-2 col-form-label">Activar/Desativar</label>
+                    </div>
+                    @if (Model.Active)
+                    {
+                        <input type="checkbox" asp-for="Active" name="Active" checked data-bootstrap-switch data-off-color="danger" data-on-color="success" class="form-control">
+                    }
+                    else
+                    {
+                        <input type="checkbox" asp-for="Active" name="Active" data-bootstrap-switch data-off-color="danger" data-on-color="success" class="form-control">
+                    }
+
+                </div>
+            </div>
+        }
     </div>
 
-    @await Html.PartialAsync("_ModalFooter", new ModalFooter { urlPOST = "/Category/AddEditCategory", IdEntity = Model.Id.ToString(), IdForm = "frm" })
+    @await Html.PartialAsync("_ModalFooter", new ModalFooter { urlPOST = "", IdEntity = Model.Id.ToString(), IdForm = "frm" })
 
 </form>
 
 
 <script>
 
-    $(document).on("submit", "form", function (event) {
-        const IdCat =  doAjax("/Category/AddEditCategory", "@Model.Id", "#frm");
-    })
+    $("input[data-bootstrap-switch]").each(function () {
+        $(this).bootstrapSwitch('state', $(this).prop('checked'));
+    });
 
    function doAjax(url, IdEntity, IdForm) {
         event.preventDefault();
@@ -68,23 +86,67 @@
             else {
                 Toast.fire({
                     icon: 'error',
-                    title: ''
+                    title: htmlresponse.result
                 })
             }
         });
     }
 
-    $('#catImageClick').on('click', function (e) {
-        e.preventDefault();
-        $('#catImage').trigger('click');
+     $.validator.setDefaults({
+        submitHandler: function () {
+            event.preventDefault();
+
+             const IdProduct = doAjax("/Category/AddEditCategory", "@Model.Id", "#frm");
+        }
     });
 
-    $("#catImage").change('change', function (e) {
-        e.preventDefault();
-        $('#Div_catImage').css("background-image", "url(" + URL.createObjectURL(e.target.files[0]) + ") ");
+    $('#frm').validate({
+        rules: {
+            Name: {
+                required: true,
+            },
+          
+          
+        },
+        messages: {
+            Name: {
+                required: "Insira um Nome",
 
+            },
+         
+         
+        },
+
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+            if ("@Model.Id" <= 0) {
+                if ($("#catImage").val() == "") {
+                    $("#Image_Path_Error").show()
+                }
+            }
+            error.addClass('invalid-feedback');
+            element.closest('.form-group').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        }
     });
 
+    $('.upload-btn').on('click', function (e) {
+        e.preventDefault();
+
+        var input = $(this).closest(".upload-image-div").find('.input-type-file');
+        $(input).trigger('click');
+    });
+
+    $(".input-type-file").change('change', function (e) {
+        e.preventDefault();
+
+        $(this).closest('.upload-image-div').css("background-image", "url(" + URL.createObjectURL(e.target.files[0]) + ") ");
+    });
 
     function UploadFile(inputId, IdCat) {
         debugger;

@@ -1,0 +1,175 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "_LayoutAdmin";
+}
+<style>
+    input[type="file"] {
+        display: none;
+    }
+
+    .upload-btn {
+        border-radius: 50%;
+        background-color: transparent;
+        color: white;
+        width: 91px;
+        height: 91px;
+        top: 50%;
+        transform: translateY(-74%);
+        padding-top: 30px;
+    }
+
+    .upload-image-div {
+        padding: 0px;
+        background-repeat: no-repeat;
+        background-position-x: center;
+        background-position-y: center;
+        background-size: contain;
+        border: 2px dashed #da6908;
+        border-radius: 12px;
+        padding: 3px;
+    }
+</style>
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            @foreach (var Section in ViewBag.Sections as ICollection<Ecommerce_MVC_Core.Models.Admin.Sections>)
+            {
+                <div class="col-4">
+                    <div class="card card-secondary w-100 collapsed-card">
+                        <div class="card-header">
+                            <h3 class="card-title">@Section.Name</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" class="form-Section" data-sectionId="@Section.Id">
+                                @foreach (var Section_HTML in Section.Sections_HTML)
+                                {
+                                    <div class="row Section_HTML_aux" data-Section_HTML_Id="@Section_HTML.Id" data-typeinput="@Section_HTML.InputType">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label class="col-sm-12 col-form-label" for="@Section_HTML.Display">@Section_HTML.Display</label>
+                                                @Html.Raw(Section_HTML.Input)
+                                            </div>
+                                        </div>
+                                        @if (Section_HTML.InputType == 2)
+                                        {
+                                            <input class="aux_values" hidden />
+                                        }
+                                    </div>
+                                }
+                                <div class="row">
+                                    <div class="col-12 text-right">
+                                        <button type="button" class="btn btn-block btn-success" style="width:74px;float:right; margin-right: 2%;" id="edit-@Section.Id">Editar</button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="form-group">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                $("#edit-@Section.Id").on("click",function () {
+                    event.preventDefault();
+                    debugger;
+
+
+                var Sections_HTML = [];
+
+
+
+                    $(this).closest(".form-Section").find('.Section_HTML_aux').each(function (i, obj) {
+
+                        var input_Type = $(obj).attr("data-typeinput");
+
+                        var div = obj.closest(".Section_HTML_aux");
+
+                        var input = $(obj).find(":input");
+                        var input_html = $(input)[0].outerHTML;
+                        var input_val = $(input).val();
+
+                        if (input_Type == 2) {
+
+                            var div_input_image = $(obj).find(".upload-image-div");
+                            var input_image = $(div_input_image).find(".upload-image-div");
+                            var input_image_HTML = $(div_input_image)[0].outerHTML;
+                            debugger;
+                            var inputaux = $(obj).find(".aux_values").val()
+
+                            let obj_m = { Id: $(obj).attr("data-Section_HTML_Id"), 'Input': input_image_HTML, 'Tag_HTML_Value': "", "ImageBase64": inputaux};
+                            Sections_HTML.push(obj_m);
+
+                        }
+                        else {
+                            let obj_m = { Id: $(obj).attr("data-Section_HTML_Id"), 'Input': input_html, 'Tag_HTML_Value': input_val };
+                            Sections_HTML.push(obj_m);
+                        }
+
+                    });
+
+                    $.post("/Admin/SaveSections", { SectionId: "@Section.Id", List: Sections_HTML }, function (htmlresponse) {
+                        debugger
+                        if (!htmlresponse.error) {
+                            CloseModal();
+                            Toast.fire({
+                                icon: 'success',
+                                title: htmlresponse.result,
+                                timer: 5000
+                            })
+                        }
+                        else {
+                            Toast.fire({
+                                icon: 'error',
+                                title: htmlresponse.result
+                            })
+                        }
+                    });
+
+
+
+
+                })
+                </script>
+            }
+        </div>
+    </div>
+</section>
+<script>
+    $('.upload-btn').on('click', function (e) {
+        e.preventDefault();
+        var input = $(this).closest(".upload-image-div").find('.input-type-file');
+        $(input).trigger('click');
+    });
+
+    $(".input-type-file").change('change', function (e) {
+        e.preventDefault();
+        debugger;
+        $(this).closest('.upload-image-div').css("background-image", "url(" + URL.createObjectURL(e.target.files[0]) + ") ");
+        var input = $(this);
+        toDataUrl(URL.createObjectURL(e.target.files[0]), function (myBase64) {
+            debugger;
+            $(input).closest('.Section_HTML_aux').find(".aux_values").val(myBase64) // myBase64 is the base64 string
+        });
+    });
+
+
+    function toDataUrl(url, callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+            var reader = new FileReader();
+            reader.onloadend = function () {
+                callback(reader.result);
+            }
+            reader.readAsDataURL(xhr.response);
+        };
+        xhr.open('GET', url);
+        xhr.responseType = 'blob';
+        xhr.send();
+    }
+
+</script>

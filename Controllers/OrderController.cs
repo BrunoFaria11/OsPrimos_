@@ -4,9 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Ecommerce_MVC_Core.Code;
 using Ecommerce_MVC_Core.Data;
-using Ecommerce_MVC_Core.Models;
+using Ecommerce_MVC_Core_Data_2.Models;
 using Ecommerce_MVC_Core.Models.Admin;
 using Ecommerce_MVC_Core.Repository;
+using Ecommerce_MVC_Core.ViewModel;
 using Ecommerce_MVC_Core.ViewModel.Public;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -14,6 +15,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Ecommerce_MVC_Core.Models;
+
+using static Ecommerce_MVC_Core_Data_2.Data.Enum.Enum;
 
 namespace Ecommerce_MVC_Core.Controllers
 {
@@ -43,291 +47,428 @@ namespace Ecommerce_MVC_Core.Controllers
             _userManager = userManager;
         }
 
-
-        public IActionResult Index()
+        [Authorize(Roles = "Admin")]
+        public IActionResult Index(int TypeOrder)
         {
-            List<OrderDetailsViewModel> model = new List<OrderDetailsViewModel>();
-            List<AddToCartViewModel> addToCartList = HttpContext.Session.Get<List<AddToCartViewModel>>("CartItem");
-            int itemInCart = 0;
-            var valu = HttpContext.Session.GetInt32("itemCount");
-            if (valu != null)
-            {
-                itemInCart = valu.Value;
-            }
 
-            // var dbProducts = _unitOfWork.Repository<Product>().Query()
-            //     .Include( p => p.ProductImages)
-            //     .Include(ps => ps.ProductStocks);
-            if (addToCartList!=null)
+            ViewBag.TypeOrder = TypeOrder;
+            return View();
+        }
+
+        public ActionResult LoadData(int TypeOrder)
+        {
+            try
             {
-                addToCartList.ForEach(c =>
+                //Creating instance of DatabaseContext class  
+                var draw_ = new Microsoft.Extensions.Primitives.StringValues();
+                var start_ = new Microsoft.Extensions.Primitives.StringValues();
+                var length_ = new Microsoft.Extensions.Primitives.StringValues();
+                var aux = new Microsoft.Extensions.Primitives.StringValues();
+                var sortcolumndir_ = new Microsoft.Extensions.Primitives.StringValues();
+                var searchvalue_ = new Microsoft.Extensions.Primitives.StringValues();
+                var sortcolumn_ = new Microsoft.Extensions.Primitives.StringValues();
+
+
+                var draw = Request.Form.TryGetValue("draw", out draw_);
+                var start = Request.Form.TryGetValue("start", out start_);
+                var length = Request.Form.TryGetValue("length", out length_);
+                var aux_ = Request.Form.TryGetValue("order[0][column]", out aux);
+                var sortcolumn = Request.Form.TryGetValue("columns[" + aux_ + "][name]", out sortcolumn_);
+                var sortcolumndir = Request.Form.TryGetValue("order[0][dir]", out sortcolumndir_);
+                var searchvalue = Request.Form.TryGetValue("search[value]", out searchvalue_);
+
+
+                //Paging Size (10,20,50,100)    
+                int pageSize = length != null ? Convert.ToInt32(length_) : 0;
+                int skip = start != null ? Convert.ToInt32(start_) : 0;
+                int recordsTotal = 0;
+
+                // Getting all Customer data    
+                var OrdersList = GetOrders(TypeOrder).ToList();
+
+                //Sorting    
+                if (!(string.IsNullOrEmpty(sortcolumn_) && string.IsNullOrEmpty(sortcolumndir_)))
                 {
-                    OrderDetailsViewModel orderDetails=new OrderDetailsViewModel();
-                    orderDetails.ProductId = c.ProductId;
-                    orderDetails.ProductName = c.ProductName;
-                    orderDetails.FinalPrice = c.FinalPrice;
-                    orderDetails.Quantity = c.Quantity;
-                    // var product = dbProducts.FirstOrDefault(x => x.Id == c.ProductId);
+                    OrdersList = OrdersList.OrderBy(x => x.Name).ToList();
+                }
+                //Search    
+                //if (!string.IsNullOrEmpty(searchvalue_))
+                //{
+                //    ProductsStockList = ProductsStockList.Where(m => m.ProductName == searchvalue_);
+                //}
 
-                    // if (product!=null)
-                    // {
-                    //     orderDetails.Price = product.Price;
-                    //     orderDetails.ImagePath =product.ProductImages.FirstOrDefault(x => x.ProductId == c.ProductId)
-                    //         ?.ImagePath;
-                    //     var pStock = product.ProductStocks.FirstOrDefault(x => x.ProductId == c.ProductId);
-                    //     if (pStock!=null)
-                    //     {
-                    //         orderDetails.Stock = (pStock.InQuantity - pStock.OutQuantity) < 1
-                    //             ? 0
-                    //             : pStock.InQuantity - pStock.OutQuantity;
-                    //     }
-                    //     model.Add(orderDetails);
-                    // }
+                //total number of rows count     
+                recordsTotal = OrdersList.Count();
+                //Paging     
+                var data = OrdersList.Skip(skip).Take(pageSize).ToList();
+                //Returning Json Data    
+                return Json(new { draw = draw_, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+
+        public List<OrdersViewModel> GetOrders(int TypeOrder)
+        {
+            try
+            {
+                List<OrdersViewModel> orderList = new List<OrdersViewModel>();
+                var Listdb = new List<Orders>();
+                switch (TypeOrder)
+                {
+                    case 1:
+
+                        Listdb = _unitOfWork.Repository<Orders>().GetAllInclude(u => u.Users).Where(x => x.StatusId == (int)StatusOrder.Created 
+                        || (x.StatusId == (int)StatusOrder.Processed && x.PaymentMethodId == 2) 
+                        || x.StatusId == (int)StatusOrder.NotPaid
+                        || x.StatusId == (int)StatusOrder.Error).ToList();
+                        break;
+                    case 2:
+                        Listdb = _unitOfWork.Repository<Orders>().GetAllInclude(u => u.Users).Where(x => x.StatusId == (int)StatusOrder.Paid).ToList();
+                        break;
+                    case 3:
+                        Listdb = _unitOfWork.Repository<Orders>().GetAllInclude(u => u.Users).Where(x => x.StatusId == (int)StatusOrder.Sent).ToList();
+                        break;
+                    default:
+                        //error
+                        break;
+                }
+                Listdb.ForEach(x =>
+                {
+                    OrdersViewModel Order = new OrdersViewModel
+                    {
+                        Id = x.Id,
+                        Number = x.Number,
+                        Name = x.Users.FirstName + " " + x.Users.LastName,
+                        Address = x.DeliveryAddress,
+                        Email = x.Users.Email,
+                        PhoneNumber = x.Users.PhoneNumber,
+                        Total = x.Total,
+                        ProductsNumber = x.ProductsNumber,
+                        NIF = x.Users.NIF,                      
+                        Status = x.StatusId,
+                    };
+
+                    switch (x.PaymentMethodId)
+                    {
+                        case 1:
+                            Order.PaymentMethod = "Visa/MasterCard";
+                            break;
+                        case 2:
+                            Order.PaymentMethod = "Referência Multibanco";
+                            break;
+                        default:
+                            break;
+                    }
+                    orderList.Add(Order);
                 });
+                return orderList;
+            }
+            catch (Exception)
+            {
+
+                throw;
             }
 
-            return View(model);
         }
 
-        [HttpPost]
-        public IActionResult Index(IEnumerable<OrderDetailsViewModel> product)
-        {
-            List<AddToCartViewModel> addToCartList = HttpContext.Session.Get<List<AddToCartViewModel>>("CartItem");
-            
-            List <AddToCartViewModel> modelCart=new List<AddToCartViewModel>();
-
-            int itemInCart = 0;
-            double estimatePrice = 0;
-            double totalPrice = 0;
-            var valu = HttpContext.Session.GetInt32("itemCount");
-            if (valu != null)
-            {
-                itemInCart = valu.Value;
-            }
-            HttpContext.Session.Set<List<AddToCartViewModel>>("CartItem", modelCart);
-            foreach (var item in product)
-            {
-                AddToCartViewModel cart = new AddToCartViewModel();
-                cart.ProductId = item.ProductId;
-                cart.FinalPrice = item.FinalPrice;
-                cart.ProductName = item.ProductName;
-                cart.Quantity = item.Quantity;
-                estimatePrice = item.Quantity * item.FinalPrice;
-                totalPrice = totalPrice + estimatePrice;
-                modelCart.Add(cart);
-                
-            }
-            HttpContext.Session.Set<List<AddToCartViewModel>>("CartItem", modelCart);
-            itemInCart = HttpContext.Session.Get<List<AddToCartViewModel>>("CartItem").Count;
-            HttpContext.Session.SetInt32("itemCount", itemInCart);
-            HttpContext.Session.SetInt32("TotalPrice",Convert.ToInt32(totalPrice));
-
-            return RedirectToAction(nameof(NewOrder));
-        }
-
-        #region AddNewOrders
-        [Authorize]
-        public IActionResult NewOrder()
-        {
-            NewOrderViewModel model=new NewOrderViewModel();
-            model.OrderDetailsList = GetItemOrderDetails();
-
-            model.Countries  = _unitOfWork.Repository<Country>().GetAll().Select(c => new SelectListItem
-            {
-                Text = c.Name,
-                Value = c.Id.ToString()
-
-            }).OrderBy(x => x.Text).ToList();
-
-            model.Countries.Add(new SelectListItem { Text = "--Select--", Value = "0", Selected = true });
-            model.Cities = new List<SelectListItem>();
-            model.Locations=new List<SelectListItem>();
-            model.PaymentMethods = _unitOfWork.Repository<PaymentMethod>().GetAll().Select(p => new SelectListItem
-            {
-                Text = p.Name,
-                Value = p.Id.ToString()
-
-            }).OrderBy(s => s.Text).ToList();
-            model.PaymentMethods.Add(new SelectListItem { Text = "--Select--", Value = "0",Selected = true});
-
-            return View(model);
-        }
-
-        [Authorize]
         [HttpPost]
         public IActionResult NewOrder(NewOrderViewModel model)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                ModelState.AddModelError("","Something wrong");
-                return View(model);
-            }
-            List<AddToCartViewModel> addToCartList = HttpContext.Session.Get<List<AddToCartViewModel>>("CartItem");
+                if (!ModelState.IsValid)
+                {
+                    ModelState.AddModelError("", "Something wrong");
+                    return View(model);
+                }
 
-            if (addToCartList==null)
-            {
+                bool ValidateOrder = this.ValidateOrder(model);
+                if (true)
+                {
+                    var contry = _unitOfWork.Repository<Country>().Find(x => x.Id == Convert.ToInt32(model.CountryId));
+
+                    Orders Neworder = new Orders
+                    {
+                        Number = "" + DateTime.Now.ToString("yyyyMMddss") + GenerateRandomNo() + "",
+                        ProductsNumber = model.ProductsNumber,
+                        DeliveryAddress = contry.CountryName + " " + model.City + " " + model.Address + " " + model.PostalCode,
+                        Total = Convert.ToDouble(model.Total.Replace(".",",")),
+                        StatusId = 1,
+                        PaymentMethodId = model.PaymentMethodId,
+                        AddedDate = DateTime.Now,
+                        NotificationViewed = false,
+                        Users = new ApplicationUsers
+                        {
+                            FirstName = model.FirstName,
+                            LastName = model.LastName,
+                            City = model.City,
+                            PostalCode = model.PostalCode,
+                            Address = model.Address,
+                            Email = model.Email,
+                            PhoneNumber = model.PhoneNumber,
+                            NIF = model.NIF,
+                        }
+                    };
+
+                    if (model.PaymentMethodId == 1)
+                    {
+                        Neworder.CardNumber = model.CardNumber.Replace(" ", "");
+                        Neworder.DateValidation = model.MonthValidation + "/" + model.YearValidation;
+                        Neworder.CVV = model.CVV;
+                    }
+
+                    var Products = model.ProductCountList;
+
+                    List<OrderDetails> ListProducts = new List<OrderDetails>();
+                    foreach (var product in Products)
+                    {
+                        var product_ = _unitOfWork.Repository<Product>().Find(x => x.Id == Convert.ToInt32(product.Key));
+                        var size = model.ProductSizeList.Where(x => x.Key == product.Key).FirstOrDefault().Value;
+                        var color = model.ProductColorList.Where(x => x.Key == product.Key).FirstOrDefault().Value;
+                        var count = Convert.ToInt32(product.Value);
+                        var Stockproduct_ = _unitOfWork.Repository<ProductStock>().GetAllInclude(s => s.ProductSize, c => c.Colors).Where(x => x.ProductId == Convert.ToInt32(product.Key) && x.ProductSize.Size == size && x.Colors.Color == color).FirstOrDefault();
+                        ListProducts.Add(new OrderDetails
+                        {
+                            ColorId = Stockproduct_.ColorId,
+                            SizeId = Stockproduct_.SizeId,
+                            ProductId = product_.Id,
+                            Quantity = count,
+                            AddedDate = DateTime.Now,
+                        });
+                        Stockproduct_.InQuantity = Stockproduct_.InQuantity - 1;
+                        if (Stockproduct_.InQuantity == Stockproduct_.MinQuantity)
+                        {
+                            Stockproduct_.HaveStock = false;
+                        }
+                        _unitOfWork.Repository<ProductStock>().Update(Stockproduct_);
+                    }
+
+                    Neworder.OrderDetails = ListProducts;
+                    _unitOfWork.Repository<Orders>().Insert(Neworder);
+                }
+                else
+                {
+                    //TODO:FATALERROR
+                }
+
                 return RedirectToAction("Index", "Home");
             }
-
-            var num = HttpContext.Session.GetInt32("TotalPrice");
-            double totalPrice=0;
-            if (num != null)
-            {
-                totalPrice =  Convert.ToDouble(num);
-            }
-            ApplicationUsers user = _userManager.GetUserAsync(HttpContext.User).Result;
-            //Inserting Order
-            Orders orders=new Orders
-            {
-                AddedDate = DateTime.Now,
-                DeliveryAddress = model.DaliveryAddress,
-                LocationId = model.LocationId,
-                ModifiedDate = DateTime.Now,
-                Number = GenerateRandomNo().ToString(),
-                PaymentMethodId = model.PaymentMethodId,
-                Total = totalPrice,
-            };
-
-            orders.UserId = user.Id;
-            orders.DeliveryCharge = _unitOfWork.Repository<Location>().Find(x => x.Id == model.LocationId).Charge;
-            _unitOfWork.Repository<Orders>().Insert(orders);
-            
-            //Inserting Order Details
-
-            int oId=orders.Id;
-
-
-            for (int i = 0; i < addToCartList.Count; i++)
+            catch (Exception)
             {
 
-                OrderDetails orderDetails = new OrderDetails();
-
-                orderDetails.AddedDate = DateTime.Now;
-                orderDetails.ModifiedDate = DateTime.Now;
-                orderDetails.OrderId = oId;
-                // orderDetails.ProductId = addToCartList[i].ProductId;
-                orderDetails.Quantity = addToCartList[i].Quantity;
-                orderDetails.Rate = addToCartList[i].FinalPrice;
-                orderDetails.Remarks = "";
-
-                _unitOfWork.Repository<OrderDetails>().Insert(orderDetails);
-                    
-             }
-            
-
-            addToCartList=new List<AddToCartViewModel>();
-            HttpContext.Session.Set<List<AddToCartViewModel>>("CartItem", addToCartList);
-
-           int itemInCart = HttpContext.Session.Get<List<AddToCartViewModel>>("CartItem").Count;
-            HttpContext.Session.SetInt32("itemCount", itemInCart);
-            HttpContext.Session.SetInt32("TotalPrice",0);
-
-            return RedirectToAction("Index","Home");
-        }
-
-        public List<OrderDetailsViewModel> GetItemOrderDetails()
-        {
-            List<OrderDetailsViewModel> model = new List<OrderDetailsViewModel>();
-            List<AddToCartViewModel> addToCartList = HttpContext.Session.Get<List<AddToCartViewModel>>("CartItem");
-            int itemInCart = 0;
-            var valu = HttpContext.Session.GetInt32("itemCount");
-            if (valu != null)
-            {
-                itemInCart = valu.Value;
+                throw;
             }
 
-
-            if (addToCartList != null)
-            {
-                // var dbProducts = _unitOfWork.Repository<Product>().Query()
-                //     .Include(p => p.ProductImages)
-                //     .Include(ps => ps.ProductStocks);
-
-                addToCartList.ForEach(c =>
-                {
-                    OrderDetailsViewModel orderDetails = new OrderDetailsViewModel();
-                    orderDetails.ProductId = c.ProductId;
-                    orderDetails.ProductName = c.ProductName;
-                    orderDetails.FinalPrice = c.FinalPrice;
-                    orderDetails.Quantity = c.Quantity;
-                    // var product = dbProducts.FirstOrDefault(x => x.Id == c.ProductId);
-                    // if (product!=null)
-                    // {
-                    //     orderDetails.Price = product.Price;
-                    //     orderDetails.ImagePath = product.ProductImages.FirstOrDefault(x => x.ProductId == c.ProductId)
-                    //         ?.ImagePath;
-                    //     var pStock = product.ProductStocks.FirstOrDefault(x => x.ProductId == c.ProductId);
-                    //     if (pStock != null)
-                    //     {
-                    //         orderDetails.Stock = (pStock.InQuantity - pStock.OutQuantity) < 1
-                    //             ? 0
-                    //             : pStock.InQuantity - pStock.OutQuantity;
-                    //     }
-                    //     model.Add(orderDetails);
-                    // }
-                });
-            }
-            return model;
-        }
-        public int GenerateRandomNo()
-        {
-            int _min = 1000;
-            int _max = 9999;
-            Random _rdm = new Random();
-            return _rdm.Next(_min, _max);
-        }
-        #endregion
-
-        #region RemoveCartItem
-
-
-        [HttpGet]
-        public IActionResult RemoveItemFromCart(int product)
-        {
-            AddToCartViewModel model=new AddToCartViewModel();
-
-            List<AddToCartViewModel> addToCartList = HttpContext.Session.Get<List<AddToCartViewModel>>("CartItem");
-            //string name = "";
-            model =addToCartList.FirstOrDefault(x => x.ProductId == product);
-            if (model != null)
-            {
-                HttpContext.Session.SetInt32("ProductId",product);
-            }
-
-            return PartialView("_RemoveItemFromCart", model);
         }
 
 
         [HttpPost]
-        public IActionResult RemoveItemFromCart(int? product, AddToCartViewModel model)
+        public JsonResult SendOrder(int Id)
         {
-           
-                product = HttpContext.Session.GetInt32("ProductId");
-            
-            List<AddToCartViewModel> addToCartList = HttpContext.Session.Get<List<AddToCartViewModel>>("CartItem");
-            int itemInCart = 0;
-            var valu = HttpContext.Session.GetInt32("itemCount");
-            if (valu != null)
+            try
             {
-                itemInCart = valu.Value;
-            }
-
-            if (addToCartList.Where(x => x.ProductId == product).ToList().Count > 0)
-            {
-                AddToCartViewModel cart = addToCartList.FirstOrDefault(x => x.ProductId==product);
-                if (cart!=null)
+                if (Id > 0)
                 {
-                    addToCartList.Remove(cart);
+                    var Order = _unitOfWork.Repository<Orders>().Find(x => x.Id == Id);
+                    if (Order != null)
+                    {
+                        Order.StatusId = (int)StatusOrder.Sent;
+                        _unitOfWork.Repository<Orders>().Update(Order);
+                        _unitOfWork.Commit();
+                        var result = new { Result = "Success", Error = false, Id = Id };
+                        return Json(result);
+                    }
+                    else
+                    {
+                        var result = new { Result = "Error", Error = true, Id = Id };
+                        return Json(result);
+                    }
                 }
-                HttpContext.Session.Set<List<AddToCartViewModel>>("CartItem", addToCartList);
-                itemInCart = HttpContext.Session.Get<List<AddToCartViewModel>>("CartItem").Count;
-            }
-            HttpContext.Session.SetInt32("itemCount", itemInCart);
-            
-            return RedirectToAction("Index");
+                else
+                {
+                    var result = new { Result = "Error", Error = true, Id = Id };
+                    return Json(result);
+                }
 
-            
+            }
+            catch (Exception)
+            {
+                var result = new { Result = "Error", Error = true, Id = Id };
+                return Json(result);
+            }
+
         }
-        #endregion
+        
+
+        [HttpGet]
+        public IActionResult Details(int id)
+        {
+            try
+            {
+                ViewBag.IdOrder = id;
+
+                return PartialView("~/Views/Order/_SeeDetailsOrder.cshtml");
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public ActionResult LoadDataDetails(int OrderId)
+        {
+            try
+            {
+                //Creating instance of DatabaseContext class  
+                var draw_ = new Microsoft.Extensions.Primitives.StringValues();
+                var start_ = new Microsoft.Extensions.Primitives.StringValues();
+                var length_ = new Microsoft.Extensions.Primitives.StringValues();
+                var aux = new Microsoft.Extensions.Primitives.StringValues();
+                var sortcolumndir_ = new Microsoft.Extensions.Primitives.StringValues();
+                var searchvalue_ = new Microsoft.Extensions.Primitives.StringValues();
+                var sortcolumn_ = new Microsoft.Extensions.Primitives.StringValues();
+
+
+                var draw = Request.Form.TryGetValue("draw", out draw_);
+                var start = Request.Form.TryGetValue("start", out start_);
+                var length = Request.Form.TryGetValue("length", out length_);
+                var aux_ = Request.Form.TryGetValue("order[0][column]", out aux);
+                var sortcolumn = Request.Form.TryGetValue("columns[" + aux_ + "][name]", out sortcolumn_);
+                var sortcolumndir = Request.Form.TryGetValue("order[0][dir]", out sortcolumndir_);
+                var searchvalue = Request.Form.TryGetValue("search[value]", out searchvalue_);
+
+
+                //Paging Size (10,20,50,100)    
+                int pageSize = length != null ? Convert.ToInt32(length_) : 0;
+                int skip = start != null ? Convert.ToInt32(start_) : 0;
+                int recordsTotal = 0;
+
+                // Getting all Customer data    
+                var OrdersList = GetOrderDetail(OrderId).ToList();
+
+                //Sorting    
+                if (!(string.IsNullOrEmpty(sortcolumn_) && string.IsNullOrEmpty(sortcolumndir_)))
+                {
+                    OrdersList = OrdersList.OrderBy(x => x.Product).ToList();
+                }
+                //Search    
+                //if (!string.IsNullOrEmpty(searchvalue_))
+                //{
+                //    ProductsStockList = ProductsStockList.Where(m => m.ProductName == searchvalue_);
+                //}
+
+                //total number of rows count     
+                recordsTotal = OrdersList.Count();
+                //Paging     
+                var data = OrdersList.ToList();
+                //Returning Json Data    
+                return Json(new { draw = draw_, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+        public List<OrderDetailsViewModel> GetOrderDetail(int Id)
+        {
+            try
+            {
+                List<OrderDetailsViewModel> orderList = new List<OrderDetailsViewModel>();
+
+                _unitOfWork.Repository<OrderDetails>().GetAllInclude(u => u.Product, s => s.ProductSize, X => X.Colors, c => c.Product.Category).Where(x => x.OrderId == Id).ToList().ForEach(x =>
+                 {
+                     OrderDetailsViewModel Order = new OrderDetailsViewModel
+                     {
+                         Product = x.Product.Name,
+                         Color = x.Colors.Color,
+                         Size = x.ProductSize.Size,
+                         Category = x.Product.Category.Name,
+                         Quantity = x.Quantity,
+                         Price = x.Product.Price,
+                     };
+                     orderList.Add(Order);
+                 });
+                return orderList;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
+
+        public int GenerateRandomNo()
+        {
+            int _min = 1000000;
+            int _max = 9999999;
+            Random _rdm = new Random();
+            return _rdm.Next(_min, _max);
+        }
+
+
+        public bool ValidateOrder(NewOrderViewModel model)
+        {
+            #region VerifyProducts
+            var Products = model.ProductCountList;
+            foreach (var product in Products)
+            {
+                var product_ = _unitOfWork.Repository<Product>().Find(x => x.Id == Convert.ToInt32(product.Key));
+
+                if (product_ == null)
+                {
+                    return false;
+                }
+
+                var size = model.ProductSizeList.Where(x => x.Key == product.Key).FirstOrDefault().Value;
+                var color = model.ProductColorList.Where(x => x.Key == product.Key).FirstOrDefault().Value;
+                var count = Convert.ToInt32(product.Value);
+
+                var Stockproduct_ = _unitOfWork.Repository<ProductStock>().GetAllInclude(s => s.ProductSize, c => c.Colors).Where(x => x.ProductId == Convert.ToInt32(product.Key) && x.ProductSize.Size == size && x.Colors.Color == color).FirstOrDefault();
+                var CountStock_ = Stockproduct_?.InQuantity - Stockproduct_?.MinQuantity;
+                if (Stockproduct_ == null || CountStock_ <= count)
+                {
+                    return false;
+                }
+            }
+            #endregion
+
+            #region VerifyCountry
+            var contry = _unitOfWork.Repository<Country>().Find(x => x.Id == Convert.ToInt32(model.CountryId));
+
+            if (contry == null)
+            {
+                return false;
+            }
+            #endregion
+
+            #region VerifyCard
+            var PaymentMethod = _unitOfWork.Repository<PaymentMethod>().Find(x => x.Id == 1);
+            if (PaymentMethod == null)
+            {
+                return false;
+            }
+            if (PaymentMethod.Id == 1)
+            {
+                if (model.CardNumber.Replace(" ", "").Length != 16 || model.CVV.Length != 3)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+
+
+            #endregion
+        }
+
     }
 }

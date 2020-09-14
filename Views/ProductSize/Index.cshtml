@@ -5,7 +5,9 @@
         <h3 class="card-title">Tamanhos</h3>
     </div>
     <div class="card-body">
-
+        <a data-toggle="modal" asp-controller="color" asp-action="AddSize" data-target="#modal-AddSize" id="AddSizebtn" style="float:right; margin-right: 2%;" class="btn btn-table btn-outline-secondary btn-md">
+            <i class="fas fa-plus"></i>
+        </a>
         <div style="margin-top: 70px">
             <table id="SizeTable" class="table table-bordered table-striped">
                 <thead>
@@ -14,45 +16,22 @@
 
                     </tr>
                 </thead>
-                <tbody>
-
-                    @foreach (var item in ViewBag.ProductSize as ICollection<Ecommerce_MVC_Core.Models.Admin.ProductSize>)
-                    {
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Size)
-                            </td>
-
-                        </tr>
-                    }
-                </tbody>
+                @*<tbody>
+                        @foreach (var item in ViewBag.ProductSize as ICollection<Ecommerce_MVC_Core.ViewModel.ProductSizeListViewModel>)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Size)
+                                </td>
+                            </tr>
+                        }
+                    </tbody>*@
             </table>
         </div>
     </div>
 </div>
-
-
-
-
-
+@Html.Partial("_Modal", new BootstrapModel { ID = "modal-AddSize", AreaLabeledId = "AddSize", Size = ModalSize.Small })
 
 <script>
 
-
-    $('#SizeTable').DataTable({
-        "paging": true,
-
-        "searching": true,
-        "ordering": true,
-        "info": true,
-        "autoWidth": true,
-        "responsive": true,
-    });
-
-
-
-    $('#AddColortbtn').on('click', function (e) {
-        e.preventDefault();
-        $('#modal-AddColor').addClass("show");
-    })
 </script>

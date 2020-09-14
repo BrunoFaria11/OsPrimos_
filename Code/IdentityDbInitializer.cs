@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Ecommerce_MVC_Core.Data;
 using Ecommerce_MVC_Core.Models;
 using Microsoft.AspNetCore.Identity;
+using Ecommerce_MVC_Core.Data.Seed;
+
 
 namespace Ecommerce_MVC_Core.Code
 {
@@ -22,6 +24,11 @@ namespace Ecommerce_MVC_Core.Code
         {
             SeedRoles(roleManager);
             SeedUsers(userManager);
+
+
+            
+
+
         }
 
         public static void SeedUsers(UserManager<ApplicationUsers> userManager)
@@ -34,7 +41,7 @@ namespace Ecommerce_MVC_Core.Code
                 {
                     UserName = "user1",
                     Email = "user1@localhost.com",
-                    Name = "Nancy Davolio",
+                    FirstName = "Nancy Davolio",
                     DateOfBirth = new DateTime(1960, 1, 1),
                     //CityId =cityId 
                 };
@@ -57,7 +64,7 @@ namespace Ecommerce_MVC_Core.Code
                 {
                     UserName = "admin",
                     Email = "admin@localhost.com",
-                    Name = "Mr Admin ALi",
+                    FirstName = "Mr Admin ALi",
                     DateOfBirth = new DateTime(1965, 1, 1),
                     //CityId = cityId
                 };

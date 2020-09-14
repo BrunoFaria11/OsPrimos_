@@ -1,76 +1,71 @@
 ﻿
-@model List<Ecommerce_MVC_Core.Models.Admin.Product>
+@model List<Ecommerce_MVC_Core.ViewModel.ProductViewModel>
+@{
+    bool HaveCat = ViewBag.AnyCat;
+    Layout = "_LayoutAdmin";
+}
 
+<style>
+    .img-center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+</style>
 <section class="content">
     <div class="container-fluid">
         <div class="row">
             <div class="card card-secondary w-100">
                 <div class="card-header">
-                    <h3 class="card-title">Produtos</h3>
+                    <h3 class="card-title">Produtos @( ViewBag.Active ? "" :  "Desativados" )</h3>
                 </div>
                 <div class="card-body">
-                    <a data-toggle="modal" asp-controller="product" asp-action="AddEditProduct" data-target="#modal-AddEditProduct" style="float:right; margin-right: 2%;" class="btn bg-gradient-secondary AddEditProductbtn">
-                        <i class="fas fa-plus"></i> 
-                    </a>
+                    @if (ViewBag.Active && HaveCat)
+                    {
+                        <a data-toggle="modal" asp-controller="product" asp-action="AddEditProduct" data-target="#modal-AddEditProduct" style="float:right; margin-right: 2%;" class="btn btn-table btn-outline-secondary AddEditProductbtn">
+                            <i class="fas fa-plus"></i>
+                        </a>
+                    }
                     <div style="margin-top: 70px">
                         <table id="ProductTable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
+                                    <th>#</th>
                                     <th>Produto</th>
                                     <th>Categoria</th>
                                     <th>Preço</th>
-
                                     <th>Desconto</th>
+                                    <th>Preço Final</th>
+
                                     <th>Descrição</th>
                                     <th>Data</th>
                                     <th data-orderable="false" width="1"></th>
                                     @*<th>Desativar</th>*@
-
-
                                 </tr>
                             </thead>
-                            <tbody>
-                    
-                                @foreach (var item in Model)
-                                {
-                                <tr>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Name)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Category.Name)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Price) €
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Discount) %
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Description)
-                                    </td>
-                                    <td>
-                                      @item.AddedDate.Date.ToShortDateString()
-                                    </td>
-                                    <td>
-                                        <a data-toggle="modal" asp-route-id="@item.Id" asp-controller="product" asp-action="AddEditProduct" data-target="#modal-AddEditProduct" class="AddEditProductbtn">
-                                            <button type="button" class="btn btn-sm btn-info "><i class="fas fa-edit"></i>  </button>
-                                        </a>
-                                    </td>
-                                    @*<td>
-                                        <a asp-controller="product" asp-action="DeleteProduct" asp-route-id="@item.Id">
-                                            <button type="button" class="btn btn-danger">Delete</button>
-                                        </a>
-                                    </td>*@
-                                </tr>
-                                }
-                            </tbody>
+
                         </table>
                     </div>
                 </div>
             </div>
             <!-- /.card-body -->
         </div>
+    </div>
+    <div id="toastsContainerTopRight" class="toasts-top-right fixed">
+
+        @if (!HaveCat)
+        {
+            <div class="toast bg-danger fade show" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <strong class="mr-auto">Categoria</strong>
+                    <small>
+                    </small>
+
+                </div>
+                <div class="toast-body ">Tem de inserir pelo menos uma categoria para poder adicionar um produto.</div>
+                <div class="toast-body"><strong class="mr-auto">Menu:</strong> Gerir Site </div>
+            </div>
+        }
     </div>
 </section>
 
@@ -80,16 +75,128 @@
 
 <script>
 
+    TableLaod();
+    function TableLaod() {
 
-    $('#ProductTable').DataTable({
-        "paging": true,
-        "searching": true,
-        "ordering": true,
-        "info": true,
-        "autoWidth": true,
-        "responsive": true,
-    });
+        $("#ProductTable").DataTable({
+            "destroy": true,
+            "searching": false,
+            "processing": false, // for show progress bar
+            "serverSide": true, // for process server side
+            "filter": true, // this is for disable filter (search box)
+            "orderMulti": false, // for disable multiple column at once
+            "pageLength": 10,
 
+            "ajax": {
+                "url": "/Product/LoadData?Active=@ViewBag.Active",
+                "type": "POST",
+                "datatype": "json"
+            },
+
+            "columnDefs":
+                [{
+                    "targets": [0],
+                    "className": 'text-center'
+                },
+                {
+                    "targets": [1],
+                    "className": 'text-center'
+                },
+                {
+                    "targets": [2],
+                    "className": 'text-center'
+
+                },
+                {
+                    "targets": [3],
+                    "className": 'text-center'
+
+                },
+                {
+                    "targets": [4],
+                    "className": 'text-center'
+                },
+                {
+                    "targets": [5],
+                    "className": 'text-center'
+                },
+                {
+                    "targets": [6],
+                    "className": 'text-center'
+                },],
+
+            "columns": [
+                {
+                    "render": function (data, type, full, meta) {
+                        return '<div class="row">'
+                          +'<div class="col-4 text-center">'
+                            +'<div class="product-image-thumb img-center"><img src="' + full.imagePath + '" alt="Product Image"></div>'
+                          +'</div>'
+                            +'<div class="col-4 text-center">'
+                            +'<div class="product-image-thumb img-center"><img src="' + full.imagePath2 + '" alt="Product Image"></div>'
+                            + '</div>'
+                            + '<div class="col-4 text-center">'
+                            + '<div class="product-image-thumb img-center"><img src="' + full.imagePath3 + '" alt="Product Image"></div>'
+                            + '</div>'
+                        +'</div>'
+                    }
+                },
+                { "data": 'name', "name": "Produto", "autoWidth": true },
+                { "data": "categoryName", "name": "Categoria", "autoWidth": true },
+
+                {
+                    "render": function (data, type, full, meta) {
+                        debugger;
+                        return full.price + " €";
+                    }
+                },
+                {
+                    "render": function (data, type, full, meta) {
+                        debugger;
+                        return full.discount + " %";
+                    }
+                },
+                {
+                    "render": function (data, type, full, meta) {
+                        debugger;
+                        return full.finalPrice + " €";
+                    }
+                },
+                { "data": "description", "name": "Descrição", "autoWidth": true },
+
+                {
+                    "render": function (data, type, full, meta) {
+                        debugger;
+                        return formatDate(full.addedDate);
+                    }
+                },
+                {
+                    "render": function (data, type, full, meta) {
+                        debugger;
+                        return '<a class="btn btn-sm btn-table btn-outline-info AddEditProductbtn" data-toggle="modal" href="/product/AddEditProduct/' + full.id + '" data-target="#modal-AddEditProduct" type="button" >'
+                            + '<i class="fas fa-edit"></i>'
+                            + '</a>'
+                    }
+                },
+
+            ]
+
+        });
+    }
+
+    function formatDate(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+
+        return [day, month, year].join('-');
+    }
 
     $('.AddEditProductbtn').on('click', function (e) {
         debugger;

@@ -1,5 +1,7 @@
 ﻿
-@{ ViewData["Title"] = "Index"; }
+@{ 
+    Layout = "_LayoutAdmin";
+}
 <style>
     input[type="file"] {
         display: none;
@@ -8,336 +10,147 @@
 <section class="content">
     <div class="container-fluid">
         <div class="row">
-            <div class="card card-secondary w-100">
-                <div class="card-header">
-                    <h3 class="card-title">Banner</h3>
+            <div class="col-8">
+                <div class="card card-secondary w-100">
+                    <div class="card-header">
+                        <h3 class="card-title">Categorias</h3>
 
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                            <i class="fas fa-minus"></i>
-                        </button>
+                        @*<div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>*@
                     </div>
-                </div>
-                <div class="card-body">
-                    <form role="form">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="card-body text-center" id="Div_banner_1" style="padding: 0px;background-image:url(/css/Images/banner1.jpg) ;background-repeat: no-repeat; background-position-x: center; background-position-y: top;background-attachment: fixed;">
-                                    <div class="" style="height: 300px; border-radius: 8px;background-color: rgba(95, 95, 95, 0.59); padding-top:6%">
-                                        <lebel id="banner1Click" class="btn btn-default  btn-lg" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
-                                            <i class="fas fa-pencil-alt">
-                                            </i>
-                                        </lebel>
-                                        <input id="banner1" type="file" />
-                                        <a data-toggle="modal" asp-controller="Banner" asp-action="EditBanner" data-target="#modal-EditBanner" id="EditBannerbtn" class="btn btn-default  btn-lg" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
-                                            <i class="fas fa-quote-right">
-                                            </i>
-                                        </a>
-                                    </div>
-                                </div>
+                    <div class="card-body">
+                        <form role="form">
+                            <div class="row">
 
-                                <div class="card-body text-center" id="Div_banner_2" style="padding: 0px;margin-top: 20px;background-image:url(/css/Images/banner2.jpg);background-repeat: no-repeat;  background-position-x: center; background-position-y: top;background-attachment: fixed;">
-                                    <div class="" style="height: 300px; border-radius: 8px;background-color: rgba(95, 95, 95, 0.59); padding-top:6%">
-                                        <lebel id="banner2Click" class="btn btn-default  btn-lg" href="#" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
-                                            <i class="fas fa-pencil-alt">
-                                            </i>
-                                        </lebel>
-                                        <input id="banner2" type="file" />
-                                    </div>
-                                </div>
-
-                                <div class="card-body text-center" id="Div_banner_3" style="padding: 0px;margin-top: 20px;background-image:url(/css/Images/banner3.jpg);background-repeat: no-repeat;  background-position-x: center; background-position-y: top;background-attachment: fixed;">
-                                    <div class="" style="height: 300px; border-radius: 8px;background-color: rgba(95, 95, 95, 0.59); padding-top:6%">
-                                        <lebel id="banner3Click" class="btn btn-default  btn-lg" href="#" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
-                                            <i class="fas fa-pencil-alt">
-                                            </i>
-                                        </lebel>
-                                        <input id="banner3" type="file" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                        </div>
-                    </form>
-                </div>
-                <!-- /.card-body -->
-            </div>
-
-        </div>
-        <div class="row">
-            <div class="card card-secondary w-100">
-                <div class="card-header">
-                    <h3 class="card-title">Categorias</h3>
-
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <form role="form">
-                        <div class="row">
-                            <div class="col-3">
-                                <div class="card-body text-center" style="height: 300px;background-color: rgba(95, 95, 95, 0.59);border-radius:8px;padding-top:25%">
-                                    <a class="btn btn-default  btn-lg AddEditCategorybtn" data-toggle="modal" asp-controller="Category" asp-action="AddEditCategory" data-target="#modal-AddEditCategory" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
-                                        <i class="fas fa-plus">
-                                        </i>
-                                    </a>
-                                </div>
-                            </div>
-                            @foreach (var cat_ in ViewBag.Category as ICollection<Ecommerce_MVC_Core.Models.Admin.Category>)
-                            {
-                                <div class="col-3">
-                                    <div class="card-body text-center" style="padding: 0px;background-image:url(@cat_.Image_Path) ;background-repeat: no-repeat; background-position-x: center; background-position-y: center;margin-bottom:20px">
-                                        <div class="" style="height: 300px; border-radius: 8px;background-color: rgba(95, 95, 95, 0.59); padding-top:25%">
-
-                                            <a class="btn btn-default  btn-lg AddEditCategorybtn" data-toggle="modal" asp-controller="Category" asp-action="AddEditCategory" data-target="#modal-AddEditCategory" asp-route-id="@cat_.Id" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
-                                                <i class="fas fa-pencil-alt">
+                                <div class="col-4" style="margin-bottom: 15px;">
+                                    <div class="card-body text-center upload-image-div" id="">
+                                        <div class="upload-image-gray">
+                                            <a class="btn btn-default btn-lg upload-btn AddEditCategorybtn" data-toggle="modal" asp-controller="Category" asp-action="AddEditCategory" data-target="#modal-AddEditCategory">
+                                                <i class="fas fa-plus">
                                                 </i>
                                             </a>
                                         </div>
                                     </div>
                                 </div>
-                            }
-                        </div>
-                        <div class="form-group">
-                        </div>
-                    </form>
-                </div>
-                <!-- /.card-body -->
-            </div>
+                                @foreach (var cat_ in ViewBag.Category as ICollection<Ecommerce_MVC_Core.Models.Admin.Category>)
+                                {
 
-        </div>
-        <div class="row">
-            <div class="card card-secondary w-100">
-                <div class="card-header">
-                    <h3 class="card-title">Banner + Video YouTube</h3>
+                                    <div class="col-4" style="margin-bottom: 15px;">
+                                        <div class="card-body text-center upload-image-div" id="" style="background-image:url(@cat_.Image_Path);">
+                                            @if (!cat_.Active)
+                                            {
+                                                <div class="ribbon-wrapper ribbon-lg">
+                                                    <div class="ribbon bg-danger text-sm">
+                                                        DESATIVADO
+                                                    </div>
+                                                </div>
+                                            }
 
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                            <i class="fas fa-minus"></i>
-                        </button>
+                                            <div class="upload-image-gray">
+                                                <a class="btn btn-default btn-lg upload-btn AddEditCategorybtn" data-toggle="modal" asp-controller="Category" asp-action="AddEditCategory" data-target="#modal-AddEditCategory" asp-route-id="@cat_.Id">
+                                                    <i class="fas fa-pencil-alt">
+                                                    </i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                }
+                            </div>
+                            <div class="form-group">
+                            </div>
+                        </form>
                     </div>
                 </div>
-                <div class="card-body">
-                    <form role="form">
+            </div>
+            <div class="col-4">
+                <div class="card card-secondary w-100">
+                    <div class="card-header">
+                        <h3 class="card-title">Páginas</h3>
+
+                        @*<div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>*@
+                    </div>
+                    <div class="card-body">
                         <div class="row">
                             <div class="col-sm-12">
-                                <div class="card-body text-center" style="height: 300px;background-color: rgba(95, 95, 95, 0.59);border-radius:8px">
-                                    <a class="btn btn-default  btn-lg" href="#" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
-                                        <i class="fas fa-pencil-alt">
-                                        </i>
-                                    </a>
-                                </div>
+                                <table id="PagesTable" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th data-orderable="false" width="1"></th>
+                                        </tr>
+                                    </thead>
+                                </table>
                             </div>
                         </div>
 
                         <div class="form-group">
                         </div>
-                    </form>
-                </div>
-                <!-- /.card-body -->
-            </div>
-        </div>
-        <div class="row">
-            <div class="card card-secondary w-100">
-                <div class="card-header">
-                    <h3 class="card-title">3 Imagens</h3>
-
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                            <i class="fas fa-minus"></i>
-                        </button>
                     </div>
                 </div>
-                <div class="card-body">
-                    <form role="form">
-                        <div class="row">
-
-                            <div class="col-4">
-                                <div class="card-body text-center" style="height: 300px;background-color: rgba(95, 95, 95, 0.59);border-radius:8px">
-                                    <a class="btn btn-default  btn-lg" href="#" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
-                                        <i class="fas fa-pencil-alt">
-                                        </i>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="card-body text-center" style="height: 300px;background-color: rgba(95, 95, 95, 0.59);border-radius:8px">
-                                    <a class="btn btn-default  btn-lg" href="#" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
-                                        <i class="fas fa-pencil-alt">
-                                        </i>
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="card-body text-center" style="height: 300px;background-color: rgba(95, 95, 95, 0.59);border-radius:8px">
-                                    <a class="btn btn-default  btn-lg" href="#" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
-                                        <i class="fas fa-pencil-alt">
-                                        </i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                        </div>
-                    </form>
-                </div>
-                <!-- /.card-body -->
-            </div>
-        </div>
-        <div class="row">
-            <div class="card card-secondary w-100">
-                <div class="card-header">
-                    <h3 class="card-title">Fotos do Instagram</h3>
-
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <form role="form">
-                        <div class="row">
-                            <div class="col-1">
-
-                            </div>
-                            <div class="col-2">
-                                <div class="card-body box-profile" style="height: 300px;background-color: rgba(95, 95, 95, 0.59);border-radius:8px">
-                                    <div class="text-center">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-2">
-                                <div class="card-body box-profile" style="height: 300px;background-color: rgba(95, 95, 95, 0.59);border-radius:8px">
-                                    <div class="text-center">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-2">
-                                <div class="card-body box-profile" style="height: 300px;background-color: rgba(95, 95, 95, 0.59);border-radius:8px">
-                                    <div class="text-center">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-2">
-                                <div class="card-body box-profile" style="height: 300px;background-color: rgba(95, 95, 95, 0.59);border-radius:8px">
-                                    <div class="text-center">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-2">
-                                <div class="card-body box-profile" style="height: 300px;background-color: rgba(95, 95, 95, 0.59);border-radius:8px">
-                                    <div class="text-center">
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                        </div>
-                    </form>
-                </div>
-                <!-- /.card-body -->
             </div>
         </div>
     </div>
 
 
 </section>
-    @Html.Partial("_Modal", new BootstrapModel { ID = "modal-EditBanner", AreaLabeledId = "EditBanner", Size = ModalSize.Large })
-    @Html.Partial("_Modal", new BootstrapModel { ID = "modal-AddEditCategory", AreaLabeledId = "AddEditCategory", Size = ModalSize.Large })
-
+@Html.Partial("_Modal", new BootstrapModel { ID = "modal-AddEditCategory", AreaLabeledId = "AddEditCategory", Size = ModalSize.Large })
 
 <script>
 
+    TableLaod();
+    function TableLaod() {
 
-    $('#EditBannerbtn').on('click', function (e) {
-        e.preventDefault();
-        $('#modal-EditBanner').addClass("show");
-    })
+        $("#PagesTable").DataTable({
+            "destroy": true,
+            "searching": false,
+            "processing": false, // for show progress bar
+            "serverSide": true, // for process server side
+            "filter": true, // this is for disable filter (search box)
+            "orderMulti": false, // for disable multiple column at once
+            "pageLength": 10,
+
+            "ajax": {
+                "url": "/Admin/LoadDataPages",
+                "type": "POST",
+                "datatype": "json"
+            },
+
+            "columnDefs":
+                [{
+                    "targets": [0],
+                    "className": 'text-center'
+                }],
+
+            "columns": [
+
+                { "data": 'name', "name": "Nome", "autoWidth": true },
+
+                {
+                    "render": function (data, type, full, meta) {
+                        debugger;
+                        return '<a class="btn btn-sm btn-table btn-outline-info "  href="/Admin/PageDetails/' + full.id + '" type="button" >'
+                            + '<i class="fas fa-edit"></i>'
+                            + '</a>'
+                    }
+                },
+
+            ]
+
+        });
+    }
+
 
     $('.AddEditCategorybtn').on('click', function (e) {
         e.preventDefault();
         $('#modal-AddEditCategory').addClass("show");
     })
-
-
-    $('#banner1Click').on('click', function (e) {
-        e.preventDefault();
-        $('#banner1').trigger('click');
-    });
-
-    $("#banner1").change('change', function (e) {
-        e.preventDefault();
-        $('#Div_banner_1').css("background-image", "url(" + URL.createObjectURL(e.target.files[0]) + ") ");
-        UploadFile("banner1", "banner1");
-    });
-
-
-
-    $('#banner2Click').on('click', function (e) {
-        e.preventDefault();
-        $('#banner2').trigger('click');
-    });
-
-    $("#banner2").change('change', function (e) {
-        e.preventDefault();
-        $('#Div_banner_2').css("background-image", "url(" + URL.createObjectURL(e.target.files[0]) + ") ");
-        UploadFile("banner2", "banner2");
-    });
-
-
-
-    $('#banner3Click').on('click', function (e) {
-        e.preventDefault();
-        $('#banner3').trigger('click');
-    });
-
-    $("#banner3").change('change', function (e) {
-        e.preventDefault();
-        $('#Div_banner_3').css("background-image", "url(" + URL.createObjectURL(e.target.files[0]) + ") ");
-        UploadFile("banner3", "banner3");
-    });
-
-    function UploadFile(inputId, NameImage) {
-
-        var fileUpload = $("#" + inputId).get(0);
-        var files = fileUpload.files;
-        var data = new FormData();
-        data.append(NameImage, files[0]);
-
-        $.ajax({
-            type: "POST",
-            url: "/Admin/UploadImages",
-            contentType: false,
-            processData: false,
-            data: data,
-            async: false,
-            success: function (message) {
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Imagem edidata com sucesso'
-                })
-
-            },
-            error: function () {
-                Toast.fire({
-                    icon: 'error',
-                    title: ''
-                })
-                alert("Error!");
-            },
-        });
-
-    };
-
 </script>

@@ -1,8 +1,214 @@
-﻿
+﻿@model Ecommerce_MVC_Core.ViewModel.CategoryViewModel
+
 @{
     ViewData["Title"] = "Category";
     Layout = "_Layout";
 }
 
-<h2>Category</h2>
 
+<section class="flex-col-c-m p-l-0 p-r-0" style="background: url(/css/Images/banner3.jpg) center top no-repeat fixed">
+    <div class="wrap-content-slide1 sizefull flex-col-c-m p-l-0 p-r-0  p-t-150 p-b-170 " style="background-color:rgba(95, 95, 95, 0.59);height: 10px;">
+        <h2 class="l-text2 t-center names-ToUpper">
+            @Model.Name
+        </h2>
+    </div>
+
+</section>
+
+<div class="bread-crumb bgwhite flex-w p-l-52 p-r-15 p-t-30 p-l-15-sm">
+    <label href="index.html" class="s-text16">
+        Categorias
+        <i class="fa fa-angle-right m-l-8 m-r-9" aria-hidden="true"></i>
+    </label>
+    <label class="s-text17 names-ToUpper">
+        @Model.Name
+    </label>
+</div>
+<!-- Content page -->
+<section class="bgwhite p-t-55 p-b-65">
+
+    <div class="container">
+
+        <div class="row">
+            @*<div class="col-sm-6 col-md-4 col-lg-3 p-b-50">
+                    <div class="leftbar p-r-20 p-r-0-sm">
+                        <!--  -->
+                        <h4 class="m-text14 p-b-7">
+                            Categorias
+                        </h4>
+
+                        <ul class="p-b-54">
+                            @foreach (var cat_ in ViewBag.AllCategories as ICollection<Ecommerce_MVC_Core.ViewModel.CategoryViewModel>)
+                            {
+                                <li class="p-t-4">
+                                    <a asp-action="Category"  asp-controller="Home" asp-route-cat=" @cat_.Id" class="s-text13">
+                                        @cat_.Name
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+
+                        <!--  -->
+                        <h4 class="m-text14 p-b-32">
+                            Filtros
+                        </h4>
+
+                        <div class="filter-price p-t-22 p-b-50 bo3">
+                            <div class="m-text15 p-b-17">
+                                Preço
+                            </div>
+
+                            <div class="wra-filter-bar">
+                                <div id="filter-bar"></div>
+                            </div>
+
+                            <div class="flex-sb-m flex-w p-t-16">
+                                <div class="w-size11">
+                                    <!-- Button -->
+                                    <button class="flex-c-m size4 bg7 bo-rad-15 hov1 s-text14 trans-0-4">
+                                        Filter
+                                    </button>
+                                </div>
+
+                                <div class="s-text3 p-t-10 p-b-10">
+                                    De: <span id="value-lower">0</span> € - <span id="value-upper">@ViewBag.MostExpensive €</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="filter-color p-t-22 p-b-50 bo3">
+                            <div class="m-text15 p-b-12">
+                                Color
+                            </div>
+
+                            <ul class="flex-w">
+
+                                @foreach (var color in ViewBag.Colors as ICollection<Ecommerce_MVC_Core.Models.Admin.Colors>)
+                                {
+                                    <li class="m-r-10">
+                                        <input class="checkbox-color-filter" id="color-filter1" type="checkbox" name="color-filter1">
+                                        <label class="color-filter color-filter1" for="color-filter1"></label>
+                                    </li>
+
+                                }
+
+
+                            </ul>
+                        </div>
+
+                        <div class="search-product pos-relative bo4 of-hidden">
+                            <input class="s-text7 size6 p-l-23 p-r-50" type="text" name="search-product" placeholder="Search Products...">
+
+                            <button class="flex-c-m size5 ab-r-m color2 color0-hov trans-0-4">
+                                <i class="fs-12 fa fa-search" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>*@
+
+            <div class="col-sm-12 col-md-12 col-lg-12 p-b-50">
+                <!--  -->
+                <!-- Product -->
+                <div class="row">
+                    @foreach (var product in ViewBag.ProductsOffCat as ICollection<Ecommerce_MVC_Core.ViewModel.ProductViewModel>)
+                    {
+                        <div class="col-sm-12 col-md-5 col-lg-3 p-b-50">
+                            <!-- Block2 -->
+                            <div class="block2">
+                                <div class="block2-img wrap-pic-w of-hidden pos-relative @(product.IsNew == true ? "block2-labelnew" : product.HaveStock == true  ? " " : "block2-labelsale")">
+                                    <img src="@product.ImagePath" alt="IMG-PRODUCT">
+
+                                    <div class="block2-overlay trans-0-4">
+
+
+                                        <div class="block2-btn-addcart w-size1 trans-0-4">
+                                            <!-- Button -->
+                                            <a class="flex-c-m size1 bg4 bo-rad-23 hov1 s-text1 trans-0-4" asp-controller="Home" asp-action="ProductDetails" asp-route-product="@product.Id">
+                                                Comprar
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="block2-txt p-t-20">
+                                    <a asp-controller="Home" asp-action="ProductDetails" asp-route-product="@product.Id" class="block2-name dis-block s-text3 p-b-5 names-ToUpper">
+                                        @product.Name
+                                    </a>
+
+                                    @if (product.Discount > 0)
+                                    {
+                                    <span class="block2-oldprice  m-text7 p-r-5">
+                                        @product.Price €
+                                    </span>
+                                    <span class=" block2-newprice  m-text8 p-r-5">
+                                        @product.FinalPrice €
+                                    </span>
+                                    }
+                                    else
+                                    {
+                                    <span class="m-text17">
+                                        @product.Price €
+                                    </span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+
+                <div class="text-right">
+
+
+                    <span class="s-text8 p-t-5 p-b-5 ">
+                        @ViewBag.ProductsOffCatCount resultados
+                    </span>
+                </div>
+                <!-- Pagination -->
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="relateproduct bgwhite p-t-45 p-b-138">
+    <div class="container">
+        <div class="sec-title p-b-60">
+            <h3 class="m-text5 t-center">
+                Categorias
+            </h3>
+        </div>
+
+        <!-- Slide2 -->
+        <div class="wrap-slick2">
+            <div class="slick2">
+
+                @foreach (var cat in ViewBag.AllCategories as ICollection<Ecommerce_MVC_Core.ViewModel.CategoryViewModel>)
+                {
+
+                    <div class="item-slick2 p-l-15 p-r-15">
+                        <!-- Block2 -->
+                        @*<div class="">
+                            <div class=" wrap-pic-w of-hidden pos-relative ">*@
+                        <div class="block1 hov-img-zoom pos-relative m-b-30">
+                            <img src=" @cat.Image_Path" alt="IMG-BENNER">
+
+                            <div class="block1-wrapbtn w-size2">
+                                <!-- Button -->
+                                <a asp-controller="Home" asp-action="Category" asp-route-cat="@cat.Id"class="flex-c-m size2 m-text2 bg3 hov1 trans-0-4 names-ToUpper">
+                                    @cat.Name
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    @*</div>
+                        </div>*@
+                }
+            </div>
+        </div>
+    </div>
+
+</section>

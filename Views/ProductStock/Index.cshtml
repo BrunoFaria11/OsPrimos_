@@ -1,6 +1,9 @@
-﻿@model IEnumerable<Ecommerce_MVC_Core.ViewModel.ProductStockListViewModel>
+﻿@model IEnumerable<Ecommerce_MVC_Core.ViewModel.ProductStockViewModel>
 @{
     ViewData["Title"] = "Product Stock";
+    Layout = "_LayoutAdmin";
+    var HaveColor = ViewBag.HaveColor;
+    var HaveProducts = ViewBag.HaveProducts;
 }
 
 
@@ -12,50 +15,34 @@
                     <h3 class="card-title">Produtos</h3>
                 </div>
                 <div class="card-body">
-                    <a data-toggle="modal" asp-controller="productstock" asp-action="AddEditProductStock" data-target="#modal-AddEditProduct" style="float:right; margin-right: 2%;" class="btn bg-gradient-secondary AddEditProductbtn">
-                        <i class="fas fa-plus"></i>
-                    </a>
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <label style="padding-right:20px"> <i class="nav-icon far fa-circle text-success"></i> - Ativo</label>
+                            <label style="padding-right: 20px"> <i class="nav-icon far fa-circle text-danger"></i> - Desativo</label>
+                            <label style="padding-right: 20px"> <i class="nav-icon far fa-circle text-warning"></i> - Sem Stock</label>
+                        </div>
+                    </div>
+                    @if (HaveColor && HaveProducts)
+                    {
+                        <a class="btn btn-table btn-outline-secondary btn-md AddEditProductbtn" data-toggle="modal" asp-controller="productstock" asp-action="AddEditProductStock" data-target="#modal-AddEditProduct" style="float:right; margin-right: 2%;">
+                            <i class="fas fa-plus"></i>
+                        </a>
+                    }
                     <div style="margin-top: 70px">
                         <table id="ProductStockTable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
+                                    <th data-orderable="false" width="1">#</th>
                                     <th>Produto</th>
                                     <th>Tamanho</th>
-                                    <th>Cor</th>
-                                    <th>Quantidade</th>
+                                    <th data-orderable="false" width="1">Cor</th>
+                                    <th data-orderable="false">Quantidade</th>
+                                    <th data-orderable="false">Min Stock</th>
+                                    <th width="10">Activo</th>
+
                                     <th data-orderable="false" width="1"></th>
                                 </tr>
                             </thead>
-                            <tbody>
-
-                                @foreach (var item in Model)
-                                {
-                                    <tr>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.ProductName)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Size)
-                                        </td>
-                                        <td>
-                                            <span class=""><i class="fas fa-square" style="color:@item.Color"></i></span>
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.InQuantity)
-                                        </td>
-                                        <td>
-                                            <a data-toggle="modal" asp-route-id="@item.Id" asp-controller="productstock" asp-action="AddEditProductStock" data-target="#modal-AddEditProduct" class="AddEditProductbtn">
-                                                <button type="button" class="btn btn-sm btn-info "><i class="fas fa-edit"></i>  </button>
-                                            </a>
-                                        </td>
-                                        @*<td>
-                                                <a asp-controller="product" asp-action="DeleteProduct" asp-route-id="@item.Id">
-                                                    <button type="button" class="btn btn-danger">Delete</button>
-                                                </a>
-                                            </td>*@
-                                    </tr>
-                                }
-                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -66,19 +53,32 @@
 </section>
 @Html.Partial("_Modal", new BootstrapModel { ID = "modal-AddEditProduct", AreaLabeledId = "AddEditProduct", Size = ModalSize.Large })
 
-
+<div id="toastsContainerTopRight" class="toasts-top-right fixed">
+    @if (!HaveColor)
+    {
+        <div class="toast bg-danger fade show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header"><strong class="mr-auto">Cores</strong><small></small></div>
+            <div class="toast-body">Tem de inserir pelo menos uma cor para poder adicionar stock..</div>
+            <div class="toast-body"><strong class="mr-auto">Menu:</strong> Cores/Tamanhos </div>
+        </div>
+    }
+    @if (!HaveProducts)
+    {
+        <div class="toast bg-danger fade show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="mr-auto">Produtos</strong>
+                <small>
+                </small>
+       
+            </div>
+            <div class="toast-body ">
+                Tem de inserir pelo menos um produto para poder adicionar stock.
+            </div>
+            <div class="toast-body"><strong class="mr-auto">Menu:</strong> Produtos </div>
+        </div>
+    }
+</div>
 <script>
-
-
-    $('#ProductStockTable').DataTable({
-        "paging": true,
-        "searching": true,
-        "ordering": true,
-        "info": true,
-        "autoWidth": true,
-        "responsive": true,
-    });
-
 
     $('.AddEditProductbtn').on('click', function (e) {
         debugger;
@@ -86,4 +86,93 @@
         $('#modal-AddEditProduct').addClass("show");
     })
 
+    TableLaod();
+    function TableLaod() {
+
+        $("#ProductStockTable").DataTable({
+            "destroy": true,
+            "searching": false,
+            "processing": false, // for show progress bar
+            "serverSide": true, // for process server side
+            "filter": true, // this is for disable filter (search box)
+            "orderMulti": false, // for disable multiple column at once
+            "pageLength": 10,
+
+            "ajax": {
+                "url": "/ProductStock/LoadData",
+                "type": "POST",
+                "datatype": "json"
+            },
+
+            "columnDefs":
+                [{
+                    "targets": [0],
+                    "className": 'text-center'
+                },
+                    {
+                        "targets": [1],
+                        "className": 'text-center'
+                    },
+                    {
+                        "targets": [2],
+                        "className": 'text-center'
+
+                    },
+                    {
+                        "targets": [3],
+                        "className": 'text-center'
+
+                    },
+                    {
+                        "targets": [4],
+                        "className": 'text-center'
+                    },
+                    {
+                        "targets": [5],
+                        "className": 'text-center'
+                    },
+                    {
+                        "targets": [6],
+                        "className": 'text-center'
+                    },],
+
+            "columns": [
+                {
+                    "render": function (data, type, full, meta) { return '<div class="product-image-thumb"><img src="' + full.iamgeProduct +'" alt="Product Image"></div>' }
+                },
+                { "data": 'productName', "name": "Produto", "autoWidth": true },
+                { "data": "size", "name": "Tamanho", "autoWidth": true },
+                {
+                    "render": function (data, type, full, meta) { return '<span class=""><i class="fas fa-square" style="color:' + full.color + '"></i></span>' }
+                },
+                { "data": "inQuantity", "name": "Quantidade", "autoWidth": true },
+                { "data": "minQuantity", "name": "Min Stock", "autoWidth": true },
+                {
+                    "render": function (data, type, full, meta) {
+                        var html = "";
+                        if (full.isActive) {
+                            html = '<i class="nav-icon far fa-circle text-success"></i>'
+                        }
+                        else {
+                            html = '<i class="nav-icon far fa-circle text-danger"></i>'
+                        }
+                        if (!full.haveStock) {
+                            html = html + '<i class="nav-icon far fa-circle text-warning"></i>'
+                        }
+                        return html
+                    }
+                },
+                {
+                    "render": function (data, type, full, meta) {
+                        debugger;
+                        return '<a class="btn btn-sm btn-table btn-outline-info AddEditProductbtn" data-toggle="modal" href="/productstock/AddEditProductStock/' + full.id + '" data-target="#modal-AddEditProduct" type="button" >'
+                            + '<i class="fas fa-edit"></i>'
+                            + '</a>'
+                    }
+                },
+
+            ]
+
+        });
+    }
 </script>

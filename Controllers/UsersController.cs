@@ -35,106 +35,106 @@ namespace Ecommerce_MVC_Core.Controllers
             _signInManager = signInManager;
         }
 
-        public IActionResult Index(string search = "")
-        {
-            IEnumerable<UserListViewModel> model=new List<UserListViewModel>();
-            if (!String.IsNullOrEmpty(search))
-            {
-                model =  GetAllUsers().Where(x => 
-                    x.Name.ToLower().Contains(search.ToLower()) ||
-                    x.CityName.ToLower().Contains(search.ToLower()) ||
-                    x.Email.ToLower().Contains(search.ToLower()) ||
-                    x.Contact.ToLower().Contains(search.ToLower()) 
-                );
-                ViewBag.SearchString = search;
-            }
+        //public IActionResult Index(string search = "")
+        //{
+        //    IEnumerable<UserListViewModel> model=new List<UserListViewModel>();
+        //    if (!String.IsNullOrEmpty(search))
+        //    {
+        //        model =  GetAllUsers().Where(x => 
+        //            x.Name.ToLower().Contains(search.ToLower()) ||
+        //            x.CityName.ToLower().Contains(search.ToLower()) ||
+        //            x.Email.ToLower().Contains(search.ToLower()) ||
+        //            x.Contact.ToLower().Contains(search.ToLower()) 
+        //        );
+        //        ViewBag.SearchString = search;
+        //    }
 
-            else
-            {
-                model = GetAllUsers();
-            }
-            return View(model);
-        }
+        //    else
+        //    {
+        //        model = GetAllUsers();
+        //    }
+        //    return View(model);
+        //}
 
-        public List<UserListViewModel> GetAllUsers()
-        {
-           List<UserListViewModel> userList = new List<UserListViewModel>();
+        //public List<UserListViewModel> GetAllUsers()
+        //{
+        //   List<UserListViewModel> userList = new List<UserListViewModel>();
 
-            userList=  _userManager.Users.Select(u =>
-            new UserListViewModel
-            {
-                Id = u.Id,
-                Name = u.Name,
-                CityId = u.CityId,
-                CityName ="null", //_repoCity.GetAll().First(x => x.Id == u.CityId).Name,
-                Contact = u.Contact,
-                Gender = u.Gender,
-                Email = u.Email
-            }).ToList();
-            return userList;
-        }
+        //    userList=  _userManager.Users.Select(u =>
+        //    new UserListViewModel
+        //    {
+        //        Id = u.Id,
+        //        Name = u.Fist,
+        //        CityId = u.CityId,
+        //        CityName ="null", //_repoCity.GetAll().First(x => x.Id == u.CityId).Name,
+        //        Contact = u.Contact,
+        //        Gender = u.Gender,
+        //        Email = u.Email
+        //    }).ToList();
+        //    return userList;
+        //}
 
         #region SignUp
    
-        [HttpGet]
-        public IActionResult SignUp()
-        {
-            UsersViewModel model = new UsersViewModel
-            {
-                Countries = _unitOfWork.Repository<Country>().GetAll().Select(c => new SelectListItem
-                {
-                    Text = c.Name,
-                    Value = c.Id.ToString()
-                }).ToList()
-            };
-            model.Countries.Add(new SelectListItem { Text = "--Select--", Value = "0" });
-            if (model.CityId <= 0)
-            {
-                model.Cities = new List<SelectListItem>();
-            }
+        //[HttpGet]
+        //public IActionResult SignUp()
+        //{
+        //    UsersViewModel model = new UsersViewModel
+        //    {
+        //        Countries = _unitOfWork.Repository<Country>().GetAll().Select(c => new SelectListItem
+        //        {
+        //            Text = c.Name,
+        //            Value = c.Id.ToString()
+        //        }).ToList()
+        //    };
+        //    model.Countries.Add(new SelectListItem { Text = "--Select--", Value = "0" });
+        //    if (model.CityId <= 0)
+        //    {
+        //        model.Cities = new List<SelectListItem>();
+        //    }
 
-            return View(model);
-        }
+        //    return View(model);
+        //}
 
-        [HttpPost]
-        public async Task<IActionResult> SignUp(UsersViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                ModelState.AddModelError("", "Something wrong");
-                return View(model);
-            }
-            ApplicationUsers user=new ApplicationUsers
-            {
-                Name = model.Name,
-                UserName = model.UserName,
-                Email = model.Email,
-                Address = model.Address,
-                Refference = model.Refference,
-                CityId = model.CityId,
-                DateOfBirth = model.DateOfBirth,
-                Gender = model.Gender,
-                JoinIp = "1234",
-                Contact = model.Contact,
-                EmailConfirmed = false,
+        //[HttpPost]
+        //public async Task<IActionResult> SignUp(UsersViewModel model)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        ModelState.AddModelError("", "Something wrong");
+        //        return View(model);
+        //    }
+        //    ApplicationUsers user=new ApplicationUsers
+        //    {
+        //        Name = model.Name,
+        //        UserName = model.UserName,
+        //        Email = model.Email,
+        //        Address = model.Address,
+        //        Refference = model.Refference,
+        //        CityId = model.CityId,
+        //        DateOfBirth = model.DateOfBirth,
+        //        Gender = model.Gender,
+        //        JoinIp = "1234",
+        //        Contact = model.Contact,
+        //        EmailConfirmed = false,
                 
-            };
+        //    };
 
-            IdentityResult result = await _userManager.CreateAsync(user, model.Password);
-            if (result.Succeeded)
-            {
-                ApplicationRoles applicationRoles = await _roleManager.FindByNameAsync("User");
-                if (applicationRoles!=null)
-                {
-                    IdentityResult roleResult = await _userManager.AddToRoleAsync(user, applicationRoles.Name);
-                    if (roleResult.Succeeded)
-                    {
-                        return RedirectToAction("Index","Home");
-                    }
-                }
-            }
-            return View(model);
-        }
+        //    IdentityResult result = await _userManager.CreateAsync(user, model.Password);
+        //    if (result.Succeeded)
+        //    {
+        //        ApplicationRoles applicationRoles = await _roleManager.FindByNameAsync("User");
+        //        if (applicationRoles!=null)
+        //        {
+        //            IdentityResult roleResult = await _userManager.AddToRoleAsync(user, applicationRoles.Name);
+        //            if (roleResult.Succeeded)
+        //            {
+        //                return RedirectToAction("Index","Home");
+        //            }
+        //        }
+        //    }
+        //    return View(model);
+        //}
         #endregion
 
         #region Login
@@ -238,20 +238,20 @@ namespace Ecommerce_MVC_Core.Controllers
 
         #region Delete User
 
-        [HttpGet]
-        public async Task<IActionResult> DeleteUser(string id)
-        {
-            string name = string.Empty;
-            if (!String.IsNullOrEmpty(id))
-            {
-                ApplicationUsers applicationUser = await _userManager.FindByIdAsync(id);
-                if (applicationUser != null)
-                {
-                    name = applicationUser.Name;
-                }
-            }
-            return PartialView("_DeleteUser", name);
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> DeleteUser(string id)
+        //{
+        //    string name = string.Empty;
+        //    if (!String.IsNullOrEmpty(id))
+        //    {
+        //        ApplicationUsers applicationUser = await _userManager.FindByIdAsync(id);
+        //        if (applicationUser != null)
+        //        {
+        //            name = applicationUser.Name;
+        //        }
+        //    }
+        //    return PartialView("_DeleteUser", name);
+        //}
 
         [HttpPost]
         public async Task<IActionResult> DeleteUser(string id, IFormCollection form)

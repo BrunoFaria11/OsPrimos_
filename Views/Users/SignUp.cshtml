@@ -81,7 +81,7 @@
         <div class="form-group">
             <label asp-for="CountryId" class="col-md-3 control-label"></label>
             <div class="col-md-4">
-                <select asp-for="CountryId" id="CountryId" asp-items="@Model.Countries" class="form-control"></select>
+                @*<select asp-for="CountryId" id="CountryId" asp-items="@Model.Countries" class="form-control"></select>*@
                 <span asp-validation-for="CountryId" class="text-danger"></span>
             </div>
         </div>

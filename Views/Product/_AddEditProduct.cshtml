@@ -16,13 +16,13 @@
             <div class="col-6">
                 <div class="form-group">
                     <label asp-for="Name" class="col-sm-2 col-form-label">Nome</label>
-                    <input asp-for="Name" class="form-control" autofocus="" />
+                    <input asp-for="Name" name="Name" class="form-control" autofocus="" />
                 </div>
             </div>
             <div class="col-6">
                 <div class="form-group">
                     <label asp-for="CategoryId" class="col-sm-2 col-form-label">Categoria</label>
-                    <select asp-for="CategoryId" class="form-control select2" id="cat" style="width: 100%;"></select>
+                    <select asp-for="CategoryId" name="CategoryId" class="form-control select2" id="cat" style="width: 100%;"></select>
                 </div>
             </div>
         </div>
@@ -31,13 +31,13 @@
             <div class="col-6">
                 <div class="form-group">
                     <label asp-for="Price" class="col-sm-2 col-form-label">Preço</label>
-                    <input asp-for="Price" class="form-control" autofocus="" />
+                    <input asp-for="Price" data-mask name="Price" class="form-control Price" autofocus="" />
                 </div>
             </div>
             <div class="col-6">
                 <div class="form-group">
                     <label asp-for="Discount" class="col-sm-2 col-form-label">Desconto</label>
-                    <input asp-for="Discount" class="form-control" autofocus="" />
+                    <input asp-for="Discount" type="text" data-mask class="form-control Discount" autofocus="" />
                 </div>
             </div>
         </div>
@@ -45,40 +45,43 @@
 
         <div class="row">
             <div class="col-4">
-                <div class="card-body text-center" id="Div_ProductImage1" style="padding: 0px;background-image:url(@Model.ImagePath);background-repeat: no-repeat; background-position-x: center; background-position-y: center;">
-                    <div class="" style="height: 235px; border-radius: 8px;background-color: rgba(95, 95, 95, 0.59); padding-top:25%">
-                        <lebel id="ProductImage1Click" class="btn btn-default  btn-lg" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
+
+                <div class="card-body text-center upload-image-div" id="ProductImage1_" style="background-image:url(@Model.ImagePath);">
+                    <div class="upload-image-gray">
+                        <lebel class="btn btn-default btn-lg upload-btn">
                             <i class="fas fa-pencil-alt">
                             </i>
                         </lebel>
-                        <input id="ProductImage1" type="file" />
-
+                        <input id="ProductImage1" asp-for="ImagePath" name="ImagePath" type="file" class="input-type-file" />
                     </div>
                 </div>
+                <span id="Path" class=" invalid-feedback">Insira uma Imagem</span>
+
             </div>
             <div class="col-4">
-                <div class="card-body text-center" id="Div_ProductImage2" style="padding: 0px;background-image:url(@Model.ImagePath2);background-repeat: no-repeat; background-position-x: center; background-position-y: center;">
-                    <div class="" style="height: 235px; border-radius: 8px;background-color: rgba(95, 95, 95, 0.59); padding-top:25%">
-                        <lebel id="ProductImage2Click" class="btn btn-default  btn-lg" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
+                <div class="card-body text-center upload-image-div" id="ProductImage2_" style="background-image:url(@Model.ImagePath2);">
+                    <div class="upload-image-gray">
+                        <lebel class="btn btn-default btn-lg upload-btn">
                             <i class="fas fa-pencil-alt">
                             </i>
                         </lebel>
-                        <input id="ProductImage2" type="file" />
-
+                        <input id="ProductImage2" asp-for="ImagePath2" name="ImagePath2" type="file" class="input-type-file" />
                     </div>
                 </div>
+                <span id="Path2" class=" invalid-feedback">Insira uma Imagem</span>
             </div>
             <div class="col-4">
-                <div class="card-body text-center" id="Div_ProductImage3" style="padding: 0px;background-image:url(@Model.ImagePath3);background-repeat: no-repeat; background-position-x: center; background-position-y: center;">
-                    <div class="" style="height: 235px; border-radius: 8px;background-color: rgba(95, 95, 95, 0.59); padding-top:25%">
-                        <lebel id="ProductImage3Click" class="btn btn-default  btn-lg" style="border-radius: 50%;background-color: transparent;color: white;width:91px;height:91px;padding-top: 30px;">
+                <div class="card-body text-center upload-image-div" id="ProductImage3_" style="background-image:url(@Model.ImagePath3);">
+                    <div class="upload-image-gray">
+                        <lebel class="btn btn-default btn-lg upload-btn">
                             <i class="fas fa-pencil-alt">
                             </i>
                         </lebel>
-                        <input id="ProductImage3" type="file" />
-
+                        <input id="ProductImage3" asp-for="ImagePath3" name="ImagePath3" type="file" class="input-type-file" />
                     </div>
                 </div>
+                <span id="Path3" class=" invalid-feedback">Insira uma Imagem</span>
+
             </div>
         </div>
 
@@ -92,22 +95,43 @@
             </div>
         </div>
 
-        @if(Model.Id > 0) { 
-        <div class="row">
-            <div class="col-12">
-                <div class="form-group">
-                    <label asp-for="Active" class="col-sm-2 col-form-label">Activar/Desativar</label>
+        @if (Model.Id > 0)
+        {
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        <label asp-for="Active" class="col-sm-2 col-form-label">Activar/Desativar</label>
+                    </div>
+                    @if (Model.Active)
+                    {
+                        <input type="checkbox" asp-for="Active" name="Active" checked data-bootstrap-switch data-off-color="danger" data-on-color="success" class="form-control">
+                    }
+                    else
+                    {
+                        <input type="checkbox" asp-for="Active" name="Active" data-bootstrap-switch data-off-color="danger" data-on-color="success" class="form-control">
+                    }
                 </div>
-                <input type="checkbox" asp-for="Active" name="my-checkbox" checked data-bootstrap-switch data-off-color="danger" data-on-color="success" class="form-control">
-
             </div>
-        </div>
         }
     </div>
     @await Html.PartialAsync("_ModalFooter", new ModalFooter { urlPOST = "", IdEntity = Model.Id.ToString(), IdForm = "product_form" })
 </form>
 
 <script>
+    $('[data-mask]').inputmask()
+    $(".Discount").inputmask({
+        alias: 'numeric',
+        allowMinus: false,
+        digits: 2,
+        max: 999.99
+    });
+
+    $(".Price").inputmask({
+        alias: 'numeric',
+        allowMinus: false,
+        digits: 2,
+        max: 999.99
+    });
 
     $("#cat").select2({
         cache: true,
@@ -118,74 +142,151 @@
         $(this).bootstrapSwitch('state', $(this).prop('checked'));
     });
 
+    $(document).ready(function () {
+        bsCustomFileInput.init();
+    });
     loadCats();
 
-    $('#ProductImage1Click').on('click', function (e) {
+    $('.upload-btn').on('click', function (e) {
         e.preventDefault();
-        $('#ProductImage1').trigger('click');
+        
+        var input = $(this).closest(".upload-image-div").find('.input-type-file');
+        $(input).trigger('click');
     });
 
-    $("#ProductImage1").change('change', function (e) {
+    $(".input-type-file").change('change', function (e) {
         e.preventDefault();
-        $('#Div_ProductImage1').css("background-image", "url(" + URL.createObjectURL(e.target.files[0]) + ") ");
-
+        
+        $(this).closest('.upload-image-div').css("background-image", "url(" + URL.createObjectURL(e.target.files[0]) + ") ");
     });
 
-    $('#ProductImage2Click').on('click', function (e) {
-        e.preventDefault();
-        $('#ProductImage2').trigger('click');
+    $.validator.setDefaults({
+        submitHandler: function () {
+            event.preventDefault();
+
+            const IdProduct = doAjax("product/AddEditProduct", "@Model.Id", "#product_form");
+        }
     });
 
-    $("#ProductImage2").change('change', function (e) {
-        e.preventDefault();
-        $('#Div_ProductImage2').css("background-image", "url(" + URL.createObjectURL(e.target.files[0]) + ") ");
+    $('#product_form').validate({
+        rules: {
+            Name: {
+                required: true,
+            },
+            CategoryId: {
+                required: true,
+            },
+            Price: {
+                required: true,
+                min: 0.01,
+                number: true
+            },
+            Path: {
+                required: true,
+            },
+            Path2: {
+                required: true,
+            },
+            Pat3: {
+                required: true,
+            },
+        },
+        messages: {
+            Name: {
+                required: "Insira um Nome",
 
+            },
+            CategoryId: {
+                required: "Insira uma Categoria",
+            },
+            Price: {
+                required: "Insira um Preço",
+                min: "Insira um Preço",
+            },
+            Path: {
+                required: "Insira uma Imagem",
+            },
+            Path2: {
+                required: "Insira uma Imagem",
+            },
+            Pat3: {
+                required: "Insira uma Imagem",
+            },
+        },
+
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+            if ("@Model.Id" <= 0) {
+                if ($("#ProductImage1").val() == "") {
+                    $("#Path").show()
+
+                }
+                if ($("#ProductImage2").val() == "") {
+                    $("#Path2").show()
+                }
+                if ($("#ProductImage3").val() == "") {
+                    $("#Path3").show()
+
+                }
+            }
+            error.addClass('invalid-feedback');
+            element.closest('.form-group').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        }
     });
-
-
-    $('#ProductImage3Click').on('click', function (e) {
-        e.preventDefault();
-        $('#ProductImage3').trigger('click');
-    });
-
-    $("#ProductImage3").change('change', function (e) {
-        e.preventDefault();
-        $('#Div_ProductImage3').css("background-image", "url(" + URL.createObjectURL(e.target.files[0]) + ") ");
-
-    });
-
-
-    $(document).on("submit", "form", function (event) {
-        const IdProduct = doAjax("product/AddEditProduct", "@Model.Id", "#product_form");
-    })
 
    function doAjax(url, IdEntity, IdForm) {
-        event.preventDefault();
-        debugger;
-        $.post(url, { id: IdEntity, model: $(IdForm).serializeFormJSON() }, function (htmlresponse) {
-            if (htmlresponse.result != "error") {
-                if (htmlresponse.id != "" && htmlresponse.id != "0" && htmlresponse.id != null && htmlresponse.id != undefined) {
-                    UploadFile( htmlresponse.id);
+       event.preventDefault();
+       if ("@Model.Id" <= 0) {
+           var validImage = true;
+           if ($("#ProductImage1").val() == "") {
+               $("#Path").show()
+               validImage = false;
+           }
+           if ($("#ProductImage2").val() == "") {
+               $("#Path2").show()
+               validImage = false;
+           }
+           if ($("#ProductImage3").val() == "") {
+               $("#Path3").show()
+               validImage = false;
+           }
+           if (!validImage) {
+               return
+           }
+       }
+       $.post(url, { id: IdEntity, model: $(IdForm).serializeFormJSON() }, function (htmlresponse) {
+        
+           if (!htmlresponse.error) {
+               if (htmlresponse.id != "" && htmlresponse.id != "0" && htmlresponse.id != null && htmlresponse.id != undefined) {
+                   UploadFile(htmlresponse.id);
+               }
+               CloseModal();
+               Toast.fire({
+                   icon: 'success',
+                   title: htmlresponse.result,
+                   timer: 5000
+
+               })
+               TableLaod();
+           }
+           else {
+               Toast.fire({
+                   icon: 'error',
+                   title: htmlresponse.result
+               })
+           }
+       });
 
 
-                    window.location.reload();
-                }
-                Toast.fire({
-                    icon: 'success',
-                    title: htmlresponse.result
-                })
-            }
-            else {
-                Toast.fire({
-                    icon: 'error',
-                    title: ''
-                })
-            }
-        });
     }
 
    function UploadFile(IdProduct) {
-        debugger;
         var fileUpload1 = $("#ProductImage1").get(0);
         var files1 = fileUpload1.files;
 
@@ -193,13 +294,13 @@
         var files2 = fileUpload2.files;
 
         var fileUpload3 = $("#ProductImage3").get(0);
-        var files3 = fileUpload1.files;
+        var files3 = fileUpload3.files;
 
         var data = new FormData();
-        data.append(IdProduct, files1[0]);
-        data.append(IdProduct, files2[0]);
-        data.append(IdProduct, files3[0]);
-
+        data.append("image1", files1[0]);
+        data.append("image2", files2[0]);
+        data.append("image3", files3[0]);
+        data.append("idProduct", IdProduct);
 
         $.ajax({
             type: "POST",
@@ -209,10 +310,14 @@
             data: data ,
             async: false,
             success: function (message) {
+                
+                setTimeout(function () { location.reload(); }, 1000);
+
             },
             error: function () {
             },
         });
+
     };
 
    function loadCats() {
@@ -223,7 +328,7 @@
             success: function (response) {
                 $("#cat").append('<option value=' + 0 + ' disabled >Selecione uma Categoria</option>');
                 $.each(response, function (key, value) {
-                    debugger;
+                    
 
                     $("#cat").append('<option value=' + value.value + '>' + value.text + '</option>');
                 });

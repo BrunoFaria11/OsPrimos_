@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Ecommerce_MVC_Core.Models.Admin;
 using Ecommerce_MVC_Core.Repository;
 using Ecommerce_MVC_Core.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -34,46 +35,87 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
 
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddEditCategory(int id)
         {
-            CategoryViewModel model = new CategoryViewModel();
-            var totalCategory = await _unitOfWork.Repository<Category>().CountAsync();
-            if (id > 0)
+            try
             {
-                Category category = await _unitOfWork.Repository<Category>().GetByIdAsync(id);
-                if (category != null)
+                CategoryViewModel model = new CategoryViewModel();
+                var totalCategory = await _unitOfWork.Repository<Category>().CountAsync();
+                if (id > 0)
                 {
-                    model.Id = category.Id;
-                    model.Name = category.Name;
-                    model.Image_Path = category.Image_Path;
+                    Category category = await _unitOfWork.Repository<Category>().GetByIdAsync(id);
+                    if (category != null)
+                    {
+                        model.Id = category.Id;
+                        model.Name = category.Name;
+                        model.Image_Path = category.Image_Path;
+                        model.Active = category.Active;
+
+                    }
                 }
+                return PartialView("_AddEditCategory", model);
             }
-            return PartialView("_AddEditCategory", model);
+            catch (Exception)
+            {
+
+                throw;
+            }
+          
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public JsonResult AddEditCategory(int id, CategoryViewModel model)
         {
-            if (!ModelState.IsValid)
+            try
             {
+                if (!ModelState.IsValid)
+                {
 
-                return Json(new { Result = "error" });
+                    return Json(new { Result = "error" });
+                }
+
+
+                if (id > 0)
+                {
+                    Category category = _unitOfWork.Repository<Category>().GetById(id);
+                    if (category != null)
+                    {
+                        category.Name = model.Name;
+                        category.Active = model.Active;
+
+                        category.ModifiedDate = DateTime.Now;
+                        _unitOfWork.Repository<Category>().Update(category);
+                    }
+                    var result = new { Result = "Categoria Editada com sucesso", Id = category.Id };
+                    return Json(result);
+                }
+                else
+                {
+                    Category category = new Category
+                    {
+                        Name = model.Name,
+                        Active = true,
+                        AddedDate = DateTime.Now,
+                        ModifiedDate = DateTime.Now
+                    };
+                    _unitOfWork.Repository<Category>().Insert(category);
+
+                    var result = new { Result = "Categoria Inserida com sucesso", Id = category.Id };
+                    return Json(result);
+                }
             }
-
-            Category category = _unitOfWork.Repository<Category>().GetById(id);
-            category = new Category
+            catch (Exception)
             {
-                Id = model.Id,
 
-                Name = model.Name,
-                AddedDate = DateTime.Now,
-                ModifiedDate = DateTime.Now
-            };
-            _unitOfWork.Repository<Category>().addOrUpdate(id > 0 ? EntityState.Modified : EntityState.Added, category);
-            var result = new { Result = "Categoria inserida com sucesso", Id = category.Id };
-            return Json(result);
+                throw;
+            }
+        
+
         }
 
+        [Authorize(Roles = "Admin")]
         public string UploadImages()
         {
             string result = string.Empty;
@@ -82,53 +124,67 @@ namespace Ecommerce_MVC_Core.Controllers.Admin
                 long size = 0;
                 var file = Request.Form.Files;
                 var getLastCat = new Category();
-                var idCat = ContentDispositionHeaderValue.Parse(file[0].ContentDisposition).Name.Trim('"');
-                if (idCat != "" && idCat != "0")
-                {
-                    getLastCat = _unitOfWork.Repository<Category>().GetById(Convert.ToInt32(idCat));
-                }
-                else
-                {
-                    getLastCat = _unitOfWork.Repository<Category>().Find(x => x.Image_Path == "" || x.Image_Path == null);
-                }
-                if (getLastCat != null)
-                {
-                    var filename = "catImage_" + getLastCat.Id;
-                    string FilePath = Path.Combine(_hosingEnv.WebRootPath, "css\\Images\\Categories");
-                    var file_ = Path.Combine(FilePath, filename + ".jpg");
-
-                    size += file[0].Length;
-
-                    using (FileStream fs = System.IO.File.Create(file_))
+                    if (file.Any()) {
+                    var idCat = ContentDispositionHeaderValue.Parse(file[0].ContentDisposition).Name.Trim('"');
+                    if (idCat != "" && idCat != "0")
                     {
-                        file[0].CopyTo(fs);
-                        fs.Flush();
+                        getLastCat = _unitOfWork.Repository<Category>().GetById(Convert.ToInt32(idCat));
                     }
-                    getLastCat.Image_Path = $"/css/Images/Categories/{filename}.jpg";
-                    _unitOfWork.Repository<Category>().Update(getLastCat);
+                    else
+                    {
+                        getLastCat = _unitOfWork.Repository<Category>().Find(x => x.Image_Path == "" || x.Image_Path == null);
+                    }
+                    if (getLastCat != null)
+                    {
+                        var filename = "catImage_" + getLastCat.Id;
+                        string FilePath = Path.Combine(_hosingEnv.WebRootPath, "uploads\\Categories");
+                        var file_ = Path.Combine(FilePath, filename + ".jpg");
+
+                        size += file[0].Length;
+
+                        using (FileStream fs = System.IO.File.Create(file_))
+                        {
+                            file[0].CopyTo(fs);
+                            fs.Flush();
+                        }
+                        getLastCat.Image_Path = $"/uploads/Categories/{filename}.jpg";
+                        _unitOfWork.Repository<Category>().Update(getLastCat);
+                    }
                 }
+               
             }
 
             catch (Exception ex)
             {
-                result = ex.Message;
+                throw;
             }
             return result;
         }
+
+
         public JsonResult GetCategories(string q,int catId)
         {
-            var CategoryList = _unitOfWork.Repository<Category>().GetAll().Select(x => new SelectListItem
+            try
             {
-                Text = x.Name,
-                Value = x.Id.ToString()
-            }).ToList();
-           
-            if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
-            {
-                CategoryList = CategoryList.Where(x => x.Text.ToLower().StartsWith(q.ToLower())).ToList();
-            }
+                var CategoryList = _unitOfWork.Repository<Category>().GetAll().Select(x => new SelectListItem
+                {
+                    Text = x.Name,
+                    Value = x.Id.ToString()
+                }).ToList();
 
-            return Json(CategoryList);
+                if (!(string.IsNullOrEmpty(q) || string.IsNullOrWhiteSpace(q)))
+                {
+                    CategoryList = CategoryList.Where(x => x.Text.ToLower().StartsWith(q.ToLower())).ToList();
+                }
+
+                return Json(CategoryList);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+         
         }
 
         [HttpGet]

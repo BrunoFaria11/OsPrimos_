@@ -1,70 +1,321 @@
 ﻿@model Ecommerce_MVC_Core.ViewModel.ProductStockViewModel
-@{
-    ViewData["Title"] = "AddEditProductStock";
-}
 
-<form asp-action="AddEditProductStock" id="frmBrand" enctype="multipart/form-data">
-    <div class="form-horizontal">
-        <h1>@(Model.Id > 0 ? "Edit" : "Add") Product Stocks</h1>
-        <hr />
+<style>
+    .selectbox > span {
+        padding: 14px;
+        border: 2px solid #fff;
+        display: inline-block;
+        vertical-align: middle;
+        border: 1px solid #dddddd;
+        border-radius: 6px;
+    }
+
+    .selectbox {
+        display: inline-block;
+        cursor: pointer;
+        margin-right: 20px;
+    }
+
+        .selectbox.active {
+            border: 2px dashed #8a8a8a;
+        }
+</style>
+
+<form id="productstock_form" tabindex="-1" enctype="multipart/form-data">
+    @await Html.PartialAsync("_ModalHeader", new ModalHeader { Heading = $"{(Model.Id <= 0 ? "" : "")} Stock de Produtos" })
+
+    <div class="form-horizontal" style="padding:24px">
+
         <div class="text-danger" asp-validation-summary="ModelOnly"></div>
+        @Html.HiddenFor(m => m.Id)
 
-        
-     
-        <div class="form-group">
-            <label asp-for="InQuantity" class="col-md-3 control-label"></label>
-            <div class="col-md-8">
-                <input asp-for="InQuantity" class="form-control" />
-                <span asp-validation-for="InQuantity" class="text-danger"></span>
+
+
+        <div class="row">
+            <div class="col-6">
+                <div class="form-group">
+                    <label asp-for="ProductId" class="col-sm-2 col-form-label">Produto</label>
+                    <select asp-for="ProductId" name="ProductId" class="form-control select2" id="Product" style="width: 100%;"></select>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label asp-for="SizeId" class="col-sm-2 col-form-label">Tamanho</label>
+                    <select asp-for="SizeId" name="SizeId" class="form-control select2" id="Size" style="width: 100%;"></select>
+                </div>
             </div>
         </div>
-    
 
-        <div class="form-group">
-            <div class="col-md-3"></div>
-            <div class="col-md-9">
-                <input type="submit" class="btn btn-success" value="@(Model.Id > 0 ? "Edit" : "Add")" />
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group">
+                    <label asp-for="ColorId" class="col-sm-2 col-form-label">Cor</label>
+                    <table class="variations" cellspacing="0">
+                        <tbody>
+                            <tr>
+                                <td class="value">
+                                    <input asp-for="ColorId" class="form-control ColorId" name="ColorId" autofocus="" hidden />
+
+                                    <select class="pa_available-colors" name="attribute_pa_available-colors" data-attribute_name="attribute_pa_available-colors" hidden>
+                                        <option value="" selected="selected">None</option>
+                                        @foreach (var color in ViewBag.Colors as ICollection<Ecommerce_MVC_Core.Models.Admin.Colors>)
+                                        {
+                                            <option value="@color.Id" class="attached enabled">@color.Color</option>
+                                        }
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <span id="ColorIdError" class="invalid-feedback">Insira uma Cor</span>
+                </div>
             </div>
+
         </div>
-    </div>
-    
-</form>
-<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-<script src="/lib/jquery/dist/jquery.js"></script>
-<script src="/js/jquery-ui.js"></script>
-<script type="text/javascript">
-    $(document).ready(function () {
-        $("#txtProduct").autocomplete({
-            source: function (request, response) {
-                $.ajax({
-                    url: "/ProductStock/GetProducts",
-                    type: "GET",
-                    dataType: "json",
-                    data: { term: request.term },
-                    success: function (data) {
-                        response($.map(data, function (item) {
-                            console.log("Label " + item.label);
-                            console.log("value " + item.val);
-                            return { label: item.label, value: item.val };
-                        }))
+
+        <div class="row">
+            <div class="col-6">
+                <div class="form-group">
+                    <label asp-for="InQuantity" class="col-sm-12 col-form-label">Quantidade</label>
+                    <input asp-for="InQuantity" type="text" name="InQuantity" min="0" class="form-control InQuantity" autofocus="" />
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group">
+                    <label asp-for="MinQuantity" class="col-sm-12 col-form-label">Minimo de stock</label>
+                    @if (Model.MinQuantity > 0)
+                    {
+                        <input asp-for="MinQuantity" type="text" name="MinQuantity" min="0" class="form-control MinQuantity" autofocus="" />
 
                     }
-                })
-            },
+                    else
+                    {
+                        <input asp-for="MinQuantity" type="text" name="MinQuantity" min="0" disabled class="form-control MinQuantity" autofocus="" />
+                    }
+                </div>
+            </div>
+        </div>
 
-            select: function (event, ui) {
+        @if (Model.Id > 0)
+        {
+            <div class="row">
+                <div class="col-6">
+                    <div class="form-group">
+                        <label asp-for="IsActive" class="col-sm-2 col-form-label">Activar/Desativar</label>
+                    </div>
+                    @if (Model.IsActive)
+                    {
+                        <input type="checkbox" asp-for="IsActive" name="IsActive" checked data-bootstrap-switch data-off-color="danger" data-on-color="success" class="form-control">
+                    }
+                    else
+                    {
+                        <input type="checkbox" asp-for="IsActive" name="IsActive" data-bootstrap-switch data-off-color="danger" data-on-color="success" class="form-control">
+                    }
 
-                $('#txtProductId').val(ui.item.value);
-                $('#txtProduct').val(ui.item.label);
-                return false;
+                </div>
+            </div>
+        }
+
+    </div>
+
+    @await Html.PartialAsync("_ModalFooter", new ModalFooter { urlPOST = "", IdEntity = Model.Id.ToString(), IdForm = "productstock_form" })
+</form>
+
+
+<script>
+
+    $('[data-mask]').inputmask()
+    $(".InQuantity").inputmask({
+        alias: 'integer',
+        allowMinus: true,
+        min: 0
+    });
+
+    $(".MinQuantity").inputmask({
+        alias: 'integer',
+        allowMinus: true,
+        min: 0
+    });
+
+
+    $('.InQuantity').change(function () {
+        $(".MinQuantity").removeAttr("disabled");
+        $(".MinQuantity").attr('max', $('.InQuantity').val());
+    });
+
+    $(".pa_available-colors option").each(function () {
+        //get values of all option
+        var val = $(this).val();
+        var text = $(this).text();
+
+        //do magic create boxes like checkbox
+        $("td.value").append('<div class="selectbox" data-color="' + val + '"><span style="background-color:' + text + '"></span></div>');
+
+    });
+    $("input[data-bootstrap-switch]").each(function () {
+        $(this).bootstrapSwitch('state', $(this).prop('checked'));
+    });
+
+    //remove empty selectbox
+    $('.selectbox[data-color=""]').remove();
+
+    //change select box on click
+    $(".selectbox").click(function () {
+        //remove selected from others
+        $(".selectbox").removeClass("active");
+        //do active to selected
+        $(this).addClass("active");
+        //get value
+        var optVal = $(this).data("color");
+
+        $("#ColorId").val(optVal)
+
+    });
+
+    //change select box on dropdown change
+    $(".pa_available-colors").change(function () {
+        var optVal = $(this).val();
+        $(".selectbox").removeClass("active");
+        $(".selectbox[data-color='" + optVal + "']").addClass("active");
+    })
+
+       if ("@Model.ColorId" != "0" ||"@Model.ColorId" != "" ) {
+        $(".pa_available-colors option[value='@Model.ColorId']").attr("selected", true).trigger("change");
+    }
+
+    $("#Size").select2({
+        cache: true,
+        placeholder: "Selecione um Tamanho",
+    });
+
+    $("#Product").select2({
+        cache: true,
+        placeholder: "Selecione um Produto",
+    });
+
+
+    $.validator.setDefaults({
+        submitHandler: function () {
+            var validColor = true;
+            if ($(".ColorId").val() == "" || $(".ColorId").val() == "0") {
+                $("#ColorIdError").show()
+                validColor = false;
+            }
+
+            if (!validColor) {
+                return
+            }
+            const IdProduct = doAjax("/ProductStock/AddEditProductStock", "@Model.Id", "#productstock_form", "ProductStockTable");
+            ProductStockTableLaod();
+        }
+    });
+
+    $('#productstock_form').validate({
+        rules: {
+            ColorId: {
+                required: true,
             },
-            messages: {
-                noResults: "", results: function (resultsCount) { }
+            ProductId: {
+                required: true,
+            },
+            SizeId: {
+                required: true,
+            },
+            InQuantity: {
+                required: true,
+                min: 1,
+                number: true
+            },
+            MinQuantity: {
+                required: true,
+                min: 1,
+                number: true
+            }
+        },
+        messages: {
+            ColorId: {
+                required: "Insira uma Cor",
+            },
+            ProductId: {
+                required: "Insira uma Produto",
+            },
+            SizeId: {
+                required: "Insira um Tamanho",
+            },
+            InQuantity: {
+                required: "Insira uma Quantidade",
+                min: "Insira uma Quantidade",
+                number: "Insira uma Quantidade"
+            },
+            MinQuantity: {
+                required: "Insira uma Quantidade Minima",
+                min: "Insira uma Quantidade Minima",
+                number: "Insira uma Quantidade "
+            }
+        },
+
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+            if ($(".ColorId").val() == "" || $(".ColorId").val() == "0") {
+                $("#ColorIdError").show()
+
+            }
+            error.addClass('invalid-feedback');
+            element.closest('.form-group').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).removeClass('is-invalid');
+        }
+    });
+
+    loadSize();
+    loadProducts();
+
+    function loadProducts() {
+        $.ajax({
+            url: '/ProductStock/GetProducts',
+            type: 'GET',
+            dataType: 'json',
+            success: function (response) {
+                $("#Product").append('<option value=' + 0 + ' disabled >Selecione um Produto</option>');
+                $.each(response, function (key, value) {
+                    debugger;
+
+                    $("#Product").append('<option value=' + value.value + '>' + value.text + '</option>');
+                });
+                    if ("@Model.ProductId" > 0) {
+                        $('#Product').val("@Model.ProductId").trigger('change');;
+                }
+                    else {
+                        $("#Product").val(0).trigger('change');
+                    }
             }
         });
-    })
+    };
+
+    function loadSize() {
+        $.ajax({
+            url: '/ProductStock/GetSizes',
+            type: 'GET',
+            dataType: 'json',
+            success: function (response) {
+                $("#Size").append('<option value=' + 0 + ' disabled >Selecione um Tamanho</option>');
+                $.each(response, function (key, value) {
+                    debugger;
+
+                    $("#Size").append('<option value=' + value.value + '>' + value.text + '</option>');
+                });
+                    if ("@Model.SizeId" > 0) {
+                        $('#Size').val("@Model.SizeId").trigger('change');;
+                }
+                    else {
+                        $("#Size").val(0).trigger('change');
+                    }
+            }
+        });
+    };
+
 </script>
-
-
-
-
